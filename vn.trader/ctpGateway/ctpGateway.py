@@ -81,13 +81,16 @@ class CtpGateway(VtGateway):
         self.tdConnected = False        # 交易API连接状态
         
         self.qryEnabled = False         # 是否要启动循环查询
+
+        # 注册事件处理函数
+        self.registeHandle()
         
     #----------------------------------------------------------------------
     def connect(self):
         """连接"""
         # 载入json文件
         fileName = self.gatewayName + '_connect.json'
-        fileName = os.getcwd() + '/ctpGateway/' + fileName
+        fileName = os.getcwd() + '/' + fileName
         
         try:
             f = file(fileName)
@@ -119,6 +122,7 @@ class CtpGateway(VtGateway):
         
         # 初始化并启动查询
         self.initQuery()
+
     
     #----------------------------------------------------------------------
     def subscribe(self, subscribeReq):
@@ -193,8 +197,104 @@ class CtpGateway(VtGateway):
     def setQryEnabled(self, qryEnabled):
         """设置是否要启动循环查询"""
         self.qryEnabled = qryEnabled
-    
 
+    #TODO
+    def pTick(self, event):
+        tick = event.dict_['data']
+        print tick.symbol
+        print tick.exchange
+        print tick.lastPrice
+        print tick.lastVolume
+        print tick.time
+        print tick.date
+        print tick.openPrice
+        print tick.highPrice
+        print tick.lowPrice
+        print tick.preClosePrice
+
+    def pTrade(self, event):
+        trade = event.dict_['data']
+        print 'trade info:'
+        print trade.symbol
+        print trade.exchange
+        print trade.vtSymbol
+        print trade.tradeID
+        print trade.vtTradeID
+        print trade.orderID
+        print trade.vtOrderID
+        print trade.direction
+        print trade.offset
+        print trade.price
+        print trade.volume
+        print trade.tradeTime
+
+    def pOrder(self, event):
+        order = event.dict_['data']
+        print 'order info:'
+        print order.symbol
+        print order.exchange
+        print order.vtSymbol
+        print order.orderID
+        print order.vtOrderID
+        print order.direction
+        print order.offset
+        print order.price
+        print order.totalVolume
+        print order.tradedVolume
+        print order.status
+        print order.orderTime
+        print order.cancelTime
+        print order.frontID
+        print order.sessionID
+        print '###############################'
+
+    def pPosition(self,event):
+        pos = event.dict_['data']
+        print 'position info:'
+        print pos.symbol
+        print pos.exchange
+        print pos.vtSymbol
+        print pos.direction
+        print pos.position
+        print pos.frozen
+        print pos.price
+        print pos.vtPositionName
+        print '###############################'
+
+    def pAccount(self, event):
+        account = event.dict_['data']
+        print 'account info:'
+        print account.accountID
+        print account.vtAccountID
+        print account.preBalance
+        print account.balance
+        print account.available
+        print account.commission
+        print account.margin
+        print account.closeProfit
+        print account.positionProfit
+        print '###############################'
+
+    def pError(self, event):
+        error = event.dict_['data']
+        print 'errorid:',error.errorID
+        print 'errormsg:',error.errorMsg
+
+    def pLog(self, event):
+        log = event.dict_['data']
+        print ':'.join([log.logTime, log.logContent])
+
+    def pContract(self, event):
+        pass
+
+    def registeHandle(self):
+        self.eventEngine.register(EVENT_TICK, self.pTick)
+        self.eventEngine.register(EVENT_TRADE, self.pTrade)
+        self.eventEngine.register(EVENT_ORDER, self.pOrder)
+        self.eventEngine.register(EVENT_POSITION, self.pPosition)
+        self.eventEngine.register(EVENT_ACCOUNT, self.pAccount)
+        self.eventEngine.register(EVENT_ERROR, self.pError)
+        #self.eventEngine.register(EVENT_LOG, self.pLog)
 
 ########################################################################
 class CtpMdApi(MdApi):
@@ -1443,6 +1543,9 @@ class PositionBuffer(object):
 
 
 #----------------------------------------------------------------------
+
+
+########################################################################
 def test():
     """测试"""
     from PyQt4 import QtCore
