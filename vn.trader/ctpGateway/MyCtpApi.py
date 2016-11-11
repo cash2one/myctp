@@ -28,20 +28,10 @@ def test():
     gateway.subscribe(subscribeReq)
 
     # 查询账户
-    gateway.qryAccount()
+    #gateway.qryAccount()
 
     # 查询持仓
-    gateway.qryPosition()
-
-    orderReq= VtOrderReq()
-    orderReq.symbol = 'RM701'  # 代码
-    orderReq.price = 2425  # 价格
-    orderReq.volume = 1  # 数量
-
-    orderReq.priceType = PRICETYPE_MARKETPRICE  # 价格类型
-    orderReq.direction = DIRECTION_SHORT  # 买卖
-    orderReq.offset = OFFSET_OPEN  # 开平
-    gateway.sendOrder(orderReq)
+    #gateway.qryPosition()
 
     sys.exit(app.exec_())
 

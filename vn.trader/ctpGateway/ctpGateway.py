@@ -82,6 +82,8 @@ class CtpGateway(VtGateway):
         
         self.qryEnabled = True         # 是否要启动循环查询
 
+        self.flagl = True
+
         # 注册事件处理函数
         self.registeHandle()
         
@@ -212,6 +214,19 @@ class CtpGateway(VtGateway):
         print tick.highPrice
         print tick.lowPrice
         print tick.preClosePrice
+        if self.flagl == True and tick.lastPrice > 2300:
+            orderReq = VtOrderReq()
+            orderReq.symbol = 'RM701'  # 代码
+            orderReq.price = 2425  # 价格
+            orderReq.volume = 1  # 数量
+
+            orderReq.priceType = PRICETYPE_MARKETPRICE  # 价格类型
+            orderReq.direction = DIRECTION_SHORT  # 买卖
+            orderReq.offset = OFFSET_OPEN  # 开平
+            self.sendOrder(orderReq)
+            self.flagl = False
+            print 'sendOrder!'
+        print '###############################'
 
     def pTrade(self, event):
         trade = event.dict_['data']
@@ -228,6 +243,7 @@ class CtpGateway(VtGateway):
         print trade.price
         print trade.volume
         print trade.tradeTime
+        print '###############################'
 
     def pOrder(self, event):
         order = event.dict_['data']
