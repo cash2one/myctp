@@ -23,15 +23,15 @@ def test():
     gateway.connect()
 
     #订阅行情
-    # subscribeReq = VtSubscribeReq()
-    # subscribeReq.symbol = 'RM701'
-    # gateway.subscribe(subscribeReq)
+    subscribeReq = VtSubscribeReq()
+    subscribeReq.symbol = 'RM701'
+    gateway.subscribe(subscribeReq)
 
     # 查询账户
-    # gateway.qryAccount()
+    gateway.qryAccount()
 
     # 查询持仓
-    # gateway.qryPosition()
+    gateway.qryPosition()
 
 
     sys.exit(app.exec_())

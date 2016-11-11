@@ -80,7 +80,7 @@ class CtpGateway(VtGateway):
         self.mdConnected = False        # 行情API连接状态，登录完成后为True
         self.tdConnected = False        # 交易API连接状态
         
-        self.qryEnabled = False         # 是否要启动循环查询
+        self.qryEnabled = True         # 是否要启动循环查询
 
         # 注册事件处理函数
         self.registeHandle()
