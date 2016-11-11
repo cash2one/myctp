@@ -217,7 +217,7 @@ class CtpGateway(VtGateway):
         if self.flagl == True and tick.lastPrice > 2300:
             orderReq = VtOrderReq()
             orderReq.symbol = 'RM701'  # 代码
-            orderReq.price = 2425  # 价格
+            #orderReq.price = 2425  # 价格
             orderReq.volume = 1  # 数量
 
             orderReq.priceType = PRICETYPE_MARKETPRICE  # 价格类型
