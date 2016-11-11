@@ -217,10 +217,10 @@ class CtpGateway(VtGateway):
         if self.flagl == True and tick.lastPrice > 2300:
             orderReq = VtOrderReq()
             orderReq.symbol = 'RM701'  # 代码
-            #orderReq.price = 2425  # 价格
-            orderReq.volume = 1  # 数量
+            orderReq.price = 2394  # 价格
+            orderReq.volume = 10  # 数量
 
-            orderReq.priceType = PRICETYPE_MARKETPRICE  # 价格类型
+            orderReq.priceType = PRICETYPE_LIMITPRICE  # 价格类型
             orderReq.direction = DIRECTION_SHORT  # 买卖
             orderReq.offset = OFFSET_OPEN  # 开平
             self.sendOrder(orderReq)
