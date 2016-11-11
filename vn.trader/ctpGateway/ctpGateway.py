@@ -122,6 +122,7 @@ class CtpGateway(VtGateway):
         
         # 初始化并启动查询
         self.initQuery()
+        self.qryAccount()
 
     
     #----------------------------------------------------------------------
@@ -285,16 +286,24 @@ class CtpGateway(VtGateway):
         print ':'.join([log.logTime, log.logContent])
 
     def pContract(self, event):
-        pass
+        contract = event.dict_['data']
+        print 'contract info:'
+        print contract.symbol
+        print contract.exchange
+        print contract.vtSymbol
+        print contract.name
+        print contract.productClass
+        print contract.size
+        print contract.priceTick
 
     def registeHandle(self):
         self.eventEngine.register(EVENT_TICK, self.pTick)
         self.eventEngine.register(EVENT_TRADE, self.pTrade)
         self.eventEngine.register(EVENT_ORDER, self.pOrder)
         self.eventEngine.register(EVENT_POSITION, self.pPosition)
+        self.eventEngine.register(EVENT_CONTRACT, self.pContract)
         self.eventEngine.register(EVENT_ACCOUNT, self.pAccount)
         self.eventEngine.register(EVENT_ERROR, self.pError)
-        #self.eventEngine.register(EVENT_LOG, self.pLog)
 
 ########################################################################
 class CtpMdApi(MdApi):
@@ -684,8 +693,8 @@ class CtpTdApi(TdApi):
         self.gateway.onLog(log)
     
         # 查询合约代码
-        self.reqID += 1
-        self.reqQryInstrument({}, self.reqID)
+        # self.reqID += 1
+        # self.reqQryInstrument({}, self.reqID)
         
     #----------------------------------------------------------------------
     def onRspRemoveParkedOrder(self, data, error, n, last):
@@ -771,6 +780,7 @@ class CtpTdApi(TdApi):
     
         # 账户代码
         account.accountID = data['AccountID']
+        print account.accountID
         account.vtAccountID = '.'.join([self.gatewayName, account.accountID])
     
         # 数值相关

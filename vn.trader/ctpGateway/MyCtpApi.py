@@ -22,16 +22,17 @@ def test():
     gateway = CtpGateway(eventEngine)
     gateway.connect()
 
-    #查询账户
-    gateway.qryAccount()
-
-    #查询持仓
-    gateway.qryPosition()
-
     #订阅行情
-    subscribeReq = VtSubscribeReq()
-    subscribeReq.symbol = 'RM701'
-    gateway.mdApi.subscribe(subscribeReq)
+    # subscribeReq = VtSubscribeReq()
+    # subscribeReq.symbol = 'RM701'
+    # gateway.subscribe(subscribeReq)
+
+    # 查询账户
+    # gateway.qryAccount()
+
+    # 查询持仓
+    # gateway.qryPosition()
+
 
     sys.exit(app.exec_())
 
