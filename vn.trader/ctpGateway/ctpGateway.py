@@ -214,7 +214,6 @@ class CtpGateway(VtGateway):
         print tick.highPrice
         print tick.lowPrice
         print tick.preClosePrice
-        print self.tdApi.posBufferDict
         if self.flagl == True and tick.lastPrice > 2300:
             orderReq = VtOrderReq()
             orderReq.symbol = 'RM701'  # 代码
@@ -277,6 +276,7 @@ class CtpGateway(VtGateway):
         print pos.frozen
         print pos.price
         print pos.vtPositionName
+        print self.tdApi.posBufferDict
         print '###############################'
 
     def pAccount(self, event):
