@@ -217,11 +217,9 @@ class CtpGateway(VtGateway):
         print tick.preClosePrice
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):    #多单
-                print "posSymbol:", symbol
-                print "nowprice:",tick.lastPrice
-                print "posPrice:",self.tdApi.posBufferDict[symbol].pos.price
-                print "target:",config.target
-                if tick.lastPrice > self.tdApi.posBufferDict[symbol].pos.price/10 + config.target: #止盈卖出
+                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                    continue
+                elif tick.lastPrice > self.tdApi.posBufferDict[symbol].pos.price/10 + config.target: #止盈卖出
                     orderReq = VtOrderReq()
                     orderReq.symbol = tick.symbol  # 代码
                     orderReq.price = tick.bidPrice1  # 价格
@@ -233,7 +231,9 @@ class CtpGateway(VtGateway):
                     self.sendOrder(orderReq)
                     print "sendorder==========================================="
             elif symbol == (tick.symbol + '.3'):  #空单
-                if tick.lastPrice < self.tdApi.posBufferDict[symbol].pos.price - config.target: #止盈卖出
+                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                    continue
+                elif tick.lastPrice < self.tdApi.posBufferDict[symbol].pos.price/10 - config.target: #止盈卖出
                     orderReq = VtOrderReq()
                     orderReq.symbol = tick.symbol  # 代码
                     orderReq.price = tick.askPrice1  # 价格
