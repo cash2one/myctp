@@ -221,7 +221,7 @@ class CtpGateway(VtGateway):
                 print "nowprice:",tick.lastPrice
                 print "posPrice:",self.tdApi.posBufferDict[symbol].pos.price
                 print "target:",config.target
-                if tick.lastPrice > self.tdApi.posBufferDict[symbol].pos.price + config.target: #止盈卖出
+                if tick.lastPrice > self.tdApi.posBufferDict[symbol].pos.price/10 + config.target: #止盈卖出
                     orderReq = VtOrderReq()
                     orderReq.symbol = tick.symbol  # 代码
                     orderReq.price = tick.bidPrice1  # 价格
