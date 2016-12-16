@@ -24,7 +24,7 @@ def test():
 
     #订阅行情
     subscribeReq = VtSubscribeReq()
-    subscribeReq.symbol = 'RM701'
+    subscribeReq.symbol = 'RM705'
     gateway.subscribe(subscribeReq)
 
     # 查询账户
