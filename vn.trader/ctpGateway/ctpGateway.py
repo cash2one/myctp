@@ -216,8 +216,8 @@ class CtpGateway(VtGateway):
         print tick.lowPrice
         print tick.preClosePrice
         for symbol in self.tdApi.posBufferDict.keys():
-            print "symbol:",symbol
             if symbol == (tick.symbol + '.2'):    #多单
+                print "symbol:", symbol
                 if tick.lastPrice > self.tdApi.posBufferDict[symbol].pos.price + config.target: #止盈卖出
                     orderReq = VtOrderReq()
                     orderReq.symbol = tick.symbol  # 代码
