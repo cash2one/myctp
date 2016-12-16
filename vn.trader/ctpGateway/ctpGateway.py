@@ -205,17 +205,18 @@ class CtpGateway(VtGateway):
     #TODO
     def pTick(self, event):
         tick = event.dict_['data']
-        # print tick.symbol
-        # print tick.exchange
-        # print tick.lastPrice
-        # print tick.lastVolume
-        # print tick.time
-        # print tick.date
-        # print tick.openPrice
-        # print tick.highPrice
-        # print tick.lowPrice
-        # print tick.preClosePrice
+        print "symbol:",tick.symbol
+        print "exchange:",tick.exchange
+        print "lastPrice:",tick.lastPrice
+        print "lastVolume",tick.lastVolume
+        print "time:",tick.time
+        print "date:",tick.date
+        print tick.openPrice
+        print tick.highPrice
+        print tick.lowPrice
+        print tick.preClosePrice
         for symbol in self.tdApi.posBufferDict.keys():
+            print "symbol:",symbol
             if symbol == (tick.symbol + '.2'):    #多单
                 if tick.lastPrice > self.tdApi.posBufferDict[symbol].pos.price + config.target: #止盈卖出
                     orderReq = VtOrderReq()
@@ -227,6 +228,7 @@ class CtpGateway(VtGateway):
                     orderReq.direction = DIRECTION_SHORT  # 卖
                     orderReq.offset = OFFSET_CLOSE  # 平仓
                     self.sendOrder(orderReq)
+                    print "sendorder==========================================="
             elif symbol == (tick.symbol + '.3'):  #空单
                 if tick.lastPrice < self.tdApi.posBufferDict[symbol].pos.price - config.target: #止盈卖出
                     orderReq = VtOrderReq()
