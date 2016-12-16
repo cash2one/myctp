@@ -16,6 +16,7 @@ from vnctpmd import MdApi
 from vnctptd import TdApi
 from ctpDataType import *
 from vtGateway import *
+from config import *
 
 
 # 以下为一些VT类型和CTP类型的映射字典
@@ -204,29 +205,42 @@ class CtpGateway(VtGateway):
     #TODO
     def pTick(self, event):
         tick = event.dict_['data']
-        print tick.symbol
-        print tick.exchange
-        print tick.lastPrice
-        print tick.lastVolume
-        print tick.time
-        print tick.date
-        print tick.openPrice
-        print tick.highPrice
-        print tick.lowPrice
-        print tick.preClosePrice
-        if self.flagl == True and tick.lastPrice > 2300:
-            orderReq = VtOrderReq()
-            orderReq.symbol = 'RM701'  # 代码
-            orderReq.price = 2394  # 价格
-            orderReq.volume = 10  # 数量
+        # print tick.symbol
+        # print tick.exchange
+        # print tick.lastPrice
+        # print tick.lastVolume
+        # print tick.time
+        # print tick.date
+        # print tick.openPrice
+        # print tick.highPrice
+        # print tick.lowPrice
+        # print tick.preClosePrice
+        for symbol in self.tdApi.posBufferDict.keys():
+            if symbol == (tick.symbol + '.2'):    #多单
+                if tick.lastPrice > self.tdApi.posBufferDict[symbol].pos.price + config.target: #止盈卖出
+                    orderReq = VtOrderReq()
+                    orderReq.symbol = tick.symbol  # 代码
+                    orderReq.price = tick.bidPrice1  # 价格
+                    orderReq.volume = self.tdApi.posBufferDict[symbol].pos.position  # 数量
 
-            orderReq.priceType = PRICETYPE_LIMITPRICE  # 价格类型
-            orderReq.direction = DIRECTION_SHORT  # 买卖
-            orderReq.offset = OFFSET_OPEN  # 开平
-            self.sendOrder(orderReq)
-            self.flagl = False
-            print 'sendOrder!'
-        print '###############################'
+                    orderReq.priceType = PRICETYPE_LIMITPRICE  # 限价单
+                    orderReq.direction = DIRECTION_SHORT  # 卖
+                    orderReq.offset = OFFSET_CLOSE  # 平仓
+                    self.sendOrder(orderReq)
+            elif symbol == (tick.symbol + '.3'):  #空单
+                if tick.lastPrice < self.tdApi.posBufferDict[symbol].pos.price - config.target: #止盈卖出
+                    orderReq = VtOrderReq()
+                    orderReq.symbol = tick.symbol  # 代码
+                    orderReq.price = tick.askPrice1  # 价格
+                    orderReq.volume = self.tdApi.posBufferDict[symbol].pos.position  # 数量
+
+                    orderReq.priceType = PRICETYPE_LIMITPRICE  # 限价单
+                    orderReq.direction = DIRECTION_LONG  # 买
+                    orderReq.offset = OFFSET_CLOSE  # 平仓
+                    self.sendOrder(orderReq)
+            else:
+                pass
+        # print '###############################'
 
     def pTrade(self, event):
         trade = event.dict_['data']
