@@ -81,9 +81,16 @@ class CtpGateway(VtGateway):
         self.mdConnected = False        # 行情API连接状态，登录完成后为True
         self.tdConnected = False        # 交易API连接状态
         
-        self.qryEnabled = True         # 是否要启动循环查询
+        self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
 
-        self.flagl = True
+        #----交易策略使用的参数-----
+        self.currentMode = u'多'     #当前运行模式
+        self.todayHigh = 0      #今天最高价
+        self.todayLow = 0       #今天最低价
+        self.preSellPrice = 0   #上次卖出价
+        self.maxDrawDown = 25   #最大回撤，从当天最高价回撤达到该值，立即平仓
+        self.stopLoss = False   #是否止损
+        self.stopWin = False    #是否止盈
 
         # 注册事件处理函数
         self.registeHandle()
@@ -166,10 +173,10 @@ class CtpGateway(VtGateway):
         """初始化连续查询"""
         if self.qryEnabled:
             # 需要循环的查询函数列表
-            self.qryFunctionList = [self.qryAccount, self.qryPosition]
+            self.qryFunctionList = [self.qryAccount, self.qryPosition]      #查询账户信息和持仓信息
             
             self.qryCount = 0           # 查询触发倒计时
-            self.qryTrigger = 2         # 查询触发点
+            self.qryTrigger = 2         # 查询触发点，查询周期，2为每两秒查询一次
             self.qryNextFunction = 0    # 上次运行的查询函数索引
             
             self.startQuery()
@@ -202,52 +209,98 @@ class CtpGateway(VtGateway):
         """设置是否要启动循环查询"""
         self.qryEnabled = qryEnabled
 
-    #TODO
-    def pTick(self, event):
-        tick = event.dict_['data']
-        print "symbol:",tick.symbol
-        print "exchange:",tick.exchange
-        print "lastPrice:",tick.lastPrice
-        print "lastVolume",tick.lastVolume
-        print "time:",tick.time
-        print "date:",tick.date
+    # ----------------------------------------------------------------------
+    def makeOrder(self, _symbol, _price, _volume, _direction, _offset, _priceType):
+        orderReq = VtOrderReq()
+        orderReq.symbol = _symbol  # 代码
+        orderReq.price = _price  # 价格
+        orderReq.volume = _volume  # 数量
+
+        orderReq.priceType = _priceType  # 限价单或市价单
+        orderReq.direction = _direction  # 买卖方向
+        orderReq.offset = _offset  # 开平仓
+        return orderReq
+
+    # ----------------------------------------------------------------------
+    def makeBuyOpenOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
+        '''买开单'''
+        return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_OPEN, _priceType)
+
+    # ----------------------------------------------------------------------
+    def makeBuyCloseOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
+        '''买平单'''
+        return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_CLOSE, _priceType)
+
+    # ----------------------------------------------------------------------
+    def makeSellOpenOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
+        '''卖开单'''
+        return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_OPEN, _priceType)
+
+    # ----------------------------------------------------------------------
+    def makeSellCloseOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
+        '''卖开单'''
+        return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_CLOSE, _priceType)
+
+    # ----------------------------------------------------------------------
+    def tradePolicy001(self, tick):
+        print "symbol:", tick.symbol
+        print "exchange:", tick.exchange
+        print "lastPrice:", tick.lastPrice
+        print "lastVolume", tick.lastVolume
+        print "time:", tick.time
+        print "date:", tick.date
         print tick.openPrice
         print tick.highPrice
         print tick.lowPrice
         print tick.preClosePrice
         for symbol in self.tdApi.posBufferDict.keys():
-            if symbol == (tick.symbol + '.2'):    #多单
+            if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
-                elif tick.lastPrice > self.tdApi.posBufferDict[symbol].pos.price/10 + config.target: #止盈卖出
-                    orderReq = VtOrderReq()
-                    orderReq.symbol = tick.symbol  # 代码
-                    orderReq.price = tick.bidPrice1  # 价格
-                    orderReq.volume = self.tdApi.posBufferDict[symbol].pos.position  # 数量
-
-                    orderReq.priceType = PRICETYPE_LIMITPRICE  # 限价单
-                    orderReq.direction = DIRECTION_SHORT  # 卖
-                    orderReq.offset = OFFSET_CLOSE  # 平仓
-                    self.sendOrder(orderReq)
-                    print "sendorder==========================================="
-            elif symbol == (tick.symbol + '.3'):  #空单
+                if self.todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + config.target:  # 当天价格达到过目标收益
+                    if tick.lastPrice <= self.todayHigh - self.maxDrawDown:     #达到最大回撤
+                        orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,
+                                                           self.tdApi.posBufferDict[symbol].pos.position)
+                        self.sendOrder(orderReq)
+                        print "sendorder==========================================="
+            elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
-                elif tick.lastPrice < self.tdApi.posBufferDict[symbol].pos.price/10 - config.target: #止盈卖出
-                    orderReq = VtOrderReq()
-                    orderReq.symbol = tick.symbol  # 代码
-                    orderReq.price = tick.askPrice1  # 价格
-                    orderReq.volume = self.tdApi.posBufferDict[symbol].pos.position  # 数量
-
-                    orderReq.priceType = PRICETYPE_LIMITPRICE  # 限价单
-                    orderReq.direction = DIRECTION_LONG  # 买
-                    orderReq.offset = OFFSET_CLOSE  # 平仓
-                    self.sendOrder(orderReq)
+                if self.todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - config.target:  # 当天价格达到过目标收益
+                    if tick.lastPrice >= self.todayLow + self.maxDrawDown:     #达到最大回撤
+                        orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,
+                                                           self.tdApi.posBufferDict[symbol].pos.position)
+                        self.sendOrder(orderReq)
+                        print "sendorder==========================================="
             else:
                 pass
-        # print '###############################'
+                # print '###############################'
 
+    # ----------------------------------------------------------------------
+    def pTick(self, event):
+        '''tick事件处理机，当接收到行情时执行'''
+        tick = event.dict_['data']
+        if tick.lastPrice > self.todayHigh:
+            self.todayHigh = tick.lastPrice
+        if self.todayLow < tick.lowPrice:
+            self.todayLow = tick.lowPrice
+        if tick.lastPrice < self.todayLow:
+            self.todayLow = tick.lastPrice
+
+        #止盈
+        if self.stopWin:
+            pass
+
+        #止损
+        if self.stopLoss:
+            pass
+
+        #交易策略
+        self.tradePolicy001(tick)
+
+    # ----------------------------------------------------------------------
     def pTrade(self, event):
+        '''成交事件处理机，当订单成交回报时执行'''
         trade = event.dict_['data']
         print 'trade info:'
         print trade.symbol
@@ -264,7 +317,9 @@ class CtpGateway(VtGateway):
         print trade.tradeTime
         print '###############################'
 
+    # ----------------------------------------------------------------------
     def pOrder(self, event):
+        '''订单事件处理机，当收到订单回报时执行'''
         order = event.dict_['data']
         print 'order info:'
         print order.symbol
@@ -284,7 +339,9 @@ class CtpGateway(VtGateway):
         print order.sessionID
         print '###############################'
 
+    # ----------------------------------------------------------------------
     def pPosition(self,event):
+        '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
         print 'position info:'
         print pos.symbol
@@ -298,7 +355,9 @@ class CtpGateway(VtGateway):
         print self.tdApi.posBufferDict
         print '###############################'
 
+    # ----------------------------------------------------------------------
     def pAccount(self, event):
+        '''账户信息事件处理机，当收到账户信息时执行'''
         account = event.dict_['data']
         print 'account info:'
         print account.accountID
@@ -312,15 +371,18 @@ class CtpGateway(VtGateway):
         print account.positionProfit
         print '###############################'
 
+    # ----------------------------------------------------------------------
     def pError(self, event):
         error = event.dict_['data']
         print 'errorid:',error.errorID
         print 'errormsg:',error.errorMsg
 
+    # ----------------------------------------------------------------------
     def pLog(self, event):
         log = event.dict_['data']
         print ':'.join([log.logTime, log.logContent])
 
+    # ----------------------------------------------------------------------
     def pContract(self, event):
         contract = event.dict_['data']
         print 'contract info:'
@@ -332,7 +394,9 @@ class CtpGateway(VtGateway):
         print contract.size
         print contract.priceTick
 
+    # ----------------------------------------------------------------------
     def registeHandle(self):
+        '''注册处理机'''
         self.eventEngine.register(EVENT_TICK, self.pTick)
         self.eventEngine.register(EVENT_TRADE, self.pTrade)
         self.eventEngine.register(EVENT_ORDER, self.pOrder)
