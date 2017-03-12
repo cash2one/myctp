@@ -285,6 +285,7 @@ class CtpGateway(VtGateway):
 
     # ----------------------------------------------------------------------
     def tradePolicy001(self, tick):
+        '''摸顶止盈，当价格达到目标收益后，开始摸顶，从最高价回撤达到阈值，平仓止盈'''
         print "symbol:", tick.symbol
         print "exchange:", tick.exchange
         print "lastPrice:", tick.lastPrice
@@ -322,9 +323,9 @@ class CtpGateway(VtGateway):
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
-        if tick.lastPrice > self.todayHigh:
+        if tick.lastPrice > self.todayHigh:     #更新最高价
             self.todayHigh = tick.lastPrice
-        if tick.lastPrice < self.todayLow:
+        if tick.lastPrice < self.todayLow:      #更新最低价
             self.todayLow = tick.lastPrice
 
         # 交易策略
