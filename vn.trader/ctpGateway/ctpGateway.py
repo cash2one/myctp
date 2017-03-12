@@ -84,13 +84,13 @@ class CtpGateway(VtGateway):
         self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
 
         #----交易策略使用的参数-----
-        self.currentMode = u'多'     #当前运行模式
-        self.todayHigh = 0      #今天最高价
-        self.todayLow = 0       #今天最低价
-        self.preSellPrice = 0   #上次卖出价
-        self.maxDrawDown = 25   #最大回撤，从当天最高价回撤达到该值，立即平仓
-        self.stopLoss = False   #是否止损
-        self.stopWin = False    #是否止盈
+        self.currentMode = config.currentMode       #当前运行模式
+        self.todayHigh = 0                          #今天最高价
+        self.todayLow = 1000000                     #今天最低价
+        self.preSellPrice = 0                       #上次卖出价
+        self.maxDrawDown = config.maxDrawDown       #最大回撤，从当天最高价回撤达到该值，立即平仓
+        self.stopLoss = config.stopLoss             #是否止损
+        self.stopWin = config.stopWin               #是否止盈
 
         # 注册事件处理函数
         self.registeHandle()
@@ -242,6 +242,48 @@ class CtpGateway(VtGateway):
         return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_CLOSE, _priceType)
 
     # ----------------------------------------------------------------------
+    def tradeStopWin(self, tick):
+        '''止盈函数'''
+        for symbol in self.tdApi.posBufferDict.keys():
+            if symbol == (tick.symbol + '.2'):  # 多单
+                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                    continue
+                if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.winTarget):  # 最新价格大于止盈价格
+                    orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    self.sendOrder(orderReq)
+                    print "================[STOP WIN]==========================="
+            elif symbol == (tick.symbol + '.3'):  # 空单
+                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                    continue
+                if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.winTarget):  # 最新价格小于止盈价格
+                    orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    self.sendOrder(orderReq)
+                    print "================[STOP WIN]==========================="
+            else:
+                print "==============[UNKNOWN ORDER TYPE]====================="
+
+    # ----------------------------------------------------------------------
+    def tradeStopLoss(self, tick):
+        '''止损函数'''
+        for symbol in self.tdApi.posBufferDict.keys():
+            if symbol == (tick.symbol + '.2'):  # 多单
+                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                    continue
+                if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.stopTarget):  # 最新价格小于止损价格
+                    orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    self.sendOrder(orderReq)
+                    print "================[STOP LOSS]==========================="
+            elif symbol == (tick.symbol + '.3'):  # 空单
+                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                    continue
+                if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.stopTarget):  # 最新价格大于止损价格
+                    orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    self.sendOrder(orderReq)
+                    print "================[STOP LOSS]==========================="
+            else:
+                print "==============[UNKNOWN ORDER TYPE]====================="
+
+    # ----------------------------------------------------------------------
     def tradePolicy001(self, tick):
         print "symbol:", tick.symbol
         print "exchange:", tick.exchange
@@ -257,7 +299,7 @@ class CtpGateway(VtGateway):
             if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
-                if self.todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + config.target:  # 当天价格达到过目标收益
+                if self.todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + config.winTarget:  # 当天价格达到过目标收益
                     if tick.lastPrice <= self.todayHigh - self.maxDrawDown:     #达到最大回撤
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,
                                                            self.tdApi.posBufferDict[symbol].pos.position)
@@ -266,9 +308,9 @@ class CtpGateway(VtGateway):
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
-                if self.todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - config.target:  # 当天价格达到过目标收益
+                if self.todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - config.winTarget:  # 当天价格达到过目标收益
                     if tick.lastPrice >= self.todayLow + self.maxDrawDown:     #达到最大回撤
-                        orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,
+                        orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1,
                                                            self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
                         print "sendorder==========================================="
@@ -282,21 +324,19 @@ class CtpGateway(VtGateway):
         tick = event.dict_['data']
         if tick.lastPrice > self.todayHigh:
             self.todayHigh = tick.lastPrice
-        if self.todayLow < tick.lowPrice:
-            self.todayLow = tick.lowPrice
         if tick.lastPrice < self.todayLow:
             self.todayLow = tick.lastPrice
 
+        # 交易策略
+        self.tradePolicy001(tick)
+
         #止盈
         if self.stopWin:
-            pass
+            self.tradeStopWin(tick)
 
         #止损
         if self.stopLoss:
-            pass
-
-        #交易策略
-        self.tradePolicy001(tick)
+            self.tradeStopLoss(tick)
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
