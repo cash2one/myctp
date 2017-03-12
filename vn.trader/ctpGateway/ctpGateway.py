@@ -249,18 +249,29 @@ class CtpGateway(VtGateway):
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
                 if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.winTarget):  # 最新价格大于止盈价格
+                    log = VtLogData()
+                    log.gatewayName = self.gatewayName
+                    log.logContent = u'[止盈单],多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    self.onLog(log)
+                    #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
-                    print "================[STOP WIN]==========================="
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
                 if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.winTarget):  # 最新价格小于止盈价格
+                    log = VtLogData()
+                    log.gatewayName = self.gatewayName
+                    log.logContent = u'[止盈单],空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    self.onLog(log)
+                    #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
-                    print "================[STOP WIN]==========================="
             else:
-                print "==============[UNKNOWN ORDER TYPE]====================="
+                log = VtLogData()
+                log.gatewayName = self.gatewayName
+                log.logContent = u'[未知类型订单],合约代码：%s' % symbol
+                self.onLog(log)
 
     # ----------------------------------------------------------------------
     def tradeStopLoss(self, tick):
@@ -270,18 +281,30 @@ class CtpGateway(VtGateway):
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
                 if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.stopTarget):  # 最新价格小于止损价格
+                    log = VtLogData()
+                    log.gatewayName = self.gatewayName
+                    log.logContent = u'[止损单],多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    self.onLog(log)
+                    #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
-                    print "================[STOP LOSS]==========================="
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
                 if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.stopTarget):  # 最新价格大于止损价格
+                    log = VtLogData()
+                    log.gatewayName = self.gatewayName
+                    log.logContent = u'[止损单],空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    self.onLog(log)
+
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
                     print "================[STOP LOSS]==========================="
             else:
-                print "==============[UNKNOWN ORDER TYPE]====================="
+                log = VtLogData()
+                log.gatewayName = self.gatewayName
+                log.logContent = u'[未知类型订单],合约代码：%s' % symbol
+                self.onLog(log)
 
     # ----------------------------------------------------------------------
     def tradePolicy001(self, tick):
@@ -302,22 +325,30 @@ class CtpGateway(VtGateway):
                     continue
                 if self.todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + config.winTarget:  # 当天价格达到过目标收益
                     if tick.lastPrice <= self.todayHigh - self.maxDrawDown:     #达到最大回撤
-                        orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,
-                                                           self.tdApi.posBufferDict[symbol].pos.position)
+                        log = VtLogData()
+                        log.gatewayName = self.gatewayName
+                        log.logContent = u'[摸顶止盈单],多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        self.onLog(log)
+                        #发单
+                        orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
-                        print "sendorder==========================================="
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
                 if self.todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - config.winTarget:  # 当天价格达到过目标收益
                     if tick.lastPrice >= self.todayLow + self.maxDrawDown:     #达到最大回撤
-                        orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1,
-                                                           self.tdApi.posBufferDict[symbol].pos.position)
+                        log = VtLogData()
+                        log.gatewayName = self.gatewayName
+                        log.logContent = u'[摸顶止盈单],空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        self.onLog(log)
+                        #发单
+                        orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
-                        print "sendorder==========================================="
             else:
-                pass
-                # print '###############################'
+                log = VtLogData()
+                log.gatewayName = self.gatewayName
+                log.logContent = u'[未知类型订单],合约代码：%s' % symbol
+                self.onLog(log)
 
     # ----------------------------------------------------------------------
     def pTick(self, event):
@@ -384,12 +415,6 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-
-        log = VtLogData()
-        log.gatewayName = self.gatewayName
-        log.logContent = u'接收持仓信息'
-        self.onLog(log)
-
         print 'position info:'
         print pos.symbol
         print pos.exchange
@@ -440,6 +465,7 @@ class CtpGateway(VtGateway):
         print contract.productClass
         print contract.size
         print contract.priceTick
+        print '###############################'
 
     # ----------------------------------------------------------------------
     def registeHandle(self):
