@@ -384,6 +384,12 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
+
+        log = VtLogData()
+        log.gatewayName = self.gatewayName
+        log.logContent = u'接收持仓信息'
+        self.onLog(log)
+
         print 'position info:'
         print pos.symbol
         print pos.exchange
