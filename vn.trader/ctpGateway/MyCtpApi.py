@@ -3,11 +3,14 @@
 from PyQt4 import QtCore
 import sys
 from ctpGateway import *
+from weixin import *
 
 
 def pLog(event):
     log = event.dict_['data']
-    print ':'.join([log.logTime, log.logContent])
+    loginfo = ':'.join([log.logTime, log.logContent])
+    send_msg(loginfo)
+    print loginfo
 
 
 def test():
