@@ -17,6 +17,7 @@ from vnctptd import TdApi
 from ctpDataType import *
 from vtGateway import *
 from config import *
+from weixin import *
 
 
 # 以下为一些VT类型和CTP类型的映射字典
@@ -452,7 +453,9 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def pLog(self, event):
         log = event.dict_['data']
-        print ':'.join([log.logTime, log.logContent])
+        loginfo = ':'.join([log.logTime, log.logContent])
+        send_msg(loginfo)
+        print loginfo
 
     # ----------------------------------------------------------------------
     def pContract(self, event):
