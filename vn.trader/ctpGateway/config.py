@@ -3,7 +3,7 @@
 class config:
     currentMode = u'多'          #当前运行模式：多或者空
     winTarget = 5                #盈利目标点数，浮盈达到该点数，止盈
-    stopTarget = 40              #止损目标点数，浮亏达到该点数，止损
+    stopTarget = 20              #止损目标点数，浮亏达到该点数，止损
     # winTargetPrice = 100000      #止盈目标价位，当前价格达到该价格，止盈
     # stopTargetPrice = 0          #止损目标价位，当前价格达到该价格，止损
     # preSellPrice = 0             #上次平仓价位
