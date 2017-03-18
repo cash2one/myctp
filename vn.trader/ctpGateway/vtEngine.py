@@ -3,16 +3,14 @@
 import shelve
 from collections import OrderedDict
 
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
-
-from eventEngine import *
-from vtGateway import *
-from vtFunction import loadMongoSetting
-
 from ctaAlgo.ctaEngine import CtaEngine
 from dataRecorder.drEngine import DrEngine
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
 from riskManager.rmEngine import RmEngine
+
+from vtFunction import loadMongoSetting
+from vtGateway import *
 
 
 ########################################################################
