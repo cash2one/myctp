@@ -85,13 +85,13 @@ class CtpGateway(VtGateway):
         self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
 
         #----交易策略使用的参数-----
-        self.currentMode = config.currentMode       #当前运行模式
-        self.todayHigh = 0                          #今天最高价
-        self.todayLow = 1000000                     #今天最低价
-        self.preSellPrice = 0                       #上次卖出价
-        self.maxDrawDown = config.maxDrawDown       #最大回撤，从当天最高价回撤达到该值，立即平仓
-        self.stopLoss = config.stopLoss             #是否止损
-        self.stopWin = config.stopWin               #是否止盈
+        self.todayHigh = 0                          # 今天最高价
+        self.todayLow = 1000000                     # 今天最低价
+        self.preSellPrice = 0                       # 上次卖出价
+
+        self.openFlag = False                       # 开仓标志
+        self.openDirection = config.currentMode     # 开仓方向
+        self.tickList = []
 
         # 注册事件处理函数
         self.registeHandle()
@@ -252,7 +252,7 @@ class CtpGateway(VtGateway):
                 if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.winTarget):  # 最新价格大于止盈价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止盈单],多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -263,7 +263,7 @@ class CtpGateway(VtGateway):
                 if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.winTarget):  # 最新价格小于止盈价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止盈单],空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -271,7 +271,7 @@ class CtpGateway(VtGateway):
             else:
                 log = VtLogData()
                 log.gatewayName = self.gatewayName
-                log.logContent = u'[未知类型订单],合约代码：%s' % symbol
+                log.logContent = u'[未知类型订单]合约代码：%s' % symbol
                 self.onLog(log)
 
     # ----------------------------------------------------------------------
@@ -284,7 +284,7 @@ class CtpGateway(VtGateway):
                 if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.stopTarget):  # 最新价格小于止损价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止损单],多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -295,7 +295,7 @@ class CtpGateway(VtGateway):
                 if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.stopTarget):  # 最新价格大于止损价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止损单],空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
 
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -304,31 +304,31 @@ class CtpGateway(VtGateway):
             else:
                 log = VtLogData()
                 log.gatewayName = self.gatewayName
-                log.logContent = u'[未知类型订单],合约代码：%s' % symbol
+                log.logContent = u'[未知类型订单]合约代码：%s' % symbol
                 self.onLog(log)
 
     # ----------------------------------------------------------------------
     def tradePolicy001(self, tick):
         '''摸顶止盈，当价格达到目标收益后，开始摸顶，从最高价回撤达到阈值，平仓止盈'''
-        print "symbol:", tick.symbol
-        print "exchange:", tick.exchange
-        print "lastPrice:", tick.lastPrice
-        print "lastVolume", tick.lastVolume
-        print "time:", tick.time
-        print "date:", tick.date
-        print tick.openPrice
-        print tick.highPrice
-        print tick.lowPrice
-        print tick.preClosePrice
+        # print "symbol:", tick.symbol
+        # print "exchange:", tick.exchange
+        # print "lastPrice:", tick.lastPrice
+        # print "lastVolume", tick.lastVolume
+        # print "time:", tick.time
+        # print "date:", tick.date
+        # print tick.openPrice
+        # print tick.highPrice
+        # print tick.lowPrice
+        # print tick.preClosePrice
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
                 if self.todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + config.winTarget:  # 当天价格达到过目标收益
-                    if tick.lastPrice <= self.todayHigh - self.maxDrawDown:     #达到最大回撤
+                    if tick.lastPrice <= self.todayHigh - config.maxDrawDown:     #达到最大回撤
                         log = VtLogData()
                         log.gatewayName = self.gatewayName
-                        log.logContent = u'[摸顶止盈单],多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        log.logContent = u'[摸顶止盈单]多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.onLog(log)
                         #发单
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
@@ -337,10 +337,10 @@ class CtpGateway(VtGateway):
                 if self.tdApi.posBufferDict[symbol].pos.position <= 0:
                     continue
                 if self.todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - config.winTarget:  # 当天价格达到过目标收益
-                    if tick.lastPrice >= self.todayLow + self.maxDrawDown:     #达到最大回撤
+                    if tick.lastPrice >= self.todayLow + config.maxDrawDown:     #达到最大回撤
                         log = VtLogData()
                         log.gatewayName = self.gatewayName
-                        log.logContent = u'[摸顶止盈单],空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        log.logContent = u'[摸顶止盈单]空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.onLog(log)
                         #发单
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -348,107 +348,176 @@ class CtpGateway(VtGateway):
             else:
                 log = VtLogData()
                 log.gatewayName = self.gatewayName
-                log.logContent = u'[未知类型订单],合约代码：%s' % symbol
+                log.logContent = u'[未知类型订单]合约代码：%s' % symbol
                 self.onLog(log)
+
+    # ----------------------------------------------------------------------
+    def analysis(self, tick):
+        if len(self.tickList) >= 5:
+            self.tickList = self.tickList[1:]
+        self.tickList.append(tick)
+        if self.tickList[-1].lastPrice >= self.tickList[0].lastPrice + 0.8: #突然跳高0.8美分
+            self.openFlag = True
+            self.openDirection = u'多'
+        elif self.tickList[-1].lastPrice <= self.tickList[0].lastPrice - 0.8:   #突然下跌0.8美分
+            self.openFlag = True
+            self.openDirection = u'空'
+        else:
+            pass
+
+    # ----------------------------------------------------------------------
+    def tradeOpen(self, tick):
+        '''开仓函数'''
+        #存在持仓，不交易
+        for symbol in self.tdApi.posBufferDict.keys():
+            if tick.symbol in symbol and self.tdApi.posBufferDict[symbol].pos.position > 0:
+                self.openFlag = False
+                return
+        #无持仓，交易
+        log = VtLogData()
+        log.gatewayName = self.gatewayName
+        log.logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
+        tick.symbol, tick.bidPrice1, config.tradeVolume, self.openDirection)
+        self.onLog(log)
+        # 发单
+        if self.openDirection == u'多':
+            orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, config.tradeVolume)
+        elif self.openDirection == u'空':
+            orderReq = self.makeSellOpenOrder(tick.symbol, tick.bidPrice1, config.tradeVolume)
+        else:
+            return
+        self.sendOrder(orderReq)
+        #重置最高价和最低价
+        self.todayLow = tick.lastPrice
+        self.todayHigh = tick.lastPrice
+        #重置开仓标志
+        self.openFlag = False
 
     # ----------------------------------------------------------------------
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
-        if tick.lastPrice > self.todayHigh:     #更新最高价
-            self.todayHigh = tick.lastPrice
-        if tick.lastPrice < self.todayLow:      #更新最低价
-            self.todayLow = tick.lastPrice
+        if tick.symbol == config.analysisSymbol:    #分析合约行情
+            # 分析美豆行情，发出开仓信号
+            self.analysis(tick)
+        elif tick.symbol == config.tradeSymbol:     #交易合约行情
+            if tick.lastPrice > self.todayHigh:     #更新最高价
+                self.todayHigh = tick.lastPrice
+            if tick.lastPrice < self.todayLow:      #更新最低价
+                self.todayLow = tick.lastPrice
 
-        # 交易策略
-        self.tradePolicy001(tick)
+            # 平仓策略
+            self.tradePolicy001(tick)
 
-        #止盈
-        if self.stopWin:
-            self.tradeStopWin(tick)
+            # 止盈
+            if config.stopWin:
+                self.tradeStopWin(tick)
 
-        #止损
-        if self.stopLoss:
-            self.tradeStopLoss(tick)
+            # 止损
+            if config.stopLoss:
+                self.tradeStopLoss(tick)
+
+            #开仓
+            if self.openFlag == True:
+                self.tradeOpen(tick)
+        else:
+            pass
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
         '''成交事件处理机，当订单成交回报时执行'''
         trade = event.dict_['data']
-        print 'trade info:'
-        print trade.symbol
-        print trade.exchange
-        print trade.vtSymbol
-        print trade.tradeID
-        print trade.vtTradeID
-        print trade.orderID
-        print trade.vtOrderID
-        print trade.direction
-        print trade.offset
-        print trade.price
-        print trade.volume
-        print trade.tradeTime
-        print '###############################'
+        log = VtLogData()
+        log.gatewayName = self.gatewayName
+        log.logContent = u'[成交单]合约代码：%s，价格：%s，数量：%s，方向：%s，成交时间：%s' % (
+            trade.symbol, trade.price, trade.volume, trade.direction, trade.tradeTime)
+        self.onLog(log)
+
+        # print 'trade info:'
+        # print trade.symbol
+        # print trade.exchange
+        # print trade.vtSymbol
+        # print trade.tradeID
+        # print trade.vtTradeID
+        # print trade.orderID
+        # print trade.vtOrderID
+        # print trade.direction
+        # print trade.offset
+        # print trade.price
+        # print trade.volume
+        # print trade.tradeTime
+        # print '###############################'
 
     # ----------------------------------------------------------------------
     def pOrder(self, event):
         '''订单事件处理机，当收到订单回报时执行'''
         order = event.dict_['data']
-        print 'order info:'
-        print order.symbol
-        print order.exchange
-        print order.vtSymbol
-        print order.orderID
-        print order.vtOrderID
-        print order.direction
-        print order.offset
-        print order.price
-        print order.totalVolume
-        print order.tradedVolume
-        print order.status
-        print order.orderTime
-        print order.cancelTime
-        print order.frontID
-        print order.sessionID
-        print '###############################'
+        log = VtLogData()
+        log.gatewayName = self.gatewayName
+        log.logContent = u'[发单]合约代码：%s，价格：%s，数量：%s，方向：%s，成交时间：%s' % (
+            order.symbol, order.price, order.totalVolume, order.direction, order.orderTime)
+        self.onLog(log)
+
+        # print 'order info:'
+        # print order.symbol
+        # print order.exchange
+        # print order.vtSymbol
+        # print order.orderID
+        # print order.vtOrderID
+        # print order.direction
+        # print order.offset
+        # print order.price
+        # print order.totalVolume
+        # print order.tradedVolume
+        # print order.status
+        # print order.orderTime
+        # print order.cancelTime
+        # print order.frontID
+        # print order.sessionID
+        # print '###############################'
 
     # ----------------------------------------------------------------------
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-        print 'position info:'
-        print pos.symbol
-        print pos.exchange
-        print pos.vtSymbol
-        print pos.direction
-        print pos.position
-        print pos.frozen
-        print pos.price
-        print pos.vtPositionName
-        print self.tdApi.posBufferDict
-        print '###############################'
+        # print 'position info:'
+        # print pos.symbol
+        # print pos.exchange
+        # print pos.vtSymbol
+        # print pos.direction
+        # print pos.position
+        # print pos.frozen
+        # print pos.price
+        # print pos.vtPositionName
+        # print self.tdApi.posBufferDict
+        # print '###############################'
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
         '''账户信息事件处理机，当收到账户信息时执行'''
         account = event.dict_['data']
-        print 'account info:'
-        print account.accountID
-        print account.vtAccountID
-        print account.preBalance
-        print account.balance
-        print account.available
-        print account.commission
-        print account.margin
-        print account.closeProfit
-        print account.positionProfit
-        print '###############################'
+        # print 'account info:'
+        # print account.accountID
+        # print account.vtAccountID
+        # print account.preBalance
+        # print account.balance
+        # print account.available
+        # print account.commission
+        # print account.margin
+        # print account.closeProfit
+        # print account.positionProfit
+        # print '###############################'
 
     # ----------------------------------------------------------------------
     def pError(self, event):
         error = event.dict_['data']
-        print 'errorid:',error.errorID
-        print 'errormsg:',error.errorMsg
+        log = VtLogData()
+        log.gatewayName = self.gatewayName
+        log.logContent = u'[错误信息]错误代码：%s，错误信息：%s' % (error.errorID, error.errorMsg)
+        self.onLog(log)
+
+        # print 'errorid:',error.errorID
+        # print 'errormsg:',error.errorMsg
 
     # ----------------------------------------------------------------------
     def pLog(self, event):
@@ -460,15 +529,15 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def pContract(self, event):
         contract = event.dict_['data']
-        print 'contract info:'
-        print contract.symbol
-        print contract.exchange
-        print contract.vtSymbol
-        print contract.name
-        print contract.productClass
-        print contract.size
-        print contract.priceTick
-        print '###############################'
+        # print 'contract info:'
+        # print contract.symbol
+        # print contract.exchange
+        # print contract.vtSymbol
+        # print contract.name
+        # print contract.productClass
+        # print contract.size
+        # print contract.priceTick
+        # print '###############################'
 
     # ----------------------------------------------------------------------
     def registeHandle(self):

@@ -4,6 +4,7 @@ from PyQt4 import QtCore
 import sys
 from ctpGateway import *
 from weixin import *
+from config import *
 
 
 def pLog(event):
@@ -27,14 +28,12 @@ def test():
 
     #订阅行情
     subscribeReq = VtSubscribeReq()
-    subscribeReq.symbol = 'RM705'
+    subscribeReq.symbol = config.tradeSymbol
     gateway.subscribe(subscribeReq)
 
-    # 查询账户
-    #gateway.qryAccount()
-
-    # 查询持仓
-    #gateway.qryPosition()
+    subscribeReq = VtSubscribeReq()
+    subscribeReq.symbol = config.analysisSymbol
+    gateway.subscribe(subscribeReq)
 
     sys.exit(app.exec_())
 
