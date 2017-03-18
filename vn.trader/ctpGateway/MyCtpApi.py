@@ -20,7 +20,7 @@ def test():
     app = QtCore.QCoreApplication(sys.argv)
 
     eventEngine = EventEngine()
-    eventEngine.register(EVENT_LOG, pLog)
+    # eventEngine.register(EVENT_LOG, pLog)
     eventEngine.start()
 
     #连接登录
