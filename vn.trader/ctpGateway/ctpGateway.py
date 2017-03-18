@@ -1021,8 +1021,8 @@ class CtpTdApi(TdApi):
         for positionName in posDict:     #如果持仓量为0，从持仓缓存中删除
             if posDict[positionName].pos.position <= 0:
                 self.posBufferDict.pop(positionName)
-        # if pos.position > 0:    #持仓量不为0才处理持仓查询事件
-        self.gateway.onPosition(pos)
+        if pos.position > 0:    #持仓量不为0才处理持仓查询事件
+            self.gateway.onPosition(pos)
         
     #----------------------------------------------------------------------
     def onRspQryTradingAccount(self, data, error, n, last):
