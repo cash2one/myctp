@@ -1018,7 +1018,7 @@ class CtpTdApi(TdApi):
             pos = posBuffer.updateBuffer(data, size)
 
         for positionName in self.posBufferDict:     #如果持仓量为0，从持仓缓存中删除
-            if self.posBufferDict[positionName].position <= 0:
+            if self.posBufferDict[positionName].pos.position <= 0:
                 self.posBufferDict.pop(positionName)
         # if pos.position > 0:    #持仓量不为0才处理持仓查询事件
         self.gateway.onPosition(pos)
