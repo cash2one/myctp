@@ -1025,7 +1025,7 @@ class CtpTdApi(TdApi):
     
         # 账户代码
         account.accountID = data['AccountID']
-        print account.accountID
+        # print account.accountID
         account.vtAccountID = '.'.join([self.gatewayName, account.accountID])
     
         # 数值相关
