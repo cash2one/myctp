@@ -1017,7 +1017,7 @@ class CtpTdApi(TdApi):
         else:
             pos = posBuffer.updateBuffer(data, size)
 
-        posDict = self.posBufferDict
+        posDict = copy(self.posBufferDict)
         for positionName in posDict:     #如果持仓量为0，从持仓缓存中删除
             if posDict[positionName].pos.position <= 0:
                 self.posBufferDict.pop(positionName)
