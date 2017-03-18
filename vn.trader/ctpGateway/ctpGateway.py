@@ -247,8 +247,8 @@ class CtpGateway(VtGateway):
         '''止盈函数'''
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
-                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
-                    continue
+                # if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                #     continue
                 if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.winTarget):  # 最新价格大于止盈价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
@@ -258,8 +258,8 @@ class CtpGateway(VtGateway):
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
             elif symbol == (tick.symbol + '.3'):  # 空单
-                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
-                    continue
+                # if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                #     continue
                 if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.winTarget):  # 最新价格小于止盈价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
@@ -279,8 +279,8 @@ class CtpGateway(VtGateway):
         '''止损函数'''
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
-                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
-                    continue
+                # if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                #     continue
                 if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.stopTarget):  # 最新价格小于止损价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
@@ -290,8 +290,8 @@ class CtpGateway(VtGateway):
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
             elif symbol == (tick.symbol + '.3'):  # 空单
-                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
-                    continue
+                # if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                #     continue
                 if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.stopTarget):  # 最新价格大于止损价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
@@ -322,8 +322,8 @@ class CtpGateway(VtGateway):
         # print tick.preClosePrice
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
-                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
-                    continue
+                # if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                #     continue
                 if self.todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + config.winTarget:  # 当天价格达到过目标收益
                     if tick.lastPrice <= self.todayHigh - config.maxDrawDown:     #达到最大回撤
                         log = VtLogData()
@@ -334,8 +334,8 @@ class CtpGateway(VtGateway):
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
             elif symbol == (tick.symbol + '.3'):  # 空单
-                if self.tdApi.posBufferDict[symbol].pos.position <= 0:
-                    continue
+                # if self.tdApi.posBufferDict[symbol].pos.position <= 0:
+                #     continue
                 if self.todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - config.winTarget:  # 当天价格达到过目标收益
                     if tick.lastPrice >= self.todayLow + config.maxDrawDown:     #达到最大回撤
                         log = VtLogData()
@@ -370,7 +370,7 @@ class CtpGateway(VtGateway):
         '''开仓函数'''
         #存在持仓，不交易
         for symbol in self.tdApi.posBufferDict.keys():
-            if tick.symbol in symbol and self.tdApi.posBufferDict[symbol].pos.position > 0:
+            if tick.symbol in symbol:
                 self.openFlag = False
                 return
         #无持仓，交易
