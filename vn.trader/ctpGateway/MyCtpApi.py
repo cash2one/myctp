@@ -11,6 +11,7 @@ def pLog(event):
     log = event.dict_['data']
     loginfo = ':'.join([log.logTime, log.logContent])
     # send_msg(loginfo)
+    print 'log:'
     print loginfo
 
 
