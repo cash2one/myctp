@@ -3,24 +3,13 @@
 from PyQt4 import QtCore
 import sys
 from ctpGateway import *
-from weixin import *
 from config import *
-
-
-def pLog(event):
-    log = event.dict_['data']
-    loginfo = ':'.join([log.logTime, log.logContent])
-    # send_msg(loginfo)
-    print 'log:'
-    print loginfo
-
 
 def test():
 
     app = QtCore.QCoreApplication(sys.argv)
 
     eventEngine = EventEngine()
-    # eventEngine.register(EVENT_LOG, pLog)
     eventEngine.start()
 
     #连接登录

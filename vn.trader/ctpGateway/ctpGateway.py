@@ -480,17 +480,17 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-        # print 'position info:'
-        # print pos.symbol
-        # print pos.exchange
-        # print pos.vtSymbol
-        # print pos.direction
-        # print pos.position
-        # print pos.frozen
-        # print pos.price
-        # print pos.vtPositionName
-        # print self.tdApi.posBufferDict
-        # print '###############################'
+        print 'position info:'
+        print pos.symbol
+        print pos.exchange
+        print pos.vtSymbol
+        print pos.direction
+        print pos.position
+        print pos.frozen
+        print pos.price
+        print pos.vtPositionName
+        print self.tdApi.posBufferDict
+        print '###############################'
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
@@ -1016,7 +1016,8 @@ class CtpTdApi(TdApi):
             pos = posBuffer.updateShfeBuffer(data, size)
         else:
             pos = posBuffer.updateBuffer(data, size)
-        self.gateway.onPosition(pos)
+        if pos.position > 0:    #持仓量不为0才处理持仓查询事件
+            self.gateway.onPosition(pos)
         
     #----------------------------------------------------------------------
     def onRspQryTradingAccount(self, data, error, n, last):
