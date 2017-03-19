@@ -15,3 +15,4 @@ class config:
     tradeSymbol = 'RM705'       #交易合约，菜粕
     tradeVolume = 1              #交易数量
     recodeTickFlag = True        #是否记录实时行情
+    configPath = '/home/myctp/vn.trader/ctpGateway/CTP_connect.json'
