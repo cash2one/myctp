@@ -9,7 +9,7 @@ class config:
     # preSellPrice = 0             #上次平仓价位
     maxDrawDown = 2              #允许最大回撤点数，从最高价格回撤达到该点数，止盈
     stopLoss = False             #是否止损
-    stopWin = False              #是否止盈
+    stopWin = True              #是否止盈
 
     analysisSymbol = 'ZSK7'     #分析合约，美豆
     tradeSymbol = 'RM705'       #交易合约，菜粕
