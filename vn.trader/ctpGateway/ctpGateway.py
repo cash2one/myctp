@@ -18,6 +18,7 @@ from ctpDataType import *
 from vtGateway import *
 from config import *
 from weixin import *
+import pandas as pd
 
 
 # 以下为一些VT类型和CTP类型的映射字典
@@ -92,6 +93,7 @@ class CtpGateway(VtGateway):
         self.openFlag = False                       # 开仓标志
         self.openDirection = config.currentMode     # 开仓方向
         self.tickList = []
+        self.initRecodeTick()
 
         # 注册事件处理函数
         self.registeHandle()
@@ -394,10 +396,51 @@ class CtpGateway(VtGateway):
         self.openFlag = False
 
     # ----------------------------------------------------------------------
+    def initRecodeTick(self):
+        self.today = datetime.now().date().strftime('%Y-%m-%d')
+        filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + self.today + '.csv')
+        filename2 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + self.today + '.csv')
+        self.tickCount = 0
+        self.tickDF1 = pd.DataFrame(columns=['symbol', 'date', 'time', 'lastPrice', 'lastVolume', 'bidPrice1', 'askPrice1', 'bidVolume1', 'askVolume1'])
+        self.tickDF2 = pd.DataFrame(columns=['symbol', 'date', 'time', 'lastPrice', 'lastVolume', 'bidPrice1', 'askPrice1', 'bidVolume1', 'askVolume1'])
+
+    # ----------------------------------------------------------------------
+    def recodeTick(self, tick):
+        newTick = pd.DataFrame([[tick.symbol, tick.date, tick.time, tick.lastPrice, tick.lastVolume, tick.bidPrice1, tick.askPrice1, tick.bidVolume1, tick.askVolume1]],
+                           columns=['symbol', 'date','time','lastPrice', 'lastVolume','bidPrice1','askPrice1','bidVolume1', 'askVolume1'])
+        if tick.symbol == config.analysisSymbol:
+            self.tickDF1 = pd.concat([self.tickDF1, newTick], ignore_index=True)
+        elif tick.symbol == config.tradeSymbol:
+            self.tickDF2 = pd.concat([self.tickDF2, newTick], ignore_index=True)
+        else: pass
+        self.tickCount += 1
+        if self.tickCount >= 50:
+            self.today = datetime.now().date().strftime('%Y-%m-%d')
+            filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
+            filename2 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
+            if os.path.exists(filename1):
+                tickBuffer1 = pd.read_csv(filename1)
+                tickBuffer1 = pd.concat([tickBuffer1, self.tickDF1], ignore_index=True)
+                tickBuffer1.to_csv(filename1, index=False)
+            else:
+                self.tickDF1.to_csv(filename1, index=False)
+            if os.path.exists(filename2):
+                tickBuffer2 = pd.read_csv(filename2)
+                tickBuffer2 = pd.concat([tickBuffer2, self.tickDF2], ignore_index=True)
+                tickBuffer2.to_csv(filename2, index=False)
+            else:
+                self.tickDF2.to_csv(filename2, index=False)
+            self.initRecodeTick()
+
+    # ----------------------------------------------------------------------
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
-        if tick.symbol == config.analysisSymbol:    #分析合约行情
+        #记录行情
+        self.recodeTick(tick)
+
+        # 分析合约行情
+        if tick.symbol == config.analysisSymbol:
             # 分析美豆行情，发出开仓信号
             self.analysis(tick)
         elif tick.symbol == config.tradeSymbol:     #交易合约行情
