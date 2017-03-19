@@ -436,6 +436,17 @@ class CtpGateway(VtGateway):
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
+
+        # 获取当前时间
+        now = datetime.now()
+
+        # 休市
+        if not (((now.time() > datetime.strptime('09:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('11:30:00', '%H:%M:%S').time())) or \
+                ((now.time() > datetime.strptime('13:30:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('15:30:00', '%H:%M:%S').time())) or \
+                ((now.time() > datetime.strptime('21:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('23:30:00', '%H:%M:%S').time()))):
+            return
+
+
         #记录行情
         self.recodeTick(tick)
 
