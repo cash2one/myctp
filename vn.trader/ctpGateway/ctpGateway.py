@@ -254,7 +254,7 @@ class CtpGateway(VtGateway):
                 if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.winTarget):  # 最新价格大于止盈价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -265,7 +265,7 @@ class CtpGateway(VtGateway):
                 if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.winTarget):  # 最新价格小于止盈价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -286,7 +286,7 @@ class CtpGateway(VtGateway):
                 if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.stopTarget):  # 最新价格小于止损价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -297,7 +297,7 @@ class CtpGateway(VtGateway):
                 if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.stopTarget):  # 最新价格大于止损价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
 
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
@@ -330,7 +330,7 @@ class CtpGateway(VtGateway):
                     if tick.lastPrice <= self.todayHigh - config.maxDrawDown:     #达到最大回撤
                         log = VtLogData()
                         log.gatewayName = self.gatewayName
-                        log.logContent = u'[摸顶止盈单]多单卖出，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        log.logContent = u'[摸顶止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.onLog(log)
                         #发单
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
@@ -342,7 +342,7 @@ class CtpGateway(VtGateway):
                     if tick.lastPrice >= self.todayLow + config.maxDrawDown:     #达到最大回撤
                         log = VtLogData()
                         log.gatewayName = self.gatewayName
-                        log.logContent = u'[摸顶止盈单]空单买入，合约代码：%s，价格：%s，手数：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        log.logContent = u'[摸顶止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.onLog(log)
                         #发单
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
