@@ -584,7 +584,7 @@ class CtpGateway(VtGateway):
         log = event.dict_['data']
         loginfo = ':'.join([log.logTime, log.logContent])
         # send_msg(loginfo)
-        print loginfo
+        # print loginfo
         self.today = datetime.now().date().strftime('%Y-%m-%d')
         filename = '/home/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
         if os.path.exists(filename):
@@ -596,7 +596,7 @@ class CtpGateway(VtGateway):
         else:
             fp = file(filename, 'wb')
             try:
-                fp.write(loginfo.encode('utf-8'))
+                fp.write(loginfo.encode('utf-8') + '\n')
             finally:
                 fp.close()
 
