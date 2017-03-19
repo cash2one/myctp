@@ -489,8 +489,8 @@ class CtpGateway(VtGateway):
         trade = event.dict_['data']
         log = VtLogData()
         log.gatewayName = self.gatewayName
-        log.logContent = u'[成交单]合约代码：%s，价格：%s，数量：%s，方向：%s，成交时间：%s' % (
-            trade.symbol, trade.price, trade.volume, trade.direction, trade.tradeTime)
+        log.logContent = u'[成交回报]合约代码：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交时间：%s' % (
+            trade.symbol, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeTime)
         self.onLog(log)
 
         # print 'trade info:'
@@ -514,8 +514,8 @@ class CtpGateway(VtGateway):
         order = event.dict_['data']
         log = VtLogData()
         log.gatewayName = self.gatewayName
-        log.logContent = u'[发单]合约代码：%s，价格：%s，数量：%s，方向：%s，成交时间：%s' % (
-            order.symbol, order.price, order.totalVolume, order.direction, order.orderTime)
+        log.logContent = u'[订单回报]合约代码：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
+            order.symbol, order.price, order.totalVolume, order.direction, order.offset, order.status, order.orderTime)
         self.onLog(log)
 
         # print 'order info:'
@@ -540,17 +540,17 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-        print 'position info:'
-        print pos.symbol
-        print pos.exchange
-        print pos.vtSymbol
-        print pos.direction
-        print pos.position
-        print pos.frozen
-        print pos.price
-        print pos.vtPositionName
-        print self.tdApi.posBufferDict
-        print '###############################'
+        # print 'position info:'
+        # print pos.symbol
+        # print pos.exchange
+        # print pos.vtSymbol
+        # print pos.direction
+        # print pos.position
+        # print pos.frozen
+        # print pos.price
+        # print pos.vtPositionName
+        # print self.tdApi.posBufferDict
+        # print '###############################'
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
@@ -585,6 +585,20 @@ class CtpGateway(VtGateway):
         loginfo = ':'.join([log.logTime, log.logContent])
         # send_msg(loginfo)
         print loginfo
+        self.today = datetime.now().date().strftime('%Y-%m-%d')
+        filename = '/home/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
+        if os.path.exists(filename):
+            fp = file(filename, 'a+')
+            try:
+                fp.write(loginfo.encode('utf-8') + '\n')
+            finally:
+                fp.close()
+        else:
+            fp = file(filename, 'wb')
+            try:
+                fp.write(loginfo.encode('utf-8'))
+            finally:
+                fp.close()
 
     # ----------------------------------------------------------------------
     def pContract(self, event):
