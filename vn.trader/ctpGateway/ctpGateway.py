@@ -361,9 +361,11 @@ class CtpGateway(VtGateway):
         if self.tickList[-1].lastPrice >= self.tickList[0].lastPrice + 0.8: #突然跳高0.8美分
             self.openFlag = True
             self.openDirection = u'多'
+            self.tickList = []
         elif self.tickList[-1].lastPrice <= self.tickList[0].lastPrice - 0.8:   #突然下跌0.8美分
             self.openFlag = True
             self.openDirection = u'空'
+            self.tickList = []
         else:
             pass
 
@@ -375,13 +377,8 @@ class CtpGateway(VtGateway):
             if tick.symbol in symbol:
                 self.openFlag = False
                 return
+
         #无持仓，交易
-        log = VtLogData()
-        log.gatewayName = self.gatewayName
-        log.logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
-        tick.symbol, tick.bidPrice1, config.tradeVolume, self.openDirection)
-        self.onLog(log)
-        # 发单
         if self.openDirection == u'多':
             orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, config.tradeVolume)
         elif self.openDirection == u'空':
@@ -389,23 +386,31 @@ class CtpGateway(VtGateway):
         else:
             return
         self.sendOrder(orderReq)
+
+        #记录日志
+        log = VtLogData()
+        log.gatewayName = self.gatewayName
+        log.logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
+            tick.symbol, tick.bidPrice1, config.tradeVolume, self.openDirection)
+        self.onLog(log)
+
         #重置最高价和最低价
         self.todayLow = tick.lastPrice
         self.todayHigh = tick.lastPrice
+
         #重置开仓标志
         self.openFlag = False
 
     # ----------------------------------------------------------------------
     def initRecodeTick(self):
-        self.today = datetime.now().date().strftime('%Y-%m-%d')
-        filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + self.today + '.csv')
-        filename2 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + self.today + '.csv')
+        '''重置实时行情缓存'''
         self.tickCount = 0
         self.tickDF1 = pd.DataFrame(columns=['symbol', 'date', 'time', 'lastPrice', 'lastVolume', 'bidPrice1', 'askPrice1', 'bidVolume1', 'askVolume1'])
         self.tickDF2 = pd.DataFrame(columns=['symbol', 'date', 'time', 'lastPrice', 'lastVolume', 'bidPrice1', 'askPrice1', 'bidVolume1', 'askVolume1'])
 
     # ----------------------------------------------------------------------
     def recodeTick(self, tick):
+        '''记录实时行情'''
         newTick = pd.DataFrame([[tick.symbol, tick.date, tick.time, tick.lastPrice, tick.lastVolume, tick.bidPrice1, tick.askPrice1, tick.bidVolume1, tick.askVolume1]],
                            columns=['symbol', 'date','time','lastPrice', 'lastVolume','bidPrice1','askPrice1','bidVolume1', 'askVolume1'])
         if tick.symbol == config.analysisSymbol:
@@ -448,7 +453,8 @@ class CtpGateway(VtGateway):
 
 
         #记录行情
-        self.recodeTick(tick)
+        if config.recodeTickFlag:
+            self.recodeTick(tick)
 
         # 分析合约行情
         if tick.symbol == config.analysisSymbol:
@@ -472,7 +478,7 @@ class CtpGateway(VtGateway):
                 self.tradeStopLoss(tick)
 
             #开仓
-            if self.openFlag == True:
+            if self.openFlag:
                 self.tradeOpen(tick)
         else:
             pass

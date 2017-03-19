@@ -14,3 +14,4 @@ class config:
     analysisSymbol = 'ZSK7'     #分析合约，美豆
     tradeSymbol = 'RM705'       #交易合约，菜粕
     tradeVolume = 1              #交易数量
+    recodeTickFlag = True        #是否记录实时行情
