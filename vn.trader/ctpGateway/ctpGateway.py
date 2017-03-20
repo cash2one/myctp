@@ -359,11 +359,11 @@ class CtpGateway(VtGateway):
         if len(self.tickList) >= 5:
             self.tickList = self.tickList[1:]
         self.tickList.append(tick)
-        if self.tickList[-1].lastPrice >= self.tickList[0].lastPrice + 0.8: #突然跳高0.8美分
+        if self.tickList[-1].lastPrice >= self.tickList[0].lastPrice + 4:
             self.openFlag = True
             self.openDirection = u'多'
             self.tickList = []
-        elif self.tickList[-1].lastPrice <= self.tickList[0].lastPrice - 0.8:   #突然下跌0.8美分
+        elif self.tickList[-1].lastPrice <= self.tickList[0].lastPrice - 4:
             self.openFlag = True
             self.openDirection = u'空'
             self.tickList = []
