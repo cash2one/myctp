@@ -493,6 +493,7 @@ class CtpGateway(VtGateway):
         log.logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
             trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID, trade.tradeTime)
         self.onLog(log)
+        self.qryPosition()  #查询并更新持仓
 
         # print 'trade info:'
         # print trade.symbol
