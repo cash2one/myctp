@@ -447,9 +447,9 @@ class CtpGateway(VtGateway):
         now = datetime.now()
 
         # 休市
-        if not (((now.time() > datetime.strptime('09:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('11:30:00', '%H:%M:%S').time())) or \
-                ((now.time() > datetime.strptime('13:30:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('15:30:00', '%H:%M:%S').time())) or \
-                ((now.time() > datetime.strptime('21:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('23:30:00', '%H:%M:%S').time()))):
+        if not (((now.time() > datetime.strptime('09:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('11:31:00', '%H:%M:%S').time())) or \
+                ((now.time() > datetime.strptime('13:30:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('15:31:00', '%H:%M:%S').time())) or \
+                ((now.time() > datetime.strptime('21:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('23:31:00', '%H:%M:%S').time()))):
             return
 
 
