@@ -11,7 +11,7 @@ class config:
     stopLoss = False             #是否止损
     stopWin = True              #是否止盈
 
-    analysisSymbol = 'ZSK7'     #分析合约，美豆
+    analysisSymbol = 'm1705'     #分析合约，美豆
     tradeSymbol = 'RM705'       #交易合约，菜粕
     tradeVolume = 1              #交易数量
     recodeTickFlag = True        #是否记录实时行情

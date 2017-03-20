@@ -468,7 +468,7 @@ class CtpGateway(VtGateway):
                 self.todayLow = tick.lastPrice
 
             # 平仓策略
-            self.tradePolicy001(tick)
+            # self.tradePolicy001(tick)
 
             # 止盈
             if config.stopWin:
@@ -541,17 +541,17 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-        # print 'position info:'
-        # print pos.symbol
-        # print pos.exchange
-        # print pos.vtSymbol
-        # print pos.direction
-        # print pos.position
-        # print pos.frozen
-        # print pos.price
-        # print pos.vtPositionName
-        # print self.tdApi.posBufferDict
-        # print '###############################'
+        print 'position info:'
+        print pos.symbol
+        print pos.exchange
+        print pos.vtSymbol
+        print pos.direction
+        print pos.position
+        print pos.frozen
+        print pos.price
+        print pos.vtPositionName
+        print self.tdApi.posBufferDict
+        print '###############################'
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
