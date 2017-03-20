@@ -541,17 +541,15 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-        print 'position info:'
-        print pos.symbol
-        print pos.exchange
-        print pos.vtSymbol
-        print pos.direction
-        print pos.position
-        print pos.frozen
-        print pos.price
-        print pos.vtPositionName
-        print self.tdApi.posBufferDict
-        print '###############################'
+        for positionName in self.tdApi.posBufferDict.keys():
+            print '###############################'
+            print 'position info:'
+            print self.tdApi.posBufferDict[positionName].pos.symbol
+            print self.tdApi.posBufferDict[positionName].pos.direction
+            print self.tdApi.posBufferDict[positionName].pos.position
+            print self.tdApi.posBufferDict[positionName].pos.frozen
+            print self.tdApi.posBufferDict[positionName].pos.price
+            print self.tdApi.posBufferDict[positionName].pos.vtPositionName
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
