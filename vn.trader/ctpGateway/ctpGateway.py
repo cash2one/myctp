@@ -541,7 +541,7 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-        positionName = '.'.join(pos.symbol, pos.direction)
+        positionName = '.'.join([pos.symbol, pos.direction])
         self.tdApi.posBufferDict[positionName] = pos
         print 'position info:'
         print pos.symbol
