@@ -467,6 +467,8 @@ class CtpGateway(VtGateway):
             if tick.lastPrice < self.todayLow:      #更新最低价
                 self.todayLow = tick.lastPrice
 
+            print self.todayHigh
+            print self.todayLow
             # 平仓策略
             self.tradePolicy001(tick)
 
@@ -494,7 +496,9 @@ class CtpGateway(VtGateway):
             trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID, trade.tradeTime)
         self.onLog(log)
         self.qryPosition()  #查询并更新持仓
-
+        if trade.offset == u'开仓':
+            self.todayHigh = 0
+            self.todayLow = 100000
         # print 'trade info:'
         # print trade.symbol
         # print trade.exchange
