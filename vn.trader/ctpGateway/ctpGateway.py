@@ -467,8 +467,8 @@ class CtpGateway(VtGateway):
             if tick.lastPrice < self.todayLow:      #更新最低价
                 self.todayLow = tick.lastPrice
 
-            print self.todayHigh
-            print self.todayLow
+            # print self.todayHigh
+            # print self.todayLow
             # 平仓策略
             self.tradePolicy001(tick)
 
@@ -546,15 +546,15 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-        for positionName in self.tdApi.posBufferDict.keys():
-            print '###############################'
-            print 'position info:'
-            print self.tdApi.posBufferDict[positionName].pos.symbol
-            print self.tdApi.posBufferDict[positionName].pos.direction
-            print self.tdApi.posBufferDict[positionName].pos.position
-            print self.tdApi.posBufferDict[positionName].pos.frozen
-            print self.tdApi.posBufferDict[positionName].pos.price
-            print self.tdApi.posBufferDict[positionName].pos.vtPositionName
+        # for positionName in self.tdApi.posBufferDict.keys():
+        #     print '###############################'
+        #     print 'position info:'
+        #     print self.tdApi.posBufferDict[positionName].pos.symbol
+        #     print self.tdApi.posBufferDict[positionName].pos.direction
+        #     print self.tdApi.posBufferDict[positionName].pos.position
+        #     print self.tdApi.posBufferDict[positionName].pos.frozen
+        #     print self.tdApi.posBufferDict[positionName].pos.price
+        #     print self.tdApi.posBufferDict[positionName].pos.vtPositionName
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
