@@ -468,7 +468,7 @@ class CtpGateway(VtGateway):
                 self.todayLow = tick.lastPrice
 
             # 平仓策略
-            # self.tradePolicy001(tick)
+            self.tradePolicy001(tick)
 
             # 止盈
             if config.stopWin:
