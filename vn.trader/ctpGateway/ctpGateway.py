@@ -269,7 +269,7 @@ class CtpGateway(VtGateway):
                     log.logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     #发单
-                    orderReq = self.makeSellCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
             else:
                 log = VtLogData()
