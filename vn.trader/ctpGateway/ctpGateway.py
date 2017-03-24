@@ -495,7 +495,7 @@ class CtpGateway(VtGateway):
         log.logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
             trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID, trade.tradeTime)
         self.onLog(log)
-        send_msg(log.logContent)
+        send_msg(log.logContent.encode('utf-8'))
         self.qryPosition()  #查询并更新持仓
         if trade.offset == u'开仓':
             self.todayHigh = 0
