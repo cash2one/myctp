@@ -513,11 +513,11 @@ class CtpGateway(VtGateway):
         if self.openFlag:
             self.tradeOpen(tick)
 
-        print config.currentMode
-        print self.tradeList
-        print self.todayHigh
-        print self.todayLow
-        print self.noTrading
+        # print config.currentMode
+        # print self.tradeList
+        # print self.todayHigh
+        # print self.todayLow
+        # print self.noTrading
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
