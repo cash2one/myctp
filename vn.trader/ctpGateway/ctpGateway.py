@@ -285,6 +285,7 @@ class CtpGateway(VtGateway):
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
+                    self.noTrading = True
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
@@ -297,6 +298,7 @@ class CtpGateway(VtGateway):
                     #发单
                     orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
+                    self.noTrading = True
             else:
                 log = VtLogData()
                 log.gatewayName = self.gatewayName
@@ -321,6 +323,7 @@ class CtpGateway(VtGateway):
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
+                    self.noTrading = True
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
@@ -333,6 +336,7 @@ class CtpGateway(VtGateway):
                     # 发单
                     orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
+                    self.noTrading = True
                     print "================[STOP LOSS]==========================="
             else:
                 log = VtLogData()
@@ -359,6 +363,7 @@ class CtpGateway(VtGateway):
                         #发单
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
+                        self.noTrading = True
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
@@ -372,6 +377,7 @@ class CtpGateway(VtGateway):
                         #发单
                         orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
+                        self.noTrading = True
             else:
                 log = VtLogData()
                 log.gatewayName = self.gatewayName
