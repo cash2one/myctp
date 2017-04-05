@@ -521,6 +521,12 @@ class CtpGateway(VtGateway):
         if self.openFlag:
             self.tradeOpen(tick)
 
+        print config.currentMode
+        print self.tradeList
+        print self.todayHigh
+        print self.todayLow
+        print self.noTrading
+
     # ----------------------------------------------------------------------
     def pTrade(self, event):
         '''成交事件处理机，当订单成交回报时执行'''
