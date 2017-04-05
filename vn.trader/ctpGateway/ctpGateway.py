@@ -454,22 +454,14 @@ class CtpGateway(VtGateway):
         '''记录实时行情'''
         newTick = pd.DataFrame([[tick.symbol, tick.date, tick.time, tick.lastPrice, tick.lastVolume, tick.bidPrice1, tick.askPrice1, tick.bidVolume1, tick.askVolume1]],
                            columns=['symbol', 'date','time','lastPrice', 'lastVolume','bidPrice1','askPrice1','bidVolume1', 'askVolume1'])
-        if tick.symbol == config.analysisSymbol:
+        if tick.symbol == config.tradeSymbol:
             self.tickDF1 = pd.concat([self.tickDF1, newTick], ignore_index=True)
-        elif tick.symbol == config.tradeSymbol:
-            self.tickDF2 = pd.concat([self.tickDF2, newTick], ignore_index=True)
         else: pass
         self.tickCount += 1
         if self.tickCount >= 50:
             self.today = datetime.now().date().strftime('%Y-%m-%d')
-            filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
+            # filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
             filename2 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
-            if os.path.exists(filename1):
-                tickBuffer1 = pd.read_csv(filename1)
-                tickBuffer1 = pd.concat([tickBuffer1, self.tickDF1], ignore_index=True)
-                tickBuffer1.to_csv(filename1, index=False)
-            else:
-                self.tickDF1.to_csv(filename1, index=False)
             if os.path.exists(filename2):
                 tickBuffer2 = pd.read_csv(filename2)
                 tickBuffer2 = pd.concat([tickBuffer2, self.tickDF2], ignore_index=True)
