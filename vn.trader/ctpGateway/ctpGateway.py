@@ -91,9 +91,10 @@ class CtpGateway(VtGateway):
         self.preSellPrice = 0                       # 上次卖出价
 
         self.openFlag = False                       # 开仓标志
-        self.openDirection = config.currentMode     # 开仓方向
-        self.tickList = []
+        self.noTrading = False                      #是否存在未成交订单
+        self.tradeList = []
         self.initRecodeTick()
+        self.loadTradeConfig()
 
         # 注册事件处理函数
         self.registeHandle()
@@ -104,7 +105,7 @@ class CtpGateway(VtGateway):
         # 载入json文件
         # fileName = self.gatewayName + '_connect.json'
         # fileName = os.getcwd() + '/' + fileName
-        fileName = config.configPath
+        fileName = config.CTP_configPath
         
         try:
             f = file(fileName)
@@ -138,6 +139,27 @@ class CtpGateway(VtGateway):
         self.initQuery()
         self.qryAccount()
 
+    def loadTradeConfig(self):
+        try:
+            f = file(config.TRADE_configPath)
+        except IOError:
+            log = VtLogData()
+            log.gatewayName = self.gatewayName
+            log.logContent = u'读取交易配置出错，请检查'
+            self.onLog(log)
+            return
+
+        # 解析json文件
+        setting = json.load(f)
+        try:
+            config.currentMode = int(setting['todayMode'])
+            self.tradeList = list(setting['todayTrade'])
+        except KeyError:
+            log = VtLogData()
+            log.gatewayName = self.gatewayName
+            log.logContent = u'交易配置缺少字段，请检查'
+            self.onLog(log)
+            return
     
     #----------------------------------------------------------------------
     def subscribe(self, subscribeReq):
@@ -248,6 +270,8 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def tradeStopWin(self, tick):
         '''止盈函数'''
+        if self.noTrading:
+            return
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
@@ -280,6 +304,8 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def tradeStopLoss(self, tick):
         '''止损函数'''
+        if self.noTrading:
+            return
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
@@ -311,18 +337,10 @@ class CtpGateway(VtGateway):
                 self.onLog(log)
 
     # ----------------------------------------------------------------------
-    def tradePolicy001(self, tick):
+    def tradeGetMaxWin(self, tick):
         '''摸顶止盈，当价格达到目标收益后，开始摸顶，从最高价回撤达到阈值，平仓止盈'''
-        # print "symbol:", tick.symbol
-        # print "exchange:", tick.exchange
-        # print "lastPrice:", tick.lastPrice
-        # print "lastVolume", tick.lastVolume
-        # print "time:", tick.time
-        # print "date:", tick.date
-        # print tick.openPrice
-        # print tick.highPrice
-        # print tick.lowPrice
-        # print tick.preClosePrice
+        if self.noTrading:
+            return
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
@@ -355,20 +373,25 @@ class CtpGateway(VtGateway):
                 self.onLog(log)
 
     # ----------------------------------------------------------------------
-    def analysis(self, tick):
-        if len(self.tickList) >= 5:
-            self.tickList = self.tickList[1:]
-        self.tickList.append(tick)
-        if self.tickList[-1].lastPrice >= self.tickList[0].lastPrice + 4:
-            self.openFlag = True
-            self.openDirection = u'多'
-            self.tickList = []
-        elif self.tickList[-1].lastPrice <= self.tickList[0].lastPrice - 4:
-            self.openFlag = True
-            self.openDirection = u'空'
-            self.tickList = []
-        else:
-            pass
+    def Dual_Thrust(self, tick):
+        if config.currentMode == 1:
+            if tick.lastPrice >= tick.openPrice + 5 and (1 not in self.tradeList):
+                self.openFlag = True
+                self.openDirection = u'多'
+            elif tick.lastPrice <= tick.openPrice - 15 and (0 not in self.tradeList):
+                self.openFlag = True
+                self.openDirection = u'空'
+            else:
+                pass
+        elif config.currentMode == 0:
+            if tick.lastPrice >= tick.openPrice + 15 and (1 not in self.tradeList):
+                self.openFlag = True
+                self.openDirection = u'多'
+            elif tick.lastPrice <= tick.openPrice - 5 and (0 not in self.tradeList):
+                self.openFlag = True
+                self.openDirection = u'空'
+            else:
+                pass
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
@@ -379,6 +402,9 @@ class CtpGateway(VtGateway):
                 self.openFlag = False
                 return
 
+        if self.noTrading:
+            return
+
         #无持仓，交易
         if self.openDirection == u'多':
             orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, config.tradeVolume)
@@ -387,6 +413,7 @@ class CtpGateway(VtGateway):
         else:
             return
         self.sendOrder(orderReq)
+        self.noTrading = True
 
         #记录日志
         log = VtLogData()
@@ -452,39 +479,34 @@ class CtpGateway(VtGateway):
                 ((now.time() > datetime.strptime('21:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('23:31:00', '%H:%M:%S').time()))):
             return
 
-
         #记录行情
         if config.recodeTickFlag:
             self.recodeTick(tick)
 
         # 分析合约行情
-        if tick.symbol == config.analysisSymbol:
-            # 分析美豆行情，发出开仓信号
-            self.analysis(tick)
-        elif tick.symbol == config.tradeSymbol:     #交易合约行情
-            if tick.lastPrice > self.todayHigh:     #更新最高价
-                self.todayHigh = tick.lastPrice
-            if tick.lastPrice < self.todayLow:      #更新最低价
-                self.todayLow = tick.lastPrice
+        self.Dual_Thrust(tick)
 
-            # print self.todayHigh
-            # print self.todayLow
-            # 平仓策略
-            self.tradePolicy001(tick)
+        if tick.lastPrice > self.todayHigh:     #更新最高价
+            self.todayHigh = tick.lastPrice
+        if tick.lastPrice < self.todayLow:      #更新最低价
+            self.todayLow = tick.lastPrice
 
-            # 止盈
-            if config.stopWin:
-                self.tradeStopWin(tick)
+        # print self.todayHigh
+        # print self.todayLow
+        # 平仓策略
+        self.tradeGetMaxWin(tick)
 
-            # 止损
-            if config.stopLoss:
-                self.tradeStopLoss(tick)
+        # 止盈
+        if config.stopWin:
+            self.tradeStopWin(tick)
 
-            #开仓
-            if self.openFlag:
-                self.tradeOpen(tick)
-        else:
-            pass
+        # 止损
+        if config.stopLoss:
+            self.tradeStopLoss(tick)
+
+        #开仓
+        if self.openFlag:
+            self.tradeOpen(tick)
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
@@ -496,9 +518,23 @@ class CtpGateway(VtGateway):
             trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID, trade.tradeTime)
         self.onLog(log)
         self.qryPosition()  #查询并更新持仓
+        self.noTrading = False
         if trade.offset == u'开仓':
             self.todayHigh = 0
             self.todayLow = 100000
+            if trade.direction == u'空':
+                self.tradeList.append(0)
+            elif trade.direction == u'多':
+                self.tradeList.append(1)
+            else:
+                pass
+        # 记录开仓交易
+        json_dict = {}
+        json_dict['todayMode'] = config.currentMode
+        json_dict['todayTrade'] = self.tradeList
+        f = open(config.TRADE_configPath, 'w')
+        f.write(json.dumps(json_dict))
+        f.close()
         # print 'trade info:'
         # print trade.symbol
         # print trade.exchange
