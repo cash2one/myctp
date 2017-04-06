@@ -392,8 +392,8 @@ class CtpGateway(VtGateway):
             pass
 
         # 收盘清仓
-        now = datetime.now()
-        if now.time() > datetime.strptime('14:59:00', '%H:%M:%S').time() and now.time() < datetime.strptime('15:05:00', '%H:%M:%S').time():
+        now = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
+        if now.time() > datetime.strptime('14:59:55', '%H:%M:%S').time() and now.time() < datetime.strptime('15:00:05', '%H:%M:%S').time():
             if tick.symbol + '.3' in self.tdApi.posBufferDict.keys(): #存在空单
                 #空单清仓
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
