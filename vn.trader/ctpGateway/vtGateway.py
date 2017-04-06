@@ -211,6 +211,8 @@ class VtTickData(VtBaseData):
     
     
 ########################################################################
+
+
 class VtTradeData(VtBaseData):
     """成交数据类"""
 
