@@ -361,11 +361,11 @@ class CtpGateway(VtGateway):
                 pass
 
     def shortPolicy(self, tick):
-        # print '============================='
-        # print 'lastPrice:',tick.lastPrice
-        # print 'openPrice:',tick.openPrice
-        # print 'stopCount:',self.stopCount
-        # print 'noTrading:',self.noTrading
+        print '============================='
+        print 'lastPrice:',tick.lastPrice
+        print 'openPrice:',tick.openPrice
+        print 'stopCount:',self.stopCount
+        print 'noTrading:',self.noTrading
         if self.tradeDict[tick.symbol].stopCount >= 4 or self.tradeDict[tick.symbol].noTrading:
             # print 'step1'
             return
@@ -632,15 +632,15 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
-        # for positionName in self.tdApi.posBufferDict.keys():
-        #     print '###############################'
-        #     print 'position info:'
-        #     print self.tdApi.posBufferDict[positionName].pos.symbol
-        #     print self.tdApi.posBufferDict[positionName].pos.direction
-        #     print self.tdApi.posBufferDict[positionName].pos.position
-        #     print self.tdApi.posBufferDict[positionName].pos.frozen
-        #     print self.tdApi.posBufferDict[positionName].pos.price
-        #     print self.tdApi.posBufferDict[positionName].pos.vtPositionName
+        for positionName in self.tdApi.posBufferDict.keys():
+            print '###############################'
+            print 'position info:'
+            print self.tdApi.posBufferDict[positionName].pos.symbol
+            print self.tdApi.posBufferDict[positionName].pos.direction
+            print self.tdApi.posBufferDict[positionName].pos.position
+            print self.tdApi.posBufferDict[positionName].pos.frozen
+            print self.tdApi.posBufferDict[positionName].pos.price
+            print self.tdApi.posBufferDict[positionName].pos.vtPositionName
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
