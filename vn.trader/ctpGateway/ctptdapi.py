@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 from vnctptd import TdApi
-
+from vtGateway import *
 
 class CtpTdApi(TdApi):
     """CTP交易API实现"""

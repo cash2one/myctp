@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 from vnctpmd import MdApi
-
+from vtGateway import *
 
 class CtpMdApi(MdApi):
     """CTP行情API实现"""
