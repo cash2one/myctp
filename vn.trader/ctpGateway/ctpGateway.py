@@ -368,31 +368,31 @@ class CtpGateway(VtGateway):
         print 'stopCount:',self.tradeDict[tick.symbol].stopCount
         print 'noTrading:',self.tradeDict[tick.symbol].stopCount
         if self.tradeDict[tick.symbol].stopCount >= 4 or self.tradeDict[tick.symbol].noTrading:
-            # print 'step1'
+            print 'step1'
             return
         elif tick.lastPrice >= tick.openPrice + 2:
             if tick.symbol + '.3' in self.tdApi.posBufferDict.keys(): #存在空单
-                # print 'step3'
+                print 'step3'
                 #空单止损
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
                 self.sendOrder(orderReq)
                 self.tradeDict[tick.symbol].noTrading = True
                 self.tradeDict[tick.symbol].stopCount += 1
             if tick.symbol + '.2' not in self.tdApi.posBufferDict.keys():     #无持仓
-                # print 'step4'
+                print 'step4'
                 #开多单
                 self.tradeDict[tick.symbol].openFlag = True
                 self.tradeDict[tick.symbol].openDirection = u'多'
         elif tick.lastPrice <= tick.openPrice - 2:
             if tick.symbol + '.2' in self.tdApi.posBufferDict.keys(): #存在多单
-                # print 'step6'
+                print 'step6'
                 #多单止损
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
                 self.sendOrder(orderReq)
                 self.tradeDict[tick.symbol].noTrading = True
                 self.tradeDict[tick.symbol].stopCount += 1
             if tick.symbol + '.3' not in self.tdApi.posBufferDict.keys():     #无持仓
-                # print 'step7'
+                print 'step7'
                 #开空单
                 self.tradeDict[tick.symbol].openFlag = True
                 self.tradeDict[tick.symbol].openDirection = u'空'
