@@ -407,7 +407,7 @@ class CtpGateway(VtGateway):
                 pass
 
     def shortPolicy(self, tick):
-        if self.stopCount >= 4:
+        if self.stopCount >= 4 or self.noTrading:
             return
         elif tick.lastPrice >= tick.openPrice + 2:
             if tick.symbol + '.2' in self.tdApi.posBufferDict.keys(): #存在多单
