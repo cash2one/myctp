@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 import os
-import copy
+from copy import copy
 from vnctptd import TdApi
 from vtGateway import *
 from ctpDataType import *

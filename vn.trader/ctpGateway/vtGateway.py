@@ -1,5 +1,5 @@
 # encoding: UTF-8
-import copy
+from copy import copy
 
 from datetime import *
 
