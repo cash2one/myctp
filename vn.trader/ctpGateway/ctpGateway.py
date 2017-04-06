@@ -362,10 +362,11 @@ class CtpGateway(VtGateway):
 
     def shortPolicy(self, tick):
         print '============================='
+        print 'symbol:',tick.symbol
         print 'lastPrice:',tick.lastPrice
         print 'openPrice:',tick.openPrice
-        print 'stopCount:',self.stopCount
-        print 'noTrading:',self.noTrading
+        print 'stopCount:',self.tradeDict[tick.symbol].stopCount
+        print 'noTrading:',self.tradeDict[tick.symbol].stopCount
         if self.tradeDict[tick.symbol].stopCount >= 4 or self.tradeDict[tick.symbol].noTrading:
             # print 'step1'
             return
