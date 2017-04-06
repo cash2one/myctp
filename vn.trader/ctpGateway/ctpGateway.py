@@ -12,8 +12,8 @@ import os
 import json
 from copy import copy
 
-from ctpmdapi import CtpMdApi
-from ctptdapi import CtpTdApi
+# from ctpmdapi import CtpMdApi
+# from ctptdapi import CtpTdApi
 # from ctpDataType import *
 from vtGateway import *
 from config import *
