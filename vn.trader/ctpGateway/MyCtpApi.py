@@ -21,10 +21,6 @@ def test():
     subscribeReq.symbol = config.tradeSymbol
     gateway.subscribe(subscribeReq)
 
-    subscribeReq = VtSubscribeReq()
-    subscribeReq.symbol = config.analysisSymbol
-    gateway.subscribe(subscribeReq)
-
     sys.exit(app.exec_())
 
 
