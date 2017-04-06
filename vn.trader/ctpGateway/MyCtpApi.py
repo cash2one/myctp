@@ -17,9 +17,10 @@ def test():
     gateway.connect()
 
     #订阅行情
-    subscribeReq = VtSubscribeReq()
-    subscribeReq.symbol = config.tradeSymbol
-    gateway.subscribe(subscribeReq)
+    for symbol in config.tradeSymbol:
+        subscribeReq = VtSubscribeReq()
+        subscribeReq.symbol = symbol
+        gateway.subscribe(subscribeReq)
 
     sys.exit(app.exec_())
 

@@ -15,6 +15,7 @@ from copy import copy
 from ctpmdapi import CtpMdApi
 from ctptdapi import CtpTdApi
 from vtGateway import *
+from policy import *
 from config import *
 from weixin import *
 import pandas as pd
@@ -37,17 +38,9 @@ class CtpGateway(VtGateway):
         
         self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
 
-        #----交易策略使用的参数-----
-        self.todayHigh = 0                          # 今天最高价
-        self.todayLow = 1000000                     # 今天最低价
-        self.preSellPrice = 0                       # 上次卖出价
-
-        self.openFlag = False                       # 开仓标志
-        self.noTrading = False                      #是否存在未成交订单
-        self.tradeList = []
-        self.stopCount = 0      #止损次数
+        self.tradeDict = {}
         self.initRecodeTick()
-        self.loadTradeConfig()
+        # self.loadTradeConfig()
 
         # 注册事件处理函数
         self.registeHandle()
@@ -92,6 +85,7 @@ class CtpGateway(VtGateway):
         self.initQuery()
         self.qryAccount()
 
+    # ----------------------------------------------------------------------
     def loadTradeConfig(self):
         try:
             f = file(config.TRADE_configPath)
@@ -113,7 +107,15 @@ class CtpGateway(VtGateway):
             log.logContent = u'交易配置缺少字段，请检查'
             self.onLog(log)
             return
-    
+
+    # ----------------------------------------------------------------------
+    def initTrade(self):
+        for symbol in config.tradeSymbol:
+            self.tradeDict[symbol] = tradeBar(symbol)
+        if 'm1709' in self.tradeDict.keys():    #豆粕10点止盈
+            self.tradeDict['m1709'].stopWin = True
+            self.tradeDict['m1709'].winTarget = 10
+
     #----------------------------------------------------------------------
     def subscribe(self, subscribeReq):
         """订阅行情"""
@@ -223,35 +225,35 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def tradeStopWin(self, tick):
         '''止盈函数'''
-        if self.noTrading:
+        if self.tradeDict[tick.symbol].noTrading:
             return
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
-                if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.winTarget):  # 最新价格大于止盈价格
+                if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + self.tradeDict[tick.symbol].winTarget):  # 最新价格大于止盈价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     send_msg(log.logContent.encode('utf-8'))
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
-                    self.noTrading = True
+                    self.tradeDict[tick.symbol].noTrading = True
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
-                if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.winTarget):  # 最新价格小于止盈价格
+                if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - self.tradeDict[tick.symbol].winTarget):  # 最新价格小于止盈价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     send_msg(log.logContent.encode('utf-8'))
                     #发单
                     orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
-                    self.noTrading = True
+                    self.tradeDict[tick.symbol].noTrading = True
             else:
                 log = VtLogData()
                 log.gatewayName = self.gatewayName
@@ -261,36 +263,35 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def tradeStopLoss(self, tick):
         '''止损函数'''
-        if self.noTrading:
+        if self.tradeDict[tick.symbol].noTrading:
             return
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
-                if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - config.stopTarget):  # 最新价格小于止损价格
+                if tick.lastPrice < ((self.tdApi.posBufferDict[symbol].pos.price / 10) - self.tradeDict[tick.symbol].stopTarget):  # 最新价格小于止损价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     send_msg(log.logContent.encode('utf-8'))
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
-                    self.noTrading = True
+                    self.tradeDict[tick.symbol].noTrading = True
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
-                if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + config.stopTarget):  # 最新价格大于止损价格
+                if tick.lastPrice > ((self.tdApi.posBufferDict[symbol].pos.price / 10) + self.tradeDict[tick.symbol].stopTarget):  # 最新价格大于止损价格
                     log = VtLogData()
                     log.gatewayName = self.gatewayName
-                    log.logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                    log.logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
                     send_msg(log.logContent.encode('utf-8'))
                     # 发单
                     orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
-                    self.noTrading = True
-                    print "================[STOP LOSS]==========================="
+                    self.tradeDict[tick.symbol].noTrading = True
             else:
                 log = VtLogData()
                 log.gatewayName = self.gatewayName
@@ -300,37 +301,37 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def tradeGetMaxWin(self, tick):
         '''摸顶止盈，当价格达到目标收益后，开始摸顶，从最高价回撤达到阈值，平仓止盈'''
-        if self.noTrading:
+        if self.tradeDict[tick.symbol].noTrading:
             return
         for symbol in self.tdApi.posBufferDict.keys():
             if symbol == (tick.symbol + '.2'):  # 多单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
-                if self.todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + config.winTarget:  # 当天价格达到过目标收益
-                    if tick.lastPrice <= self.todayHigh - config.maxDrawDown:     #达到最大回撤
+                if self.tradeDict[tick.symbol].todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + self.tradeDict[tick.symbol].winTarget:  # 当天价格达到过目标收益
+                    if tick.lastPrice <= self.tradeDict[tick.symbol].todayHigh - self.tradeDict[tick.symbol].maxDrawDown:     #达到最大回撤
                         log = VtLogData()
                         log.gatewayName = self.gatewayName
-                        log.logContent = u'[摸顶止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        log.logContent = u'[摸顶止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.onLog(log)
                         send_msg(log.logContent.encode('utf-8'))
                         #发单
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
-                        self.noTrading = True
+                        self.tradeDict[tick.symbol].noTrading = True
             elif symbol == (tick.symbol + '.3'):  # 空单
                 if self.tdApi.posBufferDict[symbol].pos.position - self.tdApi.posBufferDict[symbol].pos.frozen == 0:
                     continue
-                if self.todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - config.winTarget:  # 当天价格达到过目标收益
-                    if tick.lastPrice >= self.todayLow + config.maxDrawDown:     #达到最大回撤
+                if self.tradeDict[tick.symbol].todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - self.tradeDict[tick.symbol].winTarget:  # 当天价格达到过目标收益
+                    if tick.lastPrice >= self.tradeDict[tick.symbol].todayLow + self.tradeDict[tick.symbol].maxDrawDown:     #达到最大回撤
                         log = VtLogData()
                         log.gatewayName = self.gatewayName
-                        log.logContent = u'[摸顶止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        log.logContent = u'[摸顶止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.onLog(log)
                         send_msg(log.logContent.encode('utf-8'))
                         #发单
                         orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
-                        self.noTrading = True
+                        self.tradeDict[tick.symbol].noTrading = True
             else:
                 log = VtLogData()
                 log.gatewayName = self.gatewayName
@@ -364,7 +365,7 @@ class CtpGateway(VtGateway):
         # print 'openPrice:',tick.openPrice
         # print 'stopCount:',self.stopCount
         # print 'noTrading:',self.noTrading
-        if self.stopCount >= 4 or self.noTrading:
+        if self.tradeDict[tick.symbol].stopCount >= 4 or self.tradeDict[tick.symbol].noTrading:
             # print 'step1'
             return
         elif tick.lastPrice >= tick.openPrice + 2:
@@ -373,34 +374,26 @@ class CtpGateway(VtGateway):
                 #空单止损
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
                 self.sendOrder(orderReq)
-                self.noTrading = True
-                self.stopCount += 1
-            if tick.symbol + '.2' in self.tdApi.posBufferDict.keys():  # 存在多单
-                # print 'step2'
-                pass  # 不操作
-            elif len(self.tdApi.posBufferDict.keys()) == 0:     #无持仓
+                self.tradeDict[tick.symbol].noTrading = True
+                self.tradeDict[tick.symbol].stopCount += 1
+            if tick.symbol + '.2' not in self.tdApi.posBufferDict.keys():     #无持仓
                 # print 'step4'
                 #开多单
-                orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, config.tradeVolume)
-                self.sendOrder(orderReq)
-                self.noTrading = True
+                self.tradeDict[tick.symbol].openFlag = True
+                self.tradeDict[tick.symbol].openDirection = u'多'
         elif tick.lastPrice <= tick.openPrice - 2:
             if tick.symbol + '.2' in self.tdApi.posBufferDict.keys(): #存在多单
                 # print 'step6'
                 #多单止损
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
                 self.sendOrder(orderReq)
-                self.noTrading = True
-                self.stopCount += 1
-            if tick.symbol + '.3' in self.tdApi.posBufferDict.keys():  # 存在空单
-                # print 'step5'
-                pass  # 不操作
-            elif len(self.tdApi.posBufferDict.keys()) == 0:     #无持仓
+                self.tradeDict[tick.symbol].noTrading = True
+                self.tradeDict[tick.symbol].stopCount += 1
+            if tick.symbol + '.3' not in self.tdApi.posBufferDict.keys():     #无持仓
                 # print 'step7'
                 #开空单
-                orderReq = self.makeSellOpenOrder(tick.symbol, tick.bidPrice1, config.tradeVolume)
-                self.sendOrder(orderReq)
-                self.noTrading = True
+                self.tradeDict[tick.symbol].openFlag = True
+                self.tradeDict[tick.symbol].openDirection = u'空'
         else:
             # print 'step8'
             pass
@@ -421,28 +414,27 @@ class CtpGateway(VtGateway):
             else:
                 pass
 
-
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
         '''开仓函数'''
         #存在持仓，不交易
         for symbol in self.tdApi.posBufferDict.keys():
             if tick.symbol in symbol:
-                self.openFlag = False
+                self.tradeDict[tick.symbol].openFlag = False
                 return
 
-        if self.noTrading:
+        if self.tradeDict[tick.symbol].noTrading:
             return
 
         #无持仓，交易
-        if self.openDirection == u'多':
-            orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, config.tradeVolume)
+        if self.tradeDict[tick.symbol].openDirection == u'多':
+            orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, self.tradeDict[tick.symbol].tradeVolume)
         elif self.openDirection == u'空':
-            orderReq = self.makeSellOpenOrder(tick.symbol, tick.bidPrice1, config.tradeVolume)
+            orderReq = self.makeSellOpenOrder(tick.symbol, tick.bidPrice1, self.tradeDict[tick.symbol].tradeVolume)
         else:
             return
         self.sendOrder(orderReq)
-        self.noTrading = True
+        self.tradeDict[tick.symbol].noTrading = True
 
         #记录日志
         log = VtLogData()
@@ -453,11 +445,11 @@ class CtpGateway(VtGateway):
         send_msg(log.logContent.encode('utf-8'))
 
         #重置最高价和最低价
-        self.todayLow = tick.lastPrice
-        self.todayHigh = tick.lastPrice
+        self.tradeDict[tick.symbol].todayLow = tick.lastPrice
+        self.tradeDict[tick.symbol].todayHigh = tick.lastPrice
 
         #重置开仓标志
-        self.openFlag = False
+        self.tradeDict[tick.symbol].openFlag = False
 
     # ----------------------------------------------------------------------
     def initRecodeTick(self):
@@ -504,11 +496,16 @@ class CtpGateway(VtGateway):
                 now.time() < datetime.strptime('23:31:00', '%H:%M:%S').time()))):
             return
 
-        # 记录行情
-        if config.recodeTickFlag:
-            self.recodeTick(tick)
-
         self.shortPolicy(tick)
+
+        if self.tradeDict[tick.symbol].stopLoss:
+            self.tradeStopLoss(tick)
+
+        if self.tradeDict[tick.symbol].stopWin:
+            self.tradeStopWin(tick)
+
+        if self.tradeDict[tick.symbol].openFlag:
+            self.tradeOpen(tick)
 
     # ----------------------------------------------------------------------
     def pTick1(self, event):
@@ -570,23 +567,23 @@ class CtpGateway(VtGateway):
         self.onLog(log)
         send_msg(log.logContent.encode('utf-8'))
         self.qryPosition()  #查询并更新持仓
-        self.noTrading = False
+        self.tradeDict[trade.symbol].noTrading = False
         if trade.offset == u'开仓':
-            self.todayHigh = 0
-            self.todayLow = 100000
+            self.tradeDict[trade.symbol].todayHigh = 0
+            self.tradeDict[trade.symbol].todayLow = 100000
             if trade.direction == u'空':
-                self.tradeList.append(0)
+                self.tradeDict[trade.symbol].tradeList.append(0)
             elif trade.direction == u'多':
-                self.tradeList.append(1)
+                self.tradeDict[trade.symbol].tradeList.append(1)
             else:
                 pass
-        # 记录开仓交易
-        json_dict = {}
-        json_dict['todayMode'] = config.currentMode
-        json_dict['todayTrade'] = self.tradeList
-        f = open(config.TRADE_configPath, 'w')
-        f.write(json.dumps(json_dict))
-        f.close()
+        # # 记录开仓交易
+        # json_dict = {}
+        # json_dict['todayMode'] = config.currentMode
+        # json_dict['todayTrade'] = self.tradeList
+        # f = open(config.TRADE_configPath, 'w')
+        # f.write(json.dumps(json_dict))
+        # f.close()
         # print 'trade info:'
         # print trade.symbol
         # print trade.exchange

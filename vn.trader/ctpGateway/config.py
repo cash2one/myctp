@@ -12,7 +12,7 @@ class config:
     stopWin = False              #是否止盈
 
     # analysisSymbol = 'm1705'     #分析合约，美豆
-    tradeSymbol = 'RM709'       #交易合约，菜粕
+    tradeSymbol = ['RM709', 'm1709']       #交易合约，菜粕
     tradeVolume = 1              #交易数量
     recodeTickFlag = True        #是否记录实时行情
     CTP_configPath = '/home/myctp/vn.trader/ctpGateway/CTP_connect.json'
