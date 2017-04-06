@@ -256,10 +256,7 @@ class CtpGateway(VtGateway):
                     self.sendOrder(orderReq)
                     self.tradeDict[tick.symbol].noTrading = True
             else:
-                log = VtLogData()
-                log.gatewayName = self.gatewayName
-                log.logContent = u'[未知类型订单]合约代码：%s' % symbol
-                self.onLog(log)
+                pass
 
     # ----------------------------------------------------------------------
     def tradeStopLoss(self, tick):
@@ -294,10 +291,7 @@ class CtpGateway(VtGateway):
                     self.sendOrder(orderReq)
                     self.tradeDict[tick.symbol].noTrading = True
             else:
-                log = VtLogData()
-                log.gatewayName = self.gatewayName
-                log.logContent = u'[未知类型订单]合约代码：%s' % symbol
-                self.onLog(log)
+                pass
 
     # ----------------------------------------------------------------------
     def tradeGetMaxWin(self, tick):
@@ -334,10 +328,7 @@ class CtpGateway(VtGateway):
                         self.sendOrder(orderReq)
                         self.tradeDict[tick.symbol].noTrading = True
             else:
-                log = VtLogData()
-                log.gatewayName = self.gatewayName
-                log.logContent = u'[未知类型订单]合约代码：%s' % symbol
-                self.onLog(log)
+                pass
 
     # ----------------------------------------------------------------------
     def Dual_Thrust(self, tick):
