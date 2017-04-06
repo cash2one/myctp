@@ -441,7 +441,7 @@ class CtpGateway(VtGateway):
         log = VtLogData()
         log.gatewayName = self.gatewayName
         log.logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
-            tick.symbol, tick.bidPrice1, config.tradeVolume, self.openDirection)
+            tick.symbol, tick.bidPrice1, config.tradeVolume, self.tradeDict[tick.symbol].openDirection)
         self.onLog(log)
         send_msg(log.logContent.encode('utf-8'))
 
