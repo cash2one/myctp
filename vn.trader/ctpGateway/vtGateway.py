@@ -1,4 +1,5 @@
 # encoding: UTF-8
+import copy
 
 from datetime import *
 
