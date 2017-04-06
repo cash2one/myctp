@@ -657,6 +657,10 @@ class CtpGateway(VtGateway):
         log.gatewayName = self.gatewayName
         log.logContent = u'[错误信息]错误代码：%s，错误信息：%s' % (error.errorID, error.errorMsg)
         self.onLog(log)
+        if error.errorID == '30':
+            #平仓量超过持仓量
+            for symbol in self.tradeDict.keys():
+                self.tradeDict[symbol].noTrading = False
 
         # print 'errorid:',error.errorID
         # print 'errormsg:',error.errorMsg
