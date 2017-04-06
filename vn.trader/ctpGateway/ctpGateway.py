@@ -39,6 +39,7 @@ class CtpGateway(VtGateway):
         self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
 
         self.tradeDict = {}
+        self.initTrade()
         self.initRecodeTick()
         # self.loadTradeConfig()
 
