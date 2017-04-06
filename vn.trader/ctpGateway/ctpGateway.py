@@ -422,7 +422,7 @@ class CtpGateway(VtGateway):
             elif tick.symbol + '.3' in self.tdApi.posBufferDict.keys(): #存在空单
                 print 'step3'
                 #空单止损
-                orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[symbol].pos.position)
+                orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
                 self.sendOrder(orderReq)
                 self.noTrading = True
                 self.stopCount += 1
@@ -444,7 +444,7 @@ class CtpGateway(VtGateway):
             elif tick.symbol + '.2' in self.tdApi.posBufferDict.keys(): #存在多单
                 print 'step6'
                 #多单止损
-                orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
+                orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
                 self.sendOrder(orderReq)
                 self.noTrading = True
                 self.stopCount += 1
