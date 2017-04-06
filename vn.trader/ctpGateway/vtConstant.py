@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+from ctpDataType import *
+
 # 默认空值
 EMPTY_STRING = ''
 EMPTY_UNICODE = u''

@@ -14,7 +14,7 @@ from copy import copy
 
 from ctpmdapi import CtpMdApi
 from ctptdapi import CtpTdApi
-from ctpDataType import *
+# from ctpDataType import *
 from vtGateway import *
 from config import *
 from weixin import *
