@@ -430,7 +430,7 @@ class CtpGateway(VtGateway):
         #无持仓，交易
         if self.tradeDict[tick.symbol].openDirection == u'多':
             orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, self.tradeDict[tick.symbol].tradeVolume)
-        elif self.openDirection == u'空':
+        elif self.tradeDict[tick.symbol].openDirection == u'空':
             orderReq = self.makeSellOpenOrder(tick.symbol, tick.bidPrice1, self.tradeDict[tick.symbol].tradeVolume)
         else:
             return
