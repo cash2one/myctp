@@ -3,6 +3,7 @@
 import os
 from vnctpmd import MdApi
 from vtGateway import *
+from ctpDataType import *
 
 class CtpMdApi(MdApi):
     """CTP行情API实现"""
