@@ -1,5 +1,6 @@
 # encoding: UTF-8
 
+import os
 from vnctpmd import MdApi
 from vtGateway import *
 

@@ -1,5 +1,6 @@
 # encoding: UTF-8
 
+import os
 from vnctptd import TdApi
 from vtGateway import *
 
