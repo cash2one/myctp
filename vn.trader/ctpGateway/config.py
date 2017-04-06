@@ -8,7 +8,7 @@ class config:
     # stopTargetPrice = 0          #止损目标价位，当前价格达到该价格，止损
     # preSellPrice = 0             #上次平仓价位
     maxDrawDown = 3              #允许最大回撤点数，从最高价格回撤达到该点数，止盈
-    stopLoss = True             #是否止损
+    stopLoss = False             #是否止损
     stopWin = False              #是否止盈
 
     # analysisSymbol = 'm1705'     #分析合约，美豆

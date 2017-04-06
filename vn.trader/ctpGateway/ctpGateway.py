@@ -93,6 +93,7 @@ class CtpGateway(VtGateway):
         self.openFlag = False                       # 开仓标志
         self.noTrading = False                      #是否存在未成交订单
         self.tradeList = []
+        self.stopCount = 0      #止损次数
         self.initRecodeTick()
         self.loadTradeConfig()
 
@@ -405,6 +406,66 @@ class CtpGateway(VtGateway):
             else:
                 pass
 
+    def shortPolicy(self, tick):
+        if self.stopCount >= 4:
+            return
+        elif tick.lastPrice >= tick.openPrice + 2:
+            if tick.symbol + '.2' in self.tdApi.posBufferDict.keys(): #存在多单
+                pass    #不操作
+            elif tick.symbol + '.3' in self.tdApi.posBufferDict.keys(): #存在空单
+                #空单止损
+                orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[symbol].pos.position)
+                self.sendOrder(orderReq)
+                self.noTrading = True
+                self.stopCount += 1
+
+                #开多单
+                orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, config.tradeVolume)
+                self.sendOrder(orderReq)
+                self.noTrading = True
+            else:
+                #开多单
+                orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, config.tradeVolume)
+                self.sendOrder(orderReq)
+                self.noTrading = True
+        elif tick.lastPrice <= tick.openPrice - 2:
+            if tick.symbol + '.3' in self.tdApi.posBufferDict.keys(): #存在空单
+                pass    #不操作
+            elif tick.symbol + '.2' in self.tdApi.posBufferDict.keys(): #存在多单
+                #多单止损
+                orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
+                self.sendOrder(orderReq)
+                self.noTrading = True
+                self.stopCount += 1
+                #开空单
+                orderReq = self.makeSellOpenOrder(tick.symbol, tick.bidPrice1, config.tradeVolume)
+                self.sendOrder(orderReq)
+                self.noTrading = True
+            else:
+                #开空单
+                orderReq = self.makeSellOpenOrder(tick.symbol, tick.bidPrice1, config.tradeVolume)
+                self.sendOrder(orderReq)
+                self.noTrading = True
+        else:
+            pass
+
+        # 收盘清仓
+        now = datetime.now()
+        if now.time() > datetime.strptime('14:59:00', '%H:%M:%S').time():
+            if tick.symbol + '.3' in self.tdApi.posBufferDict.keys(): #存在空单
+                #空单清仓
+                orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[symbol].pos.position)
+                self.sendOrder(orderReq)
+                self.noTrading = True
+            elif tick.symbol + '.2' in self.tdApi.posBufferDict.keys(): #存在多单
+                #多单清仓
+                orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
+                self.sendOrder(orderReq)
+                self.noTrading = True
+            else:
+                pass
+
+
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
         '''开仓函数'''
@@ -472,6 +533,29 @@ class CtpGateway(VtGateway):
 
     # ----------------------------------------------------------------------
     def pTick(self, event):
+        '''tick事件处理机，当接收到行情时执行'''
+        tick = event.dict_['data']
+
+        # 获取当前时间
+        now = datetime.now()
+
+        # 休市
+        if not (((now.time() > datetime.strptime('09:00:00', '%H:%M:%S').time()) and (
+            now.time() < datetime.strptime('11:31:00', '%H:%M:%S').time())) or \
+                ((now.time() > datetime.strptime('13:30:00', '%H:%M:%S').time()) and (
+                now.time() < datetime.strptime('15:31:00', '%H:%M:%S').time())) or \
+                ((now.time() > datetime.strptime('21:00:00', '%H:%M:%S').time()) and (
+                now.time() < datetime.strptime('23:31:00', '%H:%M:%S').time()))):
+            return
+
+        # 记录行情
+        if config.recodeTickFlag:
+            self.recodeTick(tick)
+
+        self.shortPolicy(tick)
+
+    # ----------------------------------------------------------------------
+    def pTick1(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
 
