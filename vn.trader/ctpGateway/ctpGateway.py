@@ -237,7 +237,7 @@ class CtpGateway(VtGateway):
                     log.gatewayName = self.gatewayName
                     log.logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
-                    send_msg(log.logContent.encode('utf-8'))
+                    # send_msg(log.logContent.encode('utf-8'))
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
@@ -250,7 +250,7 @@ class CtpGateway(VtGateway):
                     log.gatewayName = self.gatewayName
                     log.logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
-                    send_msg(log.logContent.encode('utf-8'))
+                    # send_msg(log.logContent.encode('utf-8'))
                     #发单
                     orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
@@ -275,7 +275,7 @@ class CtpGateway(VtGateway):
                     log.gatewayName = self.gatewayName
                     log.logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
-                    send_msg(log.logContent.encode('utf-8'))
+                    # send_msg(log.logContent.encode('utf-8'))
                     #发单
                     orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
@@ -288,7 +288,7 @@ class CtpGateway(VtGateway):
                     log.gatewayName = self.gatewayName
                     log.logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.onLog(log)
-                    send_msg(log.logContent.encode('utf-8'))
+                    # send_msg(log.logContent.encode('utf-8'))
                     # 发单
                     orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                     self.sendOrder(orderReq)
@@ -314,7 +314,7 @@ class CtpGateway(VtGateway):
                         log.gatewayName = self.gatewayName
                         log.logContent = u'[摸顶止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.onLog(log)
-                        send_msg(log.logContent.encode('utf-8'))
+                        # send_msg(log.logContent.encode('utf-8'))
                         #发单
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
@@ -328,7 +328,7 @@ class CtpGateway(VtGateway):
                         log.gatewayName = self.gatewayName
                         log.logContent = u'[摸顶止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.onLog(log)
-                        send_msg(log.logContent.encode('utf-8'))
+                        # send_msg(log.logContent.encode('utf-8'))
                         #发单
                         orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
@@ -444,7 +444,7 @@ class CtpGateway(VtGateway):
         log.logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
             tick.symbol, tick.bidPrice1, config.tradeVolume, self.tradeDict[tick.symbol].openDirection)
         self.onLog(log)
-        send_msg(log.logContent.encode('utf-8'))
+        # send_msg(log.logContent.encode('utf-8'))
 
         #重置最高价和最低价
         self.tradeDict[tick.symbol].todayLow = tick.lastPrice
@@ -567,7 +567,7 @@ class CtpGateway(VtGateway):
         log.logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
             trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID, trade.tradeTime)
         self.onLog(log)
-        send_msg(log.logContent.encode('utf-8'))
+        # send_msg(log.logContent.encode('utf-8'))
         self.qryPosition()  #查询并更新持仓
         self.tradeDict[trade.symbol].noTrading = False
         if trade.offset == u'开仓':
