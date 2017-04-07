@@ -746,7 +746,7 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def registeHandle(self):
         '''注册处理机'''
-        self.eventEngine.register(EVENT_TIMER, self.checkCount)
+        self.eventEngine.register(EVENT_TIMER, self.checkConnect)
         self.eventEngine.register(EVENT_LOG, self.pLog)
         self.eventEngine.register(EVENT_TICK, self.pTick)
         self.eventEngine.register(EVENT_TRADE, self.pTrade)
