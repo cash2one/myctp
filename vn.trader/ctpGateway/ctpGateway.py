@@ -524,9 +524,10 @@ class CtpGateway(VtGateway):
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
-
-        # 获取当前时间
-        now = datetime.now()
+        print tick.symbol
+        print tick.lastPrice
+        if True:
+            return
 
         # 休市
         if not self.isTradeTime():
