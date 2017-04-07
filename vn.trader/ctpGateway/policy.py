@@ -12,6 +12,7 @@ class tradeBar(object):
         self.maxDrawDown = 3  # 允许最大回撤点数，从最高价格回撤达到该点数，止盈
         self.stopLoss = False  # 是否止损
         self.stopWin = False  # 是否止盈
+        self.threshold = 2
         self.tradeVolume = 1  # 交易数量
         self.openFlag = False  # 开仓标志
         self.openDirection = u'多'

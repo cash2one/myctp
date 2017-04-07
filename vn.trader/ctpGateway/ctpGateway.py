@@ -361,7 +361,7 @@ class CtpGateway(VtGateway):
         if self.tradeDict[tick.symbol].stopCount >= 4:
             # print 'step1'
             return
-        elif tick.lastPrice >= tick.openPrice + 2:
+        elif tick.lastPrice > tick.openPrice + self.tradeDict[tick.symbol].threshold:
             if (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()) and (not self.tradeDict[tick.symbol].closeing): #存在空单
                 # print 'step3'
                 #空单止损
@@ -374,7 +374,7 @@ class CtpGateway(VtGateway):
                 #开多单
                 self.tradeDict[tick.symbol].openFlag = True
                 self.tradeDict[tick.symbol].openDirection = u'多'
-        elif tick.lastPrice <= tick.openPrice - 2:
+        elif tick.lastPrice < tick.openPrice - self.tradeDict[tick.symbol].threshold:
             if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) and (not self.tradeDict[tick.symbol].closeing): #存在多单
                 # print 'step6'
                 #多单止损
