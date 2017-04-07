@@ -44,6 +44,7 @@ class CtpGateway(VtGateway):
         self.initTrade()
         self.initRecodeTick()
         # self.loadTradeConfig()
+        self.pppppp = 0
 
         # 注册事件处理函数
         self.registeHandle()
@@ -467,6 +468,9 @@ class CtpGateway(VtGateway):
             self.tradeDict[tick.symbol].openFlag = False
             return
 
+        if self.pppppp >= 2:
+            return
+
         #无持仓，交易
         if self.tradeDict[tick.symbol].openDirection == u'多':
             orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, self.tradeDict[tick.symbol].tradeVolume)
@@ -476,6 +480,7 @@ class CtpGateway(VtGateway):
             return
         self.sendOrder(orderReq)
         self.tradeDict[tick.symbol].opening = True   #存在未成交开仓单
+        self.pppppp += 1
 
         #记录日志
         log = VtLogData()
@@ -524,10 +529,10 @@ class CtpGateway(VtGateway):
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
-        print tick.symbol
-        print tick.lastPrice
-        if True:
-            return
+        # print tick.symbol
+        # print tick.lastPrice
+        # if True:
+        #     return
 
         # 休市
         if not self.isTradeTime():
@@ -602,6 +607,8 @@ class CtpGateway(VtGateway):
         self.onLog(log)
         # send_msg(log.logContent.encode('utf-8'))
         self.qryPosition()  #查询并更新持仓
+        if trade.symbol not in self.tradeDict.keys():
+            return
         if trade.offset == u'开仓':
             self.tradeDict[trade.symbol].opening = False  # 不存在未成交开仓单
             self.tradeDict[trade.symbol].todayHigh = 0
