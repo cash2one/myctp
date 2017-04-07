@@ -39,6 +39,7 @@ class CtpGateway(VtGateway):
         self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
 
         self.tradeDict = {}
+        self.checkCount = 0
         self.initTrade()
         self.initRecodeTick()
         # self.loadTradeConfig()
@@ -85,6 +86,45 @@ class CtpGateway(VtGateway):
         # 初始化并启动查询
         self.initQuery()
         self.qryAccount()
+
+    # ----------------------------------------------------------------------
+    def disconnect(self):
+        """断开连接"""
+        log = VtLogData()
+        log.gatewayName = self.gatewayName
+        log.logContent = u'断开行情和交易接口'
+        self.onLog(log)
+
+        #注销查询函数
+        if self.qryEnabled:
+            self.eventEngine.unregister(EVENT_TIMER, self.query)
+
+        # 断开行情和交易接口对象
+        if self.mdConnected:
+            self.mdApi.close()
+        if self.tdConnected:
+            self.tdApi.close()
+
+    # ----------------------------------------------------------------------
+    def isTradeTime(self):
+        '''是否为交易时间'''
+        now = datetime.now()
+        if (((now.time() > datetime.strptime('08:58:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('11:32:00', '%H:%M:%S').time()))
+            or ((now.time() > datetime.strptime('13:28:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('15:02:00', '%H:%M:%S').time()))
+            or ((now.time() > datetime.strptime('20:58:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('23:32:00', '%H:%M:%S').time()))):
+            return True
+        else:
+            return False
+
+    # ----------------------------------------------------------------------
+    def checkConnect(self):
+        self.checkCount += 1
+        if self.checkCount == 5:
+            self.checkCount = 0
+            if self.isTradeTime() and (not self.tdConnected):
+                self.connect()
+            if not self.isTradeTime() and self.tdConnected:
+                self.disconnect()
 
     # ----------------------------------------------------------------------
     def loadTradeConfig(self):
@@ -481,12 +521,7 @@ class CtpGateway(VtGateway):
         now = datetime.now()
 
         # 休市
-        if not (((now.time() > datetime.strptime('09:00:00', '%H:%M:%S').time()) and (
-            now.time() < datetime.strptime('11:31:00', '%H:%M:%S').time())) or \
-                ((now.time() > datetime.strptime('13:30:00', '%H:%M:%S').time()) and (
-                now.time() < datetime.strptime('15:31:00', '%H:%M:%S').time())) or \
-                ((now.time() > datetime.strptime('21:00:00', '%H:%M:%S').time()) and (
-                now.time() < datetime.strptime('23:31:00', '%H:%M:%S').time()))):
+        if not self.isTradeTime():
             return
 
         self.shortPolicy(tick)
@@ -702,6 +737,7 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def registeHandle(self):
         '''注册处理机'''
+        self.eventEngine.register(EVENT_TIMER, self.checkCount)
         self.eventEngine.register(EVENT_LOG, self.pLog)
         self.eventEngine.register(EVENT_TICK, self.pTick)
         self.eventEngine.register(EVENT_TRADE, self.pTrade)
