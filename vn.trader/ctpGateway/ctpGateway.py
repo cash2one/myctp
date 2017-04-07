@@ -409,6 +409,8 @@ class CtpGateway(VtGateway):
                 self.tradeDict[tick.symbol].closeing = True
             else:
                 pass
+            self.tradeDict[tick.symbol].opening = True  #不再允许开仓
+
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
@@ -418,9 +420,11 @@ class CtpGateway(VtGateway):
             if tick.symbol in symbol:
                 self.tradeDict[tick.symbol].openFlag = False
                 return
-        
-        # 未获取到持仓信息
-        if not self.getPosition:
+
+        # 未获取到持仓信息或者存在未成交开仓单
+        if (not self.getPosition) or self.tradeDict[tick.symbol].opening:
+            # 重置开仓标志
+            self.tradeDict[tick.symbol].openFlag = False
             return
 
         #无持仓，交易
