@@ -15,7 +15,8 @@ class tradeBar(object):
         self.tradeVolume = 1  # 交易数量
         self.openFlag = False  # 开仓标志
         self.openDirection = u'多'
-        self.noTrading = False  # 是否存在未成交订单
+        self.closeing = False  # 是否存在未成交平仓单
+        self.opening = False    #存在未成交开仓单
         self.tradeList = []
         self.stopCount = 0  # 止损次数
         self.todayHigh = 0  # 今天最高价
