@@ -37,6 +37,7 @@ class CtpGateway(VtGateway):
         self.tdConnected = False        # 交易API连接状态
         
         self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
+        self.getPosition = False        #是否已经得到持仓
 
         self.tradeDict = {}
         self.initTrade()
@@ -417,6 +418,10 @@ class CtpGateway(VtGateway):
             if tick.symbol in symbol:
                 self.tradeDict[tick.symbol].openFlag = False
                 return
+        
+        # 未获取到持仓信息
+        if not self.getPosition:
+            return
 
         #无持仓，交易
         if self.tradeDict[tick.symbol].openDirection == u'多':
@@ -625,6 +630,7 @@ class CtpGateway(VtGateway):
     def pPosition(self,event):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
+        self.getPosition = True
         for positionName in self.tdApi.posBufferDict.keys():
             print '###############################'
             print 'position info:'
