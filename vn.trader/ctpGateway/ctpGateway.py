@@ -118,7 +118,7 @@ class CtpGateway(VtGateway):
             return False
 
     # ----------------------------------------------------------------------
-    def checkConnect(self):
+    def checkConnect(self, event):
         self.checkCount += 1
         if self.checkCount == 5:
             self.checkCount = 0
@@ -552,9 +552,7 @@ class CtpGateway(VtGateway):
         now = datetime.now()
 
         # 休市
-        if not (((now.time() > datetime.strptime('09:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('11:31:00', '%H:%M:%S').time())) or \
-                ((now.time() > datetime.strptime('13:30:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('15:31:00', '%H:%M:%S').time())) or \
-                ((now.time() > datetime.strptime('21:00:00', '%H:%M:%S').time()) and (now.time() < datetime.strptime('23:31:00', '%H:%M:%S').time()))):
+        if not self.isTradeTime():
             return
 
         #记录行情
