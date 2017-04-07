@@ -44,7 +44,6 @@ class CtpGateway(VtGateway):
         self.initTrade()
         self.initRecodeTick()
         # self.loadTradeConfig()
-        self.pppppp = 0
 
         # 注册事件处理函数
         self.registeHandle()
@@ -456,19 +455,16 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
         '''开仓函数'''
-        #存在持仓，不交易
+        #存在持仓，不开仓
         for symbol in self.tdApi.posBufferDict.keys():
             if tick.symbol in symbol:
                 self.tradeDict[tick.symbol].openFlag = False
                 return
 
         # 未获取到持仓信息或者存在未成交开仓单
-        if (not self.getPosition) or self.tradeDict[tick.symbol].opening:
+        if (not self.getPosition) or self.tradeDict[tick.symbol].opening or self.tradeDict[tick.symbol].stopCount >= 4:
             # 重置开仓标志
             self.tradeDict[tick.symbol].openFlag = False
-            return
-
-        if self.pppppp >= 2:
             return
 
         #无持仓，交易
@@ -480,7 +476,6 @@ class CtpGateway(VtGateway):
             return
         self.sendOrder(orderReq)
         self.tradeDict[tick.symbol].opening = True   #存在未成交开仓单
-        self.pppppp += 1
 
         #记录日志
         log = VtLogData()
@@ -754,7 +749,7 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def registeHandle(self):
         '''注册处理机'''
-        self.eventEngine.register(EVENT_TIMER, self.checkConnect)
+        # self.eventEngine.register(EVENT_TIMER, self.checkConnect)
         self.eventEngine.register(EVENT_LOG, self.pLog)
         self.eventEngine.register(EVENT_TICK, self.pTick)
         self.eventEngine.register(EVENT_TRADE, self.pTrade)
