@@ -73,8 +73,9 @@ class tradeBar(object):
                 return
 
 if __name__ == '__main__':
-    b = {}
-    b['1'] = tradeBar('m109')
-    b['1'].winTargetPrice = 20
-    print b['1'].winTargetPrice
-    print b['1'].symbol
+    if 2 > 3:
+        print '1'
+    elif 6 > 5:
+        print '2'
+    else:
+        pass

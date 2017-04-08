@@ -60,6 +60,7 @@ class tradeAPI(CtpGateway):
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
+                self.tradeDict[tick.symbol].stopCount += 1
                 self.tradeDict[tick.symbol].closeing = True
         if shortPosition in self.tdApi.posBufferDict.keys():  # 空单
             if tick.lastPrice > self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice:  # 最新价格大于止损价格
@@ -71,6 +72,7 @@ class tradeAPI(CtpGateway):
                 # 发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
+                self.tradeDict[tick.symbol].stopCount += 1
                 self.tradeDict[tick.symbol].closeing = True
 
     # ----------------------------------------------------------------------
@@ -117,7 +119,7 @@ class tradeAPI(CtpGateway):
             else:
                 pass
 
-
+    # ----------------------------------------------------------------------
     def shortPolicy(self, tick):
         # print '============================='
         # print 'symbol:',tick.symbol
@@ -133,11 +135,12 @@ class tradeAPI(CtpGateway):
 
         # 存在空单,设置止损价位，打开止损开关
         if shortPosition in self.tdApi.posBufferDict.keys():
-            # print 'step3'
+            print 'step1'
             self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = highThreshold
             self.tradeDict[tick.symbol].stopLoss = True
         # 不存在空单，且价格达到低阈值，开空单
         elif tick.lastPrice < lowThreshold:
+            print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'空'
         else:
@@ -146,16 +149,16 @@ class tradeAPI(CtpGateway):
 
         # 存在多单,设置止损价位，打开止损开关
         if longPosition in self.tdApi.posBufferDict.keys():
+            print 'step3'
             self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = lowThreshold
             self.tradeDict[tick.symbol].stopLoss = True
         # 不存在多单，且价格达到高阈值，开多单
         elif tick.lastPrice > highThreshold:
+            print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'多'
         else:
             pass
-
-
 
         # 收盘清仓
         nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
@@ -172,7 +175,7 @@ class tradeAPI(CtpGateway):
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
                 self.sendOrder(orderReq)
                 self.tradeDict[tick.symbol].closeing = True
-            self.tradeDict[tick.symbol].opening = True  #不再允许开仓
+            self.tradeDict[tick.symbol].stopCount = 10  #不再允许开仓
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
@@ -255,16 +258,13 @@ class tradeAPI(CtpGateway):
         self.shortPolicy(tick)
 
         # 止损
-        if self.tradeDict[tick.symbol].stopLoss:
-            self.tradeStopLoss(tick)
+        self.tradeStopLoss(tick)
 
         # 止盈
-        if self.tradeDict[tick.symbol].stopWin:
-            self.tradeStopWin(tick)
+        self.tradeStopWin(tick)
 
         # 开仓
-        if self.tradeDict[tick.symbol].openFlag:
-            self.tradeOpen(tick)
+        self.tradeOpen(tick)
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
@@ -281,12 +281,12 @@ class tradeAPI(CtpGateway):
             return
         if trade.offset == u'开仓':
             self.tradeDict[trade.symbol].opening = False
-            self.tradeDict[trade.symbol].todayHigh = 0
-            self.tradeDict[trade.symbol].todayLow = 100000
+            self.tradeDict[trade.symbol].todayHigh = trade.price
+            self.tradeDict[trade.symbol].todayLow = trade.price
             if trade.direction == u'空':
-                self.tradeDict[trade.symbol].tradeList.append(0)
+                self.tradeDict[trade.symbol].tradeList.append(u'空')
             elif trade.direction == u'多':
-                self.tradeDict[trade.symbol].tradeList.append(1)
+                self.tradeDict[trade.symbol].tradeList.append(u'多')
             else:
                 pass
         else:
@@ -346,7 +346,9 @@ class tradeAPI(CtpGateway):
 
 if __name__ == '__main__':
 
-    b = tradeBar('m1709')
-    print b.symbol
-    print b.tickPrice
-    print b.size
+    if 6 > 3:
+        print '1'
+    elif 6 > 5:
+        print '2'
+    else:
+        pass
