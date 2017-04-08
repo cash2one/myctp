@@ -7,6 +7,8 @@ EMPTY_STRING = ''
 EMPTY_UNICODE = u''
 EMPTY_INT = 0
 EMPTY_FLOAT = 0.0
+EMPTY_BOOL = False
+EMPTY_LIST = []
 
 # 方向常量
 DIRECTION_NONE = u'无方向'
