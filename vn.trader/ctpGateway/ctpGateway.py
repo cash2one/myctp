@@ -43,7 +43,7 @@ class CtpGateway(VtGateway):
         # self.initRecodeTick()
 
         # 注册事件处理函数
-        self.registeHandle()
+        # self.registeHandle()
         
     #----------------------------------------------------------------------
     def connect(self):

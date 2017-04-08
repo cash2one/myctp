@@ -391,53 +391,6 @@ class tradeAPI(CtpGateway):
             self.tradeOpen(tick)
 
     # ----------------------------------------------------------------------
-    def pTick1(self, event):
-        '''tick事件处理机，当接收到行情时执行'''
-        tick = event.dict_['data']
-
-        # 获取当前时间
-        now = datetime.now()
-
-        # 休市
-        if not self.isTradeTime():
-            return
-
-        #记录行情
-        if config.recodeTickFlag:
-            self.recodeTick(tick)
-
-        # 分析合约行情
-        self.Dual_Thrust(tick)
-
-        if tick.lastPrice > self.todayHigh:     #更新最高价
-            self.todayHigh = tick.lastPrice
-        if tick.lastPrice < self.todayLow:      #更新最低价
-            self.todayLow = tick.lastPrice
-
-        # print self.todayHigh
-        # print self.todayLow
-        # 平仓策略
-        self.tradeGetMaxWin(tick)
-
-        # 止盈
-        if config.stopWin:
-            self.tradeStopWin(tick)
-
-        # 止损
-        if config.stopLoss:
-            self.tradeStopLoss(tick)
-
-        #开仓
-        if self.openFlag:
-            self.tradeOpen(tick)
-
-        # print config.currentMode
-        # print self.tradeList
-        # print self.todayHigh
-        # print self.todayLow
-        # print self.closeing
-
-    # ----------------------------------------------------------------------
     def pTrade(self, event):
         '''成交事件处理机，当订单成交回报时执行'''
         trade = event.dict_['data']
@@ -485,57 +438,20 @@ class tradeAPI(CtpGateway):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
         self.getPosition = True
-        # for positionName in self.tdApi.posBufferDict.keys():
-        #     print '###############################'
-        #     print 'position info:'
-        #     print self.tdApi.posBufferDict[positionName].pos.symbol
-        #     print self.tdApi.posBufferDict[positionName].pos.direction
-        #     print self.tdApi.posBufferDict[positionName].pos.position
-        #     print self.tdApi.posBufferDict[positionName].pos.frozen
-        #     print self.tdApi.posBufferDict[positionName].pos.price
-        #     print self.tdApi.posBufferDict[positionName].pos.vtPositionName
+        for positionName in self.tdApi.posBufferDict.keys():
+            print '###############################'
+            print 'position info:'
+            print self.tdApi.posBufferDict[positionName].pos.symbol
+            print self.tdApi.posBufferDict[positionName].pos.direction
+            print self.tdApi.posBufferDict[positionName].pos.position
+            print self.tdApi.posBufferDict[positionName].pos.frozen
+            print self.tdApi.posBufferDict[positionName].pos.price
+            print self.tdApi.posBufferDict[positionName].pos.vtPositionName
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
         '''账户信息事件处理机，当收到账户信息时执行'''
         account = event.dict_['data']
-
-    # ----------------------------------------------------------------------
-    def pError(self, event):
-        error = event.dict_['data']
-        log = VtLogData()
-        log.gatewayName = self.gatewayName
-        log.logContent = u'[错误信息]错误代码：%s，错误信息：%s' % (error.errorID, error.errorMsg)
-        send_msg(log.logContent.encode('utf-8'))
-        self.onLog(log)
-        if error.errorID == '30':
-            #平仓量超过持仓量
-            for symbol in self.tradeDict.keys():
-                self.tradeDict[symbol].closeing = False     #否则不再发平仓单
-
-    # ----------------------------------------------------------------------
-    def pLog(self, event):
-        log = event.dict_['data']
-        loginfo = ':'.join([log.logTime, log.logContent])
-        # send_msg(loginfo)
-        self.today = datetime.now().date().strftime('%Y-%m-%d')
-        filename = '/home/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
-        if os.path.exists(filename):
-            fp = file(filename, 'a+')
-            try:
-                fp.write(loginfo.encode('utf-8') + '\n')
-            finally:
-                fp.close()
-        else:
-            fp = file(filename, 'wb')
-            try:
-                fp.write(loginfo.encode('utf-8') + '\n')
-            finally:
-                fp.close()
-
-    # ----------------------------------------------------------------------
-    def pContract(self, event):
-        contract = event.dict_['data']
 
     # ----------------------------------------------------------------------
     def registeHandle(self):
