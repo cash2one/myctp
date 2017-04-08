@@ -15,7 +15,7 @@ from copy import copy
 from ctpmdapi import CtpMdApi
 from ctptdapi import CtpTdApi
 from vtGateway import *
-from policy import *
+from trader import *
 from config import *
 from weixin import *
 import pandas as pd
