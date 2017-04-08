@@ -40,10 +40,11 @@ class CtpGateway(VtGateway):
         self.getPosition = False        #是否已经得到持仓
 
         self.tradeDict = {}
+        self.initTrade()
         # self.initRecodeTick()
 
         # 注册事件处理函数
-        # self.registeHandle()
+        self.registeHandle()
         
     #----------------------------------------------------------------------
     def connect(self):
@@ -118,6 +119,14 @@ class CtpGateway(VtGateway):
             log.logContent = u'交易配置缺少字段，请检查'
             self.onLog(log)
             return
+
+    # ----------------------------------------------------------------------
+    def initTrade(self):
+        for symbol in config.tradeSymbol:
+            self.tradeDict[symbol] = tradeBar(symbol)
+        if 'm1709' in self.tradeDict.keys():    #豆粕10点止盈
+            self.tradeDict['m1709'].stopWin = True
+            self.tradeDict['m1709'].winTarget = 10
 
     #----------------------------------------------------------------------
     def subscribe(self, subscribeReq):
