@@ -904,6 +904,11 @@ class CtpTdApi(TdApi):
         self.reqQryInvestorPosition(req, self.reqID)
 
     # ----------------------------------------------------------------------
+    def qryInstrument(self):
+        self.reqID += 1
+        self.reqQryInstrument({}, self.reqID)
+
+    # ----------------------------------------------------------------------
     def sendOrder(self, orderReq):
         """发单"""
         self.reqID += 1

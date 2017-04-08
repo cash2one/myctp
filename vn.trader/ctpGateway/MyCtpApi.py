@@ -14,6 +14,7 @@ def test():
 
     #连接登录
     gateway = CtpGateway(eventEngine)
+    gateway.registeHandle()
     gateway.connect()
 
     #订阅行情

@@ -2,7 +2,7 @@
 # encoding: UTF-8
 from PyQt4 import QtCore
 import sys
-from trade import *
+from tradeapi import *
 from config import *
 
 def test():

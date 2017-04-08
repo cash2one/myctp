@@ -15,7 +15,7 @@ from copy import copy
 from ctpmdapi import CtpMdApi
 from ctptdapi import CtpTdApi
 from vtGateway import *
-from policy import *
+from tradebar import *
 from config import *
 from weixin import *
 import pandas as pd
@@ -39,12 +39,11 @@ class CtpGateway(VtGateway):
         self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
         self.getPosition = False        #是否已经得到持仓
 
-        self.tradeDict = {}
-        self.initTrade()
+        self.initTradeSetting()
         # self.initRecodeTick()
 
         # 注册事件处理函数
-        self.registeHandle()
+        # self.registeHandle()
         
     #----------------------------------------------------------------------
     def connect(self):
@@ -85,6 +84,7 @@ class CtpGateway(VtGateway):
         # 初始化并启动查询
         self.initQuery()
         self.qryAccount()
+        # self.qryInstrument()
 
     # ----------------------------------------------------------------------
     def isTradeTime(self):
@@ -121,12 +121,10 @@ class CtpGateway(VtGateway):
             return
 
     # ----------------------------------------------------------------------
-    def initTrade(self):
+    def initTradeSetting(self):
+        self.tradeDict = {}
         for symbol in config.tradeSymbol:
             self.tradeDict[symbol] = tradeBar(symbol)
-        if 'm1709' in self.tradeDict.keys():    #豆粕10点止盈
-            self.tradeDict['m1709'].stopWin = True
-            self.tradeDict['m1709'].winTarget = 10
 
     #----------------------------------------------------------------------
     def subscribe(self, subscribeReq):
@@ -152,6 +150,11 @@ class CtpGateway(VtGateway):
     def qryPosition(self):
         """查询持仓"""
         self.tdApi.qryPosition()
+
+    # ----------------------------------------------------------------------
+    def qryInstrument(self):
+        """查询合约信息"""
+        self.tdApi.qryInstrument()
         
     #----------------------------------------------------------------------
     def close(self):
@@ -435,7 +438,7 @@ class CtpGateway(VtGateway):
         log = VtLogData()
         log.gatewayName = self.gatewayName
         log.logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
-            tick.symbol, tick.bidPrice1, config.tradeVolume, self.tradeDict[tick.symbol].openDirection)
+            tick.symbol, tick.bidPrice1, self.tradeDict[tick.symbol].tradeVolume, self.tradeDict[tick.symbol].openDirection)
         self.onLog(log)
         send_msg(log.logContent.encode('utf-8'))
 
@@ -586,15 +589,15 @@ class CtpGateway(VtGateway):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
         self.getPosition = True
-        # for positionName in self.tdApi.posBufferDict.keys():
-        #     print '###############################'
-        #     print 'position info:'
-        #     print self.tdApi.posBufferDict[positionName].pos.symbol
-        #     print self.tdApi.posBufferDict[positionName].pos.direction
-        #     print self.tdApi.posBufferDict[positionName].pos.position
-        #     print self.tdApi.posBufferDict[positionName].pos.frozen
-        #     print self.tdApi.posBufferDict[positionName].pos.price
-        #     print self.tdApi.posBufferDict[positionName].pos.vtPositionName
+        for positionName in self.tdApi.posBufferDict.keys():
+            print '###############################'
+            print 'position info:'
+            print self.tdApi.posBufferDict[positionName].pos.symbol
+            print self.tdApi.posBufferDict[positionName].pos.direction
+            print self.tdApi.posBufferDict[positionName].pos.position
+            print self.tdApi.posBufferDict[positionName].pos.frozen
+            print self.tdApi.posBufferDict[positionName].pos.price
+            print self.tdApi.posBufferDict[positionName].pos.vtPositionName
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
@@ -637,6 +640,9 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def pContract(self, event):
         contract = event.dict_['data']
+        if contract.symbol in self.tradeDict.keys():
+            self.tradeDict[contract.symbol].tickPrice = contract.priceTick
+            self.tradeDict[contract.symbol].size = contract.size
 
     # ----------------------------------------------------------------------
     def registeHandle(self):
@@ -649,6 +655,7 @@ class CtpGateway(VtGateway):
         self.eventEngine.register(EVENT_CONTRACT, self.pContract)
         self.eventEngine.register(EVENT_ACCOUNT, self.pAccount)
         self.eventEngine.register(EVENT_ERROR, self.pError)
+        self.eventEngine.register(EVENT_CONTRACT, self.pContract)
 
 
 ########################################################################
