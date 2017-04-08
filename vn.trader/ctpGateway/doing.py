@@ -2,8 +2,9 @@
 from vtConstant import *
 
 class tradeBar(object):
-    def __init__(self, symbol):
-        self.symbol = symbol
+    def __init__(self, symbol, gateway):
+        self.symbol = symbol                    # 合约
+        self.gateway = gateway
         self.currentMode = EMPTY_INT            # 当前运行模式：1:多，0:空
         self.winTickPrice = EMPTY_INT           # 盈利目标点数(最小价格的倍数)，浮盈达到该点数，止盈
         self.stopTickPrice = EMPTY_INT          # 止损目标点数(最小价格的倍数)，浮亏达到该点数，止损
@@ -14,15 +15,14 @@ class tradeBar(object):
         self.stopLoss = EMPTY_BOOL              # 是否止损
         self.stopCount = EMPTY_INT              # 止损次数
         self.stopWin = EMPTY_BOOL               # 是否止盈
-        self.threshold = 2
         self.tradeVolume = EMPTY_INT            # 交易手数
         self.openFlag = EMPTY_BOOL              # 开仓标志
         self.openDirection = EMPTY_UNICODE      # 开仓方向，多或者空
         self.closeing = EMPTY_BOOL              # 是否存在未成交平仓单
         self.opening = EMPTY_BOOL               # 是否存在未成交开仓单
         self.tradeList = EMPTY_LIST             # 记录交易历史
-        self.todayHigh = 0  # 今天最高价
-        self.todayLow = 1000000  # 今天最低价
+        self.todayHigh = EMPTY_FLOAT            # 今天最高价
+        self.todayLow = EMPTY_FLOAT             # 今天最低价
 
 if __name__ == '__main__':
     b = {}
