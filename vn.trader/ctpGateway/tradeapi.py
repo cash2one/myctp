@@ -178,14 +178,24 @@ class tradeAPI(CtpGateway):
     def tradeOpen(self, tick):
         '''开仓函数'''
 
-        #存在持仓，不开仓
-        for symbol in self.tdApi.posBufferDict.keys():
-            if tick.symbol in symbol:
-                self.tradeDict[tick.symbol].openFlag = False
-                return
-
-        # 未获取到持仓信息或者存在未成交开仓单或者止损次数达到3次
-        if (not self.getPosition) or self.tradeDict[tick.symbol].opening or self.tradeDict[tick.symbol].stopCount >= 3:
+        # 开仓标志位false
+        if not self.tradeDict[tick.symbol].openFlag:
+            self.tradeDict[tick.symbol].openFlag = False
+            return
+        # 未获取到持仓信息
+        if not self.getPosition:
+            self.tradeDict[tick.symbol].openFlag = False
+            return
+        # 存在未成交的开仓单
+        if self.tradeDict[tick.symbol].opening:
+            self.tradeDict[tick.symbol].openFlag = False
+            return
+        # 今天止损达到3次
+        if self.tradeDict[tick.symbol].stopCount >= 3:
+            self.tradeDict[tick.symbol].openFlag = False
+            return
+        # 存在持仓
+        if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) or (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()):
             self.tradeDict[tick.symbol].openFlag = False
             return
 
@@ -270,7 +280,7 @@ class tradeAPI(CtpGateway):
         if trade.symbol not in self.tradeDict.keys():
             return
         if trade.offset == u'开仓':
-            self.tradeDict[trade.symbol].opening = False  # 不存在未成交开仓单
+            self.tradeDict[trade.symbol].opening = False
             self.tradeDict[trade.symbol].todayHigh = 0
             self.tradeDict[trade.symbol].todayLow = 100000
             if trade.direction == u'空':
