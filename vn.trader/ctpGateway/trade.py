@@ -1,89 +1,94 @@
 # encoding: UTF-8
-
-'''
-vn.ctp的gateway接入
-
-考虑到现阶段大部分CTP中的ExchangeID字段返回的都是空值
-vtSymbol直接使用symbol
-'''
-
-
-import os
-import json
-from copy import copy
-
-from ctpmdapi import CtpMdApi
-from ctptdapi import CtpTdApi
-from vtGateway import *
-from policy import *
+from vtConstant import *
 from config import *
 from weixin import *
-import pandas as pd
+import json
+from ctpGateway import *
 
+class tradeBar(object):
+    def __init__(self, symbol):
+        self.symbol = symbol                    # 合约代码
+        self.tickPrice = EMPTY_FLOAT            # 合约价格最小变动单位
+        self.size = EMPTY_INT                   # 每手合约数量
+        self.currentMode = EMPTY_UNICODE        # 当前运行模式：多，空
+        self.winTickPrice = EMPTY_INT           # 盈利目标点数(最小价格的倍数)，浮盈达到该点数，止盈
+        self.stopTickPrice = EMPTY_INT          # 止损目标点数(最小价格的倍数)，浮亏达到该点数，止损
+        self.winTargetPrice = EMPTY_FLOAT       # 止盈目标价位(真实价格)，当前价格达到该价格，止盈
+        self.stopTargetPrice = EMPTY_FLOAT      # 止损目标价位(真实价格)，当前价格达到该价格，止损
+        self.preSellPrice = EMPTY_FLOAT         # 上次平仓价格
+        self.maxDrawDown = EMPTY_INT            # 允许最大回撤点数(最小价格的倍数)，从最高价格回撤达到该点数，止盈
+        self.stopLoss = EMPTY_BOOL              # 是否止损
+        self.stopCount = EMPTY_INT              # 止损次数
+        self.stopWin = EMPTY_BOOL               # 是否止盈
+        self.tradeVolume = EMPTY_INT            # 交易手数
+        self.openFlag = EMPTY_BOOL              # 开仓标志
+        self.openDirection = EMPTY_UNICODE      # 开仓方向，多或者空
+        self.closeing = EMPTY_BOOL              # 是否存在未成交平仓单
+        self.opening = EMPTY_BOOL               # 是否存在未成交开仓单
+        self.tradeList = EMPTY_LIST             # 记录交易历史
+        self.todayHigh = EMPTY_FLOAT            # 今天最高价
+        self.todayLow = EMPTY_FLOAT             # 今天最低价
 
-########################################################################
-class CtpGateway(VtGateway):
-    """CTP接口"""
+        self.loadConfig()
 
-    #----------------------------------------------------------------------
-    def __init__(self, eventEngine, gatewayName='CTP'):
-        """Constructor"""
-        super(CtpGateway, self).__init__(eventEngine, gatewayName)
-        
-        self.mdApi = CtpMdApi(self)     # 行情API
-        self.tdApi = CtpTdApi(self)     # 交易API
-        
-        self.mdConnected = False        # 行情API连接状态，登录完成后为True
-        self.tdConnected = False        # 交易API连接状态
-        
-        self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
-        self.getPosition = False        #是否已经得到持仓
-
-        self.tradeDict = {}
-        # self.initRecodeTick()
-
-        # 注册事件处理函数
-        self.registeHandle()
-        
-    #----------------------------------------------------------------------
-    def connect(self):
-        """连接"""
-        # 载入json文件
-        # fileName = self.gatewayName + '_connect.json'
-        # fileName = os.getcwd() + '/' + fileName
-        fileName = config.CTP_configPath
-        
+    def loadConfig(self):
+        fileName = config.TRADE_configPath
+        # fileName = 'TRADE_setting.json'
         try:
             f = file(fileName)
         except IOError:
-            log = VtLogData()
-            log.gatewayName = self.gatewayName
-            log.logContent = u'读取连接配置出错，请检查'
-            self.onLog(log)
+            logContent = u'读取交易配置出错，请检查'
+            send_msg(logContent.encode('utf-8'))
             return
-        
+
         # 解析json文件
         setting = json.load(f)
-        try:
-            userID = str(setting['userID'])
-            password = str(setting['password'])
-            brokerID = str(setting['brokerID'])
-            tdAddress = str(setting['tdAddress'])
-            mdAddress = str(setting['mdAddress'])
-        except KeyError:
-            log = VtLogData()
-            log.gatewayName = self.gatewayName
-            log.logContent = u'连接配置缺少字段，请检查'
-            self.onLog(log)
-            return            
-        
-        # 创建行情和交易接口对象
-        self.mdApi.connect(userID, password, brokerID, mdAddress)
-        self.tdApi.connect(userID, password, brokerID, tdAddress)
-        
-        # 初始化并启动查询
-        self.initQuery()
-        self.qryAccount()
+        if self.symbol not in setting.keys():
+            logContent = u'没有合约%s的交易配置' % self.symbol
+            send_msg(logContent.encode('utf-8'))
+            return
+        else:
+            try:
+                self.currentMode = setting[self.symbol]['currentMode']
+                self.tickPrice = setting[self.symbol]['tickPrice']
+                self.size = setting[self.symbol]['size']
+                self.winTickPrice = setting[self.symbol]['winTickPrice']
+                self.stopTickPrice = setting[self.symbol]['stopTickPrice']
+                self.winTargetPrice = setting[self.symbol]['winTargetPrice']
+                self.stopTargetPrice = setting[self.symbol]['stopTargetPrice']
+                self.preSellPrice = setting[self.symbol]['preSellPrice']
+                self.maxDrawDown = setting[self.symbol]['maxDrawDown']
+                self.stopLoss = setting[self.symbol]['stopLoss']
+                self.stopCount = setting[self.symbol]['stopCount']
+                self.stopWin = setting[self.symbol]['stopWin']
+                self.tradeVolume = setting[self.symbol]['tradeVolume']
+                self.openFlag = setting[self.symbol]['openFlag']
+                self.openDirection = setting[self.symbol]['openDirection']
+                self.closeing = setting[self.symbol]['closeing']
+                self.opening = setting[self.symbol]['opening']
+                self.todayHigh = setting[self.symbol]['todayHigh']
+                self.todayLow = setting[self.symbol]['todayLow']
+            except KeyError:
+                logContent = u'交易配置缺少字段，请检查'
+                send_msg(logContent.encode('utf-8'))
+                return
+
+class tradeAPI(CtpGateway):
+
+    def __init__(self, eventEngine, gatewayName='CTP'):
+        super(tradeAPI, self).__init__(eventEngine, gatewayName)
+
+        self.getPosition = False  # 是否已经得到持仓
+        self.initTradeSetting()
+
+        # 注册事件处理函数
+        self.registeHandle()
+
+    # ----------------------------------------------------------------------
+    def initTradeSetting(self):
+        self.tradeDict = {}
+        for symbol in config.tradeSymbol:
+            self.tradeDict[symbol] = tradeBar(symbol)
 
     # ----------------------------------------------------------------------
     def isTradeTime(self):
@@ -95,103 +100,6 @@ class CtpGateway(VtGateway):
             return True
         else:
             return False
-
-    # ----------------------------------------------------------------------
-    def loadTradeConfig(self):
-        try:
-            f = file(config.TRADE_configPath)
-        except IOError:
-            log = VtLogData()
-            log.gatewayName = self.gatewayName
-            log.logContent = u'读取交易配置出错，请检查'
-            self.onLog(log)
-            return
-
-        # 解析json文件
-        setting = json.load(f)
-        try:
-            config.currentMode = int(setting['todayMode'])
-            self.tradeList = list(setting['todayTrade'])
-        except KeyError:
-            log = VtLogData()
-            log.gatewayName = self.gatewayName
-            log.logContent = u'交易配置缺少字段，请检查'
-            self.onLog(log)
-            return
-
-    #----------------------------------------------------------------------
-    def subscribe(self, subscribeReq):
-        """订阅行情"""
-        self.mdApi.subscribe(subscribeReq)
-        
-    #----------------------------------------------------------------------
-    def sendOrder(self, orderReq):
-        """发单"""
-        return self.tdApi.sendOrder(orderReq)
-        
-    #----------------------------------------------------------------------
-    def cancelOrder(self, cancelOrderReq):
-        """撤单"""
-        self.tdApi.cancelOrder(cancelOrderReq)
-        
-    #----------------------------------------------------------------------
-    def qryAccount(self):
-        """查询账户资金"""
-        self.tdApi.qryAccount()
-        
-    #----------------------------------------------------------------------
-    def qryPosition(self):
-        """查询持仓"""
-        self.tdApi.qryPosition()
-        
-    #----------------------------------------------------------------------
-    def close(self):
-        """关闭"""
-        if self.mdConnected:
-            self.mdApi.close()
-        if self.tdConnected:
-            self.tdApi.close()
-        
-    #----------------------------------------------------------------------
-    def initQuery(self):
-        """初始化连续查询"""
-        if self.qryEnabled:
-            # 需要循环的查询函数列表
-            self.qryFunctionList = [self.qryAccount, self.qryPosition]      #查询账户信息和持仓信息
-            
-            self.qryCount = 0           # 查询触发倒计时
-            self.qryTrigger = 2         # 查询触发点，查询周期，2为每两秒查询一次
-            self.qryNextFunction = 0    # 上次运行的查询函数索引
-            
-            self.startQuery()
-    
-    #----------------------------------------------------------------------
-    def query(self, event):
-        """注册到事件处理引擎上的查询函数"""
-        self.qryCount += 1
-        
-        if self.qryCount > self.qryTrigger:
-            # 清空倒计时
-            self.qryCount = 0
-            
-            # 执行查询函数
-            function = self.qryFunctionList[self.qryNextFunction]
-            function()
-            
-            # 计算下次查询函数的索引，如果超过了列表长度，则重新设为0
-            self.qryNextFunction += 1
-            if self.qryNextFunction == len(self.qryFunctionList):
-                self.qryNextFunction = 0
-    
-    #----------------------------------------------------------------------
-    def startQuery(self):
-        """启动连续查询"""
-        self.eventEngine.register(EVENT_TIMER, self.query)
-    
-    #----------------------------------------------------------------------
-    def setQryEnabled(self, qryEnabled):
-        """设置是否要启动循环查询"""
-        self.qryEnabled = qryEnabled
 
     # ----------------------------------------------------------------------
     def makeOrder(self, _symbol, _price, _volume, _direction, _offset, _priceType):
@@ -642,27 +550,27 @@ class CtpGateway(VtGateway):
         self.eventEngine.register(EVENT_ERROR, self.pError)
 
 
-########################################################################
-def test():
-    """测试"""
-    from PyQt4 import QtCore
-    import sys
-    
-    def print_log(event):
-        log = event.dict_['data']
-        print ':'.join([log.logTime, log.logContent])
-    
-    app = QtCore.QCoreApplication(sys.argv)    
-
-    eventEngine = EventEngine()
-    eventEngine.register(EVENT_LOG, print_log)
-    eventEngine.start()
-    
-    gateway = CtpGateway(eventEngine)
-    gateway.connect()
-    
-    sys.exit(app.exec_())
-
-
 if __name__ == '__main__':
-    test()
+
+    b = tradeBar('m1709')
+    print b.symbol
+    print b.tickPrice
+    print b.size
+    print b.currentMode
+    print b.winTickPrice
+    print b.stopTickPrice
+    print b.winTargetPrice
+    print b.stopTargetPrice
+    print b.preSellPrice
+    print b.maxDrawDown
+    print b.stopLoss
+    print b.stopCount
+    print b.stopWin
+    print b.tradeVolume
+    print b.openFlag
+    print b.openDirection
+    print b.closeing
+    print b.opening
+    print b.tradeList
+    print b.todayHigh
+    print b.todayLow

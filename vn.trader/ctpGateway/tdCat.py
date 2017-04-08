@@ -2,7 +2,7 @@
 # encoding: UTF-8
 from PyQt4 import QtCore
 import sys
-from ctpGateway import *
+from trade import *
 from config import *
 
 def test():
@@ -13,7 +13,7 @@ def test():
     eventEngine.start()
 
     #连接登录
-    gateway = CtpGateway(eventEngine)
+    gateway = tradeAPI(eventEngine)
     gateway.connect()
 
     #订阅行情
