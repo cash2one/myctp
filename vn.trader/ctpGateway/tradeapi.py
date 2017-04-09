@@ -373,14 +373,6 @@ class tradeAPI(CtpGateway):
         self.onLog(log)
         send_msg(log.logContent.encode('utf-8'))
         self.qryPosition()  #查询并更新持仓
-        if trade.symbol not in self.tradeDict.keys():
-            return
-        if trade.offset == u'开仓':
-            self.tradeDict[trade.symbol].opening = False
-            self.tradeDict[trade.symbol].todayHigh = trade.price
-            self.tradeDict[trade.symbol].todayLow = trade.price
-        else:
-            self.tradeDict[trade.symbol].closeing = False
         # # 记录开仓交易
         # json_dict = {}
         # json_dict['todayMode'] = config.currentMode
@@ -398,6 +390,23 @@ class tradeAPI(CtpGateway):
         log.logContent = u'[订单回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
             order.symbol, order.orderID, order.price, order.totalVolume, order.direction, order.offset, order.status, order.orderTime)
         self.onLog(log)
+        if order.symbol not in self.tradeDict.keys():
+            return
+        if order.offset == u'开仓' and order.status == u'全部成交':
+            self.tradeDict[order.symbol].opening = False  # 不存在未成交开仓单
+            self.tradeDict[order.symbol].todayHigh = 0
+            self.tradeDict[order.symbol].todayLow = 100000
+            if order.direction == u'空':
+                self.tradeDict[order.symbol].tradeList.append(0)
+            elif order.direction == u'多':
+                self.tradeDict[order.symbol].tradeList.append(1)
+            else:
+                pass
+        elif order.offset == u'平仓' and order.status == u'全部成交':
+            self.tradeDict[order.symbol].closeing = False
+            # self.tradeDict[order.symbol].stopCount += 1
+        else:
+            pass
 
     # ----------------------------------------------------------------------
     def pPosition(self,event):
