@@ -23,11 +23,9 @@ class tradeAPI(CtpGateway):
         shortPosition = tick.symbol + '.3'
         if longPosition in self.tdApi.posBufferDict.keys():
             if tick.lastPrice >= self.tdApi.posBufferDict[longPosition].pos.stopWinPrice:  # 最新价格大于止盈价格
-                log = VtLogData()
-                log.gatewayName = self.gatewayName
-                log.logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
-                self.onLog(log)
-                send_msg(log.logContent.encode('utf-8'))
+                logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
+                self.writeLog(logContent)
+                send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -35,11 +33,9 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].tradeList.append(u'多')      # 多单盈利
         if shortPosition == (tick.symbol + '.3'):  # 空单
             if tick.lastPrice <= self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice:  # 最新价格小于止盈价格
-                log = VtLogData()
-                log.gatewayName = self.gatewayName
-                log.logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
-                self.onLog(log)
-                send_msg(log.logContent.encode('utf-8'))
+                logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
+                self.writeLog(logContent)
+                send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -59,11 +55,9 @@ class tradeAPI(CtpGateway):
         shortPosition = tick.symbol + '.3'
         if longPosition in self.tdApi.posBufferDict.keys():
             if tick.lastPrice <= self.tdApi.posBufferDict[longPosition].pos.stopLossPrice:  # 最新价格小于止损价格
-                log = VtLogData()
-                log.gatewayName = self.gatewayName
-                log.logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
-                self.onLog(log)
-                send_msg(log.logContent.encode('utf-8'))
+                logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
+                self.writeLog(logContent)
+                send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -71,11 +65,9 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].closeing = True
         if shortPosition in self.tdApi.posBufferDict.keys():  # 空单
             if tick.lastPrice >= self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice:  # 最新价格大于止损价格
-                log = VtLogData()
-                log.gatewayName = self.gatewayName
-                log.logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
-                self.onLog(log)
-                send_msg(log.logContent.encode('utf-8'))
+                logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
+                self.writeLog(logContent)
+                send_msg(logContent.encode('utf-8'))
                 # 发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -101,11 +93,9 @@ class tradeAPI(CtpGateway):
                     continue
                 if self.tradeDict[tick.symbol].todayHigh >= self.tdApi.posBufferDict[symbol].pos.price / 10 + self.tradeDict[tick.symbol].winTarget:  # 当天价格达到过目标收益
                     if tick.lastPrice <= self.tradeDict[tick.symbol].todayHigh - self.tradeDict[tick.symbol].maxDrawDown:     #达到最大回撤
-                        log = VtLogData()
-                        log.gatewayName = self.gatewayName
-                        log.logContent = u'[摸顶止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
-                        self.onLog(log)
-                        send_msg(log.logContent.encode('utf-8'))
+                        logContent = u'[摸顶止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        self.writeLog(logContent)
+                        send_msg(logContent.encode('utf-8'))
                         #发单
                         orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
@@ -115,11 +105,9 @@ class tradeAPI(CtpGateway):
                     continue
                 if self.tradeDict[tick.symbol].todayLow <= self.tdApi.posBufferDict[symbol].pos.price / 10 - self.tradeDict[tick.symbol].winTarget:  # 当天价格达到过目标收益
                     if tick.lastPrice >= self.tradeDict[tick.symbol].todayLow + self.tradeDict[tick.symbol].maxDrawDown:     #达到最大回撤
-                        log = VtLogData()
-                        log.gatewayName = self.gatewayName
-                        log.logContent = u'[摸顶止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
-                        self.onLog(log)
-                        send_msg(log.logContent.encode('utf-8'))
+                        logContent = u'[摸顶止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
+                        self.writeLog(logContent)
+                        send_msg(logContent.encode('utf-8'))
                         #发单
                         orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[symbol].pos.position)
                         self.sendOrder(orderReq)
@@ -208,7 +196,7 @@ class tradeAPI(CtpGateway):
         print 'lastPrice:',tick.lastPrice
         print 'openPrice:',tick.openPrice
         print 'stopCount:',self.tradeDict[tick.symbol].stopCount
-        print 'closeing:',self.tradeDict[tick.symbol].closeing
+        print 'closeCount:',self.tradeDict[tick.symbol].closeCount
         highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 2
         lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 2
 
@@ -310,12 +298,17 @@ class tradeAPI(CtpGateway):
         self.tradeDict[tick.symbol].openFlag = False
 
         #记录日志
+        logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
+            tick.symbol, tick.bidPrice1, self.tradeDict[tick.symbol].tradeVolume, self.tradeDict[tick.symbol].openDirection)
+        self.writeLog(logContent)
+        send_msg(logContent.encode('utf-8'))
+
+    # ----------------------------------------------------------------------
+    def writeLog(self, loginfo):
         log = VtLogData()
         log.gatewayName = self.gatewayName
-        log.logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
-            tick.symbol, tick.bidPrice1, self.tradeDict[tick.symbol].tradeVolume, self.tradeDict[tick.symbol].openDirection)
+        log.logContent = loginfo
         self.onLog(log)
-        send_msg(log.logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def initRecodeTick(self):
@@ -366,12 +359,10 @@ class tradeAPI(CtpGateway):
     def pTrade(self, event):
         '''成交事件处理机，当订单成交回报时执行'''
         trade = event.dict_['data']
-        log = VtLogData()
-        log.gatewayName = self.gatewayName
-        log.logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
+        logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
             trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID, trade.tradeTime)
-        self.onLog(log)
-        send_msg(log.logContent.encode('utf-8'))
+        self.writeLog(logContent)
+        send_msg(logContent.encode('utf-8'))
         self.qryPosition()  #查询并更新持仓
         # # 记录开仓交易
         # json_dict = {}
@@ -385,11 +376,10 @@ class tradeAPI(CtpGateway):
     def pOrder(self, event):
         '''订单事件处理机，当收到订单回报时执行'''
         order = event.dict_['data']
-        log = VtLogData()
-        log.gatewayName = self.gatewayName
-        log.logContent = u'[订单回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
+        logContent = u'[订单回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
             order.symbol, order.orderID, order.price, order.totalVolume, order.direction, order.offset, order.status, order.orderTime)
-        self.onLog(log)
+        self.writeLog(logContent)
+        # send_msg(logContent.encode('utf-8'))
         if order.symbol not in self.tradeDict.keys():
             return
         if order.offset == u'开仓' and order.status == u'全部成交':
@@ -404,9 +394,14 @@ class tradeAPI(CtpGateway):
                 pass
         elif order.offset == u'平仓' and order.status == u'全部成交':
             self.tradeDict[order.symbol].closeing = False
-            # self.tradeDict[order.symbol].stopCount += 1
+            self.tradeDict[order.symbol].closeCount += 1
         else:
             pass
+        # TODO
+        # 此处考虑到本策略不止盈，所以将平仓次数与止损次数视为相等，不使用此策略时，应该修改。
+        # 不止盈的话，只有程序启动时，平仓次数才会大于止损次数，因此，程序中断后，通过此处获取当天止损次数
+        if self.tradeDict[order.symbol].closeCount > self.tradeDict[order.symbol].stopCount:
+            self.tradeDict[order.symbol].stopCount = self.tradeDict[order.symbol].closeCount
 
     # ----------------------------------------------------------------------
     def pPosition(self,event):

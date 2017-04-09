@@ -19,6 +19,7 @@ class tradeBar(object):
         self.stopLoss = EMPTY_BOOL              # 是否止损
         self.stopCount = EMPTY_INT              # 止损次数
         self.stopWin = EMPTY_BOOL               # 是否止盈
+        self.closeCount = EMPTY_INT             # 平仓次数
         self.tradeVolume = EMPTY_INT            # 交易手数
         self.openFlag = EMPTY_BOOL              # 开仓标志
         self.openDirection = EMPTY_UNICODE      # 开仓方向，多或者空
