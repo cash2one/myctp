@@ -6,9 +6,6 @@ class tradeAPI(CtpGateway):
     def __init__(self, eventEngine, gatewayName='CTP'):
         super(tradeAPI, self).__init__(eventEngine, gatewayName)
 
-        self.stopLong = False       #不再开多仓
-        self.stopShort = False      #不再开空仓
-
         self.accountInfo = VtAccountData()
         self.recodeAccount = False
         # 注册事件处理函数
@@ -180,10 +177,10 @@ class tradeAPI(CtpGateway):
 
         #涨停不开多单
         if tick.highPrice >= tick.upperLimit:
-            self.stopLong = True
+            self.tradeDict[tick.symbol].stopLong = True
         #跌停不开空单
         if tick.lowPrice <= tick.lowerLimit:
-            self.stopShort = True
+            self.tradeDict[tick.symbol].stopShort = True
 
         # 收盘清仓
         nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
@@ -200,8 +197,8 @@ class tradeAPI(CtpGateway):
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
                 self.sendOrder(orderReq)
                 self.tradeDict[tick.symbol].closeing = True
-            self.stopLong = True
-            self.stopShort = True
+            self.tradeDict[tick.symbol].stopLong = True
+            self.tradeDict[tick.symbol].stopShort = True
 
     # ----------------------------------------------------------------------
     def shortPolicy2(self, tick):
@@ -265,8 +262,8 @@ class tradeAPI(CtpGateway):
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
                 self.sendOrder(orderReq)
                 self.tradeDict[tick.symbol].closeing = True
-            self.stopLong = True
-            self.stopShort = True
+            self.tradeDict[tick.symbol].stopLong = True
+            self.tradeDict[tick.symbol].stopShort = True
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
@@ -276,11 +273,11 @@ class tradeAPI(CtpGateway):
         if not self.tradeDict[tick.symbol].openFlag:
             return
         # 停止开多仓
-        if self.stopLong and (self.tradeDict[tick.symbol].openDirection == u'多'):
+        if self.tradeDict[tick.symbol].stopLong and (self.tradeDict[tick.symbol].openDirection == u'多'):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 停止开空仓
-        if self.stopShort and (self.tradeDict[tick.symbol].openDirection == u'空'):
+        if self.tradeDict[tick.symbol].stopShort and (self.tradeDict[tick.symbol].openDirection == u'空'):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 未获取到持仓信息

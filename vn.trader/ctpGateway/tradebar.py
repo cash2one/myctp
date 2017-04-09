@@ -27,6 +27,8 @@ class tradeBar(object):
         self.tradeList = EMPTY_LIST             # 记录交易历史
         self.todayHigh = EMPTY_FLOAT            # 今天最高价
         self.todayLow = EMPTY_FLOAT             # 今天最低价
+        self.stopLong = EMPTY_BOOL              # 不再开多仓
+        self.stopShort = EMPTY_BOOL             # 不再开空仓
 
         self.loadConfig()
 
