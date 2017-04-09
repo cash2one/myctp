@@ -6,6 +6,8 @@ class tradeAPI(CtpGateway):
     def __init__(self, eventEngine, gatewayName='CTP'):
         super(tradeAPI, self).__init__(eventEngine, gatewayName)
 
+        self.accountInfo = VtAccountData()
+        self.recodeAccount = False
         # 注册事件处理函数
         self.registeHandle()
 
@@ -393,6 +395,24 @@ class tradeAPI(CtpGateway):
     def pAccount(self, event):
         '''账户信息事件处理机，当收到账户信息时执行'''
         account = event.dict_['data']
+        self.accountInfo.accountID = account.accountID
+        self.accountInfo.preBalance = account.preBalance    # 昨日账户结算净值
+        self.accountInfo.balance = account.balance          # 账户净值
+        self.accountInfo.available = account.available      # 可用资金
+        self.accountInfo.commission = account.commission    # 今日手续费
+        self.accountInfo.margin = account.margin            # 保证金占用
+        self.accountInfo.closeProfit = account.closeProfit  # 平仓盈亏
+        self.accountInfo.positionProfit = account.positionProfit  # 持仓盈亏
+
+        nowTime = datetime.now().time()
+        if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (not self.recodeAccount):
+            fp = file(config.BALANCE_file, 'a+')
+            today = datetime.now().date().strftime('%Y-%m-%d')
+            info = today + ',' + str(self.accountInfo.accountID) + ',' + str(self.accountInfo.preBalance) + ',' +\
+                str(self.accountInfo.balance) + ',' + str(self.accountInfo.available) + ',' +\
+                str(self.accountInfo.commission) + ',' + str(self.accountInfo.closeProfit) + '\n'
+            fp.write(info)
+            fp.close()
 
     # ----------------------------------------------------------------------
     def registeHandle(self):
