@@ -136,8 +136,8 @@ class tradeAPI(CtpGateway):
         print 'openPrice:',tick.openPrice
         print 'stopCount:',self.tradeDict[tick.symbol].stopCount
         print 'closeing:',self.tradeDict[tick.symbol].closeing
-        highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 3
-        lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 3
+        highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 2
+        lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 2
 
         longPosition = tick.symbol + '.2'
         shortPosition = tick.symbol + '.3'
