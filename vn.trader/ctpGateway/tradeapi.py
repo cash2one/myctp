@@ -413,6 +413,7 @@ class tradeAPI(CtpGateway):
                 str(self.accountInfo.commission) + ',' + str(self.accountInfo.closeProfit) + '\n'
             fp.write(info)
             fp.close()
+            self.recodeAccount = True
 
     # ----------------------------------------------------------------------
     def registeHandle(self):
