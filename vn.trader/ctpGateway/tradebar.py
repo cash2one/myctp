@@ -75,9 +75,6 @@ class tradeBar(object):
                 return
 
 if __name__ == '__main__':
-    if 2 > 3:
-        print '1'
-    elif 6 > 5:
-        print '2'
-    else:
-        pass
+    a = tradeBar('RM709')
+    print a.tickPrice
+    print a.stopShort
