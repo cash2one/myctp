@@ -2,6 +2,7 @@
 # encoding: UTF-8
 import urllib,json
 import pandas as pd
+import numpy as np
 
 
 class hist():
@@ -78,20 +79,42 @@ class hist():
         self.data['dea'] = self.data['diff'].ewm(ignore_na=False, span=m, min_periods=0, adjust=True).mean()
         self.data['macd'] = (self.data['diff'] - self.data['dea']) * 2
 
+def p1():
+    a = hist()
+    a.get_K_data('RM0', period='1d')
+    a.get_macd()
+    a.data.ix[a.data['macd'].shift(1) > a.data['macd'].shift(2), 'mode'] = 1
+    a.data.ix[a.data['macd'].shift(1) < a.data['macd'].shift(2), 'mode'] = 0
 
-a = hist()
-a.get_K_data('RM0', period='1d')
-a.get_macd()
-a.data.ix[a.data['macd'].shift(1) > a.data['macd'].shift(2), 'mode'] = 1
-a.data.ix[a.data['macd'].shift(1) < a.data['macd'].shift(2), 'mode'] = 0
+    a.data.ix[(a.data['mode'] == 1) & ((a.data['open'] - a.data['low']) > 25), 'good'] = 1
+    a.data.ix[(a.data['mode'] == 0) & ((a.data['high'] - a.data['open']) > 25), 'good'] = 1
 
-a.data.ix[(a.data['mode'] == 1) & ((a.data['open'] - a.data['low']) > 25), 'good'] = 1
-a.data.ix[(a.data['mode'] == 0) & ((a.data['high'] - a.data['open']) > 25), 'good'] = 1
+    a.data.ix[(a.data['mode'] == 1) & ((a.data['high'] - a.data['open']) > 20), 'good'] = 1
+    a.data.ix[(a.data['mode'] == 0) & ((a.data['open'] - a.data['low']) > 20), 'good'] = 1
+    a.data['good'].fillna(0, inplace=True)
+    print a.data
+    print a.data['good'].sum()
 
-a.data.ix[(a.data['mode'] == 1) & ((a.data['high'] - a.data['open']) > 20), 'good'] = 1
-a.data.ix[(a.data['mode'] == 0) & ((a.data['open'] - a.data['low']) > 20), 'good'] = 1
+def p2(symbol):
+    """计算平均涨跌幅度"""
+    a = hist()
+    a.get_K_data(symbol, period='1d')
+    a.data.ix[a.data['open'] == 0, 'open'] = np.nan
+    a.data.dropna(inplace=True)
+    a.data['h-l'] = abs(a.data['open'] - a.data['close']) / a.data['open']
+    # print a.data
+    return a.data['h-l'].mean(),a.data['volume'].mean()
 
 
-a.data['good'].fillna(0, inplace=True)
-print a.data
-print a.data['good'].sum()
+
+if __name__ == '__main__':
+    symbol = ['A0', 'B0', 'M0', 'Y0', 'C0', 'P0', 'V0', 'L0', 'PP0', 'J0', 'JM0', 'I0', 'JD0', 'BB0','FB0',
+              'WH0', 'PM0', 'RI0', 'JR0', 'CF0', 'SR0', 'OI0', 'RS0', 'RM0', 'PTA0', 'ME0', 'FG0', 'TC0', 'LR0',
+              'SM0', 'SF0', 'CU0', 'AL0', 'ZN0', 'PB0', 'AU0', 'AG0', 'RB0', 'WR0', 'HC0', 'RU0', 'FU0', 'BU0']
+    mn = {}
+    for s in symbol:
+        mn[s] = {}
+        mn[s]['h-l'],mn[s]['volume'] = p2(s)
+    # b = sorted(mn.items(), key=lambda asd:asd[1], reverse=True)
+    df = pd.DataFrame(mn)
+    df.to_csv(u'期货合约平均波动.csv')
