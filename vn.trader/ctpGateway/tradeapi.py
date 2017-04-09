@@ -124,6 +124,9 @@ class tradeAPI(CtpGateway):
         print 'openPrice:',tick.openPrice
         print 'stopCount:',self.tradeDict[tick.symbol].stopCount
         print 'closeing:',self.tradeDict[tick.symbol].closeing
+        # 未获取到持仓信息
+        if not self.getPosition:
+            return
         highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 2
         lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 2
 
@@ -266,10 +269,6 @@ class tradeAPI(CtpGateway):
             return
         # 停止开空仓
         if self.tradeDict[tick.symbol].stopShort and (self.tradeDict[tick.symbol].openDirection == u'空'):
-            self.tradeDict[tick.symbol].openFlag = False
-            return
-        # 未获取到持仓信息
-        if not self.getPosition:
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 存在未成交的开仓单
