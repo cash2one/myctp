@@ -228,7 +228,10 @@ class CtpGateway(VtGateway):
     def makeBuyCloseOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
         '''买平单'''
         # 日内交易，平今仓
-        return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_CLOSETODAY, _priceType)
+        if _symbol.startswith('hc') or _symbol.startswith('ru') or _symbol.startswith('bu') or _symbol.startswith('zn'):
+            return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_CLOSETODAY, _priceType)
+        else:
+            return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_CLOSE, _priceType)
 
     # ----------------------------------------------------------------------
     def makeSellOpenOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
@@ -238,7 +241,10 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def makeSellCloseOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
         '''卖平单'''
-        return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_CLOSETODAY, _priceType)
+        if _symbol.startswith('hc') or _symbol.startswith('ru') or _symbol.startswith('bu') or _symbol.startswith('zn'):
+            return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_CLOSETODAY, _priceType)
+        else:
+            return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_CLOSE, _priceType)
 
     # ----------------------------------------------------------------------
     def tradeStopWin(self, tick):
