@@ -36,8 +36,9 @@ class CtpGateway(VtGateway):
         self.mdConnected = False        # 行情API连接状态，登录完成后为True
         self.tdConnected = False        # 交易API连接状态
         
-        self.qryEnabled = True         # 是否要启动循环查询，查询账户信息和持仓信息
+        self.qryEnabled = True          # 是否要启动循环查询，查询账户信息和持仓信息
         self.getPosition = False        #是否已经得到持仓
+        self.sendOrderMsg = False       #非交易时间，不发送订单消息
 
         self.initTradeSetting()
         # self.initRecodeTick()

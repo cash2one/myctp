@@ -341,6 +341,7 @@ class tradeAPI(CtpGateway):
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
+        self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
         # 策略函数
         self.shortPolicy1(tick)
@@ -358,27 +359,17 @@ class tradeAPI(CtpGateway):
     def pTrade(self, event):
         '''成交事件处理机，当订单成交回报时执行'''
         trade = event.dict_['data']
-        logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
-            trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID, trade.tradeTime)
-        self.writeLog(logContent)
-        send_msg(logContent.encode('utf-8'))
         self.qryPosition()  #查询并更新持仓
-        # # 记录开仓交易
-        # json_dict = {}
-        # json_dict['todayMode'] = config.currentMode
-        # json_dict['todayTrade'] = self.tradeList
-        # f = open(config.TRADE_configPath, 'w')
-        # f.write(json.dumps(json_dict))
-        # f.close()
+        if self.sendOrderMsg:
+            logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
+                trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID,trade.tradeTime)
+            self.writeLog(logContent)
+            send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def pOrder(self, event):
         '''订单事件处理机，当收到订单回报时执行'''
         order = event.dict_['data']
-        logContent = u'[订单回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
-            order.symbol, order.orderID, order.price, order.totalVolume, order.direction, order.offset, order.status, order.orderTime)
-        self.writeLog(logContent)
-        # send_msg(logContent.encode('utf-8'))
         if order.symbol not in self.tradeDict.keys():
             return
         if order.offset == u'开仓' and order.status == u'全部成交':
@@ -401,6 +392,12 @@ class tradeAPI(CtpGateway):
         # 不止盈的话，只有程序启动时，平仓次数才会大于止损次数，因此，程序中断后，通过此处获取当天止损次数
         if self.tradeDict[order.symbol].closeCount > self.tradeDict[order.symbol].stopCount:
             self.tradeDict[order.symbol].stopCount = self.tradeDict[order.symbol].closeCount
+
+        if self.sendOrderMsg:
+            logContent = u'[订单回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
+                order.symbol, order.orderID, order.price, order.totalVolume, order.direction, order.offset,order.status, order.orderTime)
+            self.writeLog(logContent)
+            # send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def pPosition(self,event):
