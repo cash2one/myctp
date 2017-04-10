@@ -227,6 +227,7 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def makeBuyCloseOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
         '''买平单'''
+        # 日内交易，平今仓
         return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_CLOSETODAY, _priceType)
 
     # ----------------------------------------------------------------------
@@ -236,7 +237,7 @@ class CtpGateway(VtGateway):
 
     # ----------------------------------------------------------------------
     def makeSellCloseOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
-        '''卖开单'''
+        '''卖平单'''
         return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_CLOSETODAY, _priceType)
 
     # ----------------------------------------------------------------------
