@@ -84,7 +84,7 @@ class CtpGateway(VtGateway):
         # 初始化并启动查询
         self.initQuery()
         self.qryAccount()
-        # self.qryInstrument()
+        self.qryInstrument()
 
     # ----------------------------------------------------------------------
     def isTradeTime(self):

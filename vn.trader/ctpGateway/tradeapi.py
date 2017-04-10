@@ -415,6 +415,8 @@ class tradeAPI(CtpGateway):
             print self.tdApi.posBufferDict[positionName].pos.position
             print self.tdApi.posBufferDict[positionName].pos.frozen
             print self.tdApi.posBufferDict[positionName].pos.price
+            print self.tdApi.posBufferDict[positionName].pos.stopLossPrice
+            print self.tdApi.posBufferDict[positionName].pos.stopWinPrice
             print self.tdApi.posBufferDict[positionName].pos.vtPositionName
 
     # ----------------------------------------------------------------------
