@@ -591,15 +591,15 @@ class CtpGateway(VtGateway):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
         self.getPosition = True
-        for positionName in self.tdApi.posBufferDict.keys():
-            print '###############################'
-            print 'position info:'
-            print self.tdApi.posBufferDict[positionName].pos.symbol
-            print self.tdApi.posBufferDict[positionName].pos.direction
-            print self.tdApi.posBufferDict[positionName].pos.position
-            print self.tdApi.posBufferDict[positionName].pos.frozen
-            print self.tdApi.posBufferDict[positionName].pos.price
-            print self.tdApi.posBufferDict[positionName].pos.vtPositionName
+        # for positionName in self.tdApi.posBufferDict.keys():
+        #     print '###############################'
+        #     print 'position info:'
+        #     print self.tdApi.posBufferDict[positionName].pos.symbol
+        #     print self.tdApi.posBufferDict[positionName].pos.direction
+        #     print self.tdApi.posBufferDict[positionName].pos.position
+        #     print self.tdApi.posBufferDict[positionName].pos.frozen
+        #     print self.tdApi.posBufferDict[positionName].pos.price
+        #     print self.tdApi.posBufferDict[positionName].pos.vtPositionName
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
@@ -642,13 +642,13 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def pContract(self, event):
         contract = event.dict_['data']
-        print "============================================="
-        print contract.symbol
-        print contract.priceTick
-        print contract.size
-        if contract.symbol in self.tradeDict.keys():
-            self.tradeDict[contract.symbol].tickPrice = contract.priceTick
-            self.tradeDict[contract.symbol].size = contract.size
+        # print "============================================="
+        # print contract.symbol
+        # print contract.priceTick
+        # print contract.size
+        # if contract.symbol in self.tradeDict.keys():
+        #     self.tradeDict[contract.symbol].tickPrice = contract.priceTick
+        #     self.tradeDict[contract.symbol].size = contract.size
 
     # ----------------------------------------------------------------------
     def registeHandle(self):

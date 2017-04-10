@@ -119,12 +119,12 @@ class tradeAPI(CtpGateway):
     # ----------------------------------------------------------------------
     def shortPolicy1(self, tick):
         """持仓到收盘"""
-        print '============================='
-        print 'symbol:',tick.symbol
-        print 'lastPrice:',tick.lastPrice
-        print 'openPrice:',tick.openPrice
-        print 'stopCount:',self.tradeDict[tick.symbol].stopCount
-        print 'closeing:',self.tradeDict[tick.symbol].closeing
+        # print '============================='
+        # print 'symbol:',tick.symbol
+        # print 'lastPrice:',tick.lastPrice
+        # print 'openPrice:',tick.openPrice
+        # print 'stopCount:',self.tradeDict[tick.symbol].stopCount
+        # print 'closeing:',self.tradeDict[tick.symbol].closeing
 
         highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 2
         lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 2
@@ -134,7 +134,7 @@ class tradeAPI(CtpGateway):
 
         # 存在空单,设置止损价位，打开止损开关
         if shortPosition in self.tdApi.posBufferDict.keys():
-            print 'step1'
+            # print 'step1'
             self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = highThreshold
             self.tradeDict[tick.symbol].stopLoss = True
             # 跌停价止盈
@@ -142,7 +142,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在空单，且价格达到低阈值，开空单
         elif tick.lastPrice < lowThreshold:
-            print 'step2'
+            # print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'空'
         else:
@@ -151,7 +151,7 @@ class tradeAPI(CtpGateway):
 
         # 存在多单,设置止损价位，打开止损开关
         if longPosition in self.tdApi.posBufferDict.keys():
-            print 'step3'
+            # print 'step3'
             self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = lowThreshold
             self.tradeDict[tick.symbol].stopLoss = True
             # 涨停价止盈
@@ -159,7 +159,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在多单，且价格达到高阈值，开多单
         elif tick.lastPrice > highThreshold:
-            print 'step4'
+            # print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'多'
         else:
@@ -195,12 +195,12 @@ class tradeAPI(CtpGateway):
     # ----------------------------------------------------------------------
     def shortPolicy2(self, tick):
         """两边10点止盈"""
-        print '============================='
-        print 'symbol:',tick.symbol
-        print 'lastPrice:',tick.lastPrice
-        print 'openPrice:',tick.openPrice
-        print 'stopCount:',self.tradeDict[tick.symbol].stopCount
-        print 'closeCount:',self.tradeDict[tick.symbol].closeCount
+        # print '============================='
+        # print 'symbol:',tick.symbol
+        # print 'lastPrice:',tick.lastPrice
+        # print 'openPrice:',tick.openPrice
+        # print 'stopCount:',self.tradeDict[tick.symbol].stopCount
+        # print 'closeCount:',self.tradeDict[tick.symbol].closeCount
         highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 2
         lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 2
 
@@ -209,7 +209,7 @@ class tradeAPI(CtpGateway):
 
         # 存在空单,设置止损止盈价位，打开止损止盈开关
         if shortPosition in self.tdApi.posBufferDict.keys():
-            print 'step1'
+            # print 'step1'
             self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = highThreshold
             self.tradeDict[tick.symbol].stopLoss = True
             self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = \
@@ -217,7 +217,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在空单，且价格达到低阈值，开空单
         elif (tick.lastPrice < lowThreshold) and (u'空' not in self.tradeDict[tick.symbol].tradeList):
-            print 'step2'
+            # print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'空'
         else:
@@ -225,7 +225,7 @@ class tradeAPI(CtpGateway):
 
         # 存在多单,设置止损止盈价位，打开止损止盈开关
         if longPosition in self.tdApi.posBufferDict.keys():
-            print 'step3'
+            # print 'step3'
             self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = lowThreshold
             self.tradeDict[tick.symbol].stopLoss = True
             self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = \
@@ -233,7 +233,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在多单，且价格达到高阈值，开多单
         elif (tick.lastPrice > highThreshold) and (u'多' not in self.tradeDict[tick.symbol].tradeList):
-            print 'step4'
+            # print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'多'
         else:
@@ -406,17 +406,17 @@ class tradeAPI(CtpGateway):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
         self.getPosition = True
-        for positionName in self.tdApi.posBufferDict.keys():
-            print '###############################'
-            print 'position info:'
-            print self.tdApi.posBufferDict[positionName].pos.symbol
-            print self.tdApi.posBufferDict[positionName].pos.direction
-            print self.tdApi.posBufferDict[positionName].pos.position
-            print self.tdApi.posBufferDict[positionName].pos.frozen
-            print self.tdApi.posBufferDict[positionName].pos.price
-            print self.tdApi.posBufferDict[positionName].pos.stopLossPrice
-            print self.tdApi.posBufferDict[positionName].pos.stopWinPrice
-            print self.tdApi.posBufferDict[positionName].pos.vtPositionName
+        # for positionName in self.tdApi.posBufferDict.keys():
+        #     print '###############################'
+        #     print 'position info:'
+        #     print self.tdApi.posBufferDict[positionName].pos.symbol
+        #     print self.tdApi.posBufferDict[positionName].pos.direction
+        #     print self.tdApi.posBufferDict[positionName].pos.position
+        #     print self.tdApi.posBufferDict[positionName].pos.frozen
+        #     print self.tdApi.posBufferDict[positionName].pos.price
+        #     print self.tdApi.posBufferDict[positionName].pos.stopLossPrice
+        #     print self.tdApi.posBufferDict[positionName].pos.stopWinPrice
+        #     print self.tdApi.posBufferDict[positionName].pos.vtPositionName
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
