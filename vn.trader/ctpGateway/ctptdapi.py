@@ -354,6 +354,12 @@ class CtpTdApi(TdApi):
             log.logContent = u'交易合约信息获取完成'
             self.gateway.onLog(log)
 
+        err = VtErrorData()
+        err.gatewayName = self.gatewayName
+        err.errorID = error['ErrorID']
+        err.errorMsg = error['ErrorMsg'].decode('gbk')
+        self.gateway.onError(err)
+
     # ----------------------------------------------------------------------
     def onRspQryDepthMarketData(self, data, error, n, last):
         """"""
