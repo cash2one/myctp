@@ -84,7 +84,7 @@ class CtpGateway(VtGateway):
         # 初始化并启动查询
         self.initQuery()
         self.qryAccount()
-        self.qryInstrument()
+        # self.qryInstrument()
 
     # ----------------------------------------------------------------------
     def isTradeTime(self):
@@ -125,6 +125,7 @@ class CtpGateway(VtGateway):
         self.tradeDict = {}
         for symbol in config.tradeSymbol:
             self.tradeDict[symbol] = tradeBar(symbol)
+            self.tdApi.symbolSizeDict[symbol] = self.tradeDict[symbol].size
 
     #----------------------------------------------------------------------
     def subscribe(self, subscribeReq):
@@ -659,7 +660,7 @@ class CtpGateway(VtGateway):
         self.eventEngine.register(EVENT_CONTRACT, self.pContract)
         self.eventEngine.register(EVENT_ACCOUNT, self.pAccount)
         self.eventEngine.register(EVENT_ERROR, self.pError)
-        self.eventEngine.register(EVENT_CONTRACT, self.pContract)
+        # self.eventEngine.register(EVENT_CONTRACT, self.pContract)
 
 
 ########################################################################
