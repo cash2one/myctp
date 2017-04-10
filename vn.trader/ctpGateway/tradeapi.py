@@ -411,13 +411,13 @@ class tradeAPI(CtpGateway):
             print '###############################'
             print 'position info:'
             print self.tdApi.posBufferDict[positionName].pos.symbol
-            print self.tdApi.posBufferDict[positionName].pos.direction
+            print self.tdApi.posBufferDict[positionName].pos.direction.encode('utf-8')
             print self.tdApi.posBufferDict[positionName].pos.position
             print self.tdApi.posBufferDict[positionName].pos.frozen
             print self.tdApi.posBufferDict[positionName].pos.price
             print self.tdApi.posBufferDict[positionName].pos.stopLossPrice
             print self.tdApi.posBufferDict[positionName].pos.stopWinPrice
-            print self.tdApi.posBufferDict[positionName].pos.vtPositionName
+            print self.tdApi.posBufferDict[positionName].pos.vtPositionName.encode('utf-8')
 
     # ----------------------------------------------------------------------
     def pAccount(self, event):
