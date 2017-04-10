@@ -384,7 +384,8 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[order.symbol].tradeList.append(1)
             else:
                 pass
-        elif order.offset == u'平仓' and order.status == u'全部成交':
+        # 非开仓，全部成交，视为平仓全部成交，因为可能为未知或者平今，所以没有限定为平仓
+        elif order.status == u'全部成交':
             self.tradeDict[order.symbol].closeing = False
             self.tradeDict[order.symbol].closeCount += 1
         else:
