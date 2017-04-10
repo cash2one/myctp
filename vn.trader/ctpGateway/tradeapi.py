@@ -8,6 +8,7 @@ class tradeAPI(CtpGateway):
 
         self.accountInfo = VtAccountData()
         self.recodeAccount = False
+        self.tickDf = {}
         # 注册事件处理函数
         self.registeHandle()
 
@@ -124,9 +125,7 @@ class tradeAPI(CtpGateway):
         print 'openPrice:',tick.openPrice
         print 'stopCount:',self.tradeDict[tick.symbol].stopCount
         print 'closeing:',self.tradeDict[tick.symbol].closeing
-        # 未获取到持仓信息
-        if not self.getPosition:
-            return
+
         highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 2
         lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 2
 
@@ -313,28 +312,28 @@ class tradeAPI(CtpGateway):
     def initRecodeTick(self):
         '''重置实时行情缓存'''
         self.tickCount = 0
-        self.tickDF1 = pd.DataFrame(columns=['symbol', 'date', 'time', 'lastPrice', 'lastVolume', 'bidPrice1', 'askPrice1', 'bidVolume1', 'askVolume1'])
-        self.tickDF2 = pd.DataFrame(columns=['symbol', 'date', 'time', 'lastPrice', 'lastVolume', 'bidPrice1', 'askPrice1', 'bidVolume1', 'askVolume1'])
+        for symbol in config.tradeSymbol:
+            self.tickDf[symbol] = pd.DataFrame(columns=['symbol', 'date', 'time', 'lastPrice', 'lastVolume', 'bidPrice1', 'askPrice1', 'bidVolume1', 'askVolume1'])
 
     # ----------------------------------------------------------------------
     def recodeTick(self, tick):
         '''记录实时行情'''
         newTick = pd.DataFrame([[tick.symbol, tick.date, tick.time, tick.lastPrice, tick.lastVolume, tick.bidPrice1, tick.askPrice1, tick.bidVolume1, tick.askVolume1]],
                            columns=['symbol', 'date','time','lastPrice', 'lastVolume','bidPrice1','askPrice1','bidVolume1', 'askVolume1'])
-        if tick.symbol == config.tradeSymbol:
-            self.tickDF1 = pd.concat([self.tickDF1, newTick], ignore_index=True)
-        else: pass
+
+        self.tickDf[tick.symbol] = pd.concat([self.tickDf[tick.symbol], newTick], ignore_index=True)
         self.tickCount += 1
-        if self.tickCount >= 50:
+        if self.tickCount >= 50 * len(config.tradeSymbol):
             self.today = datetime.now().date().strftime('%Y-%m-%d')
-            # filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-            filename2 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
-            if os.path.exists(filename2):
-                tickBuffer2 = pd.read_csv(filename2)
-                tickBuffer2 = pd.concat([tickBuffer2, self.tickDF2], ignore_index=True)
-                tickBuffer2.to_csv(filename2, index=False)
-            else:
-                self.tickDF2.to_csv(filename2, index=False)
+            for symbol in self.tickDf.keys():
+                # filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
+                filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
+                if os.path.exists(filename):
+                    tickBuffer = pd.read_csv(filename)
+                    tickBuffer = pd.concat([tickBuffer, self.tickDf[symbol]], ignore_index=True)
+                    tickBuffer.to_csv(filename, index=False)
+                else:
+                    self.tickDf[symbol].to_csv(filename, index=False)
             self.initRecodeTick()
 
     # ----------------------------------------------------------------------
@@ -343,8 +342,9 @@ class tradeAPI(CtpGateway):
         tick = event.dict_['data']
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
-        # 策略函数
-        self.shortPolicy1(tick)
+        # 获取到持仓信息后执行策略
+        if self.getPosition:
+            self.shortPolicy1(tick)
 
         # 止损
         self.tradeStopLoss(tick)
@@ -430,7 +430,8 @@ class tradeAPI(CtpGateway):
         self.accountInfo.positionProfit = account.positionProfit  # 持仓盈亏
 
         nowTime = datetime.now().time()
-        if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (not self.recodeAccount):
+        if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (nowTime < datetime.strptime('15:01:30', '%H:%M:%S').time())\
+                and (not self.recodeAccount):
             fp = file(config.BALANCE_file, 'a+')
             today = datetime.now().date().strftime('%Y-%m-%d')
             info = today + ',' + str(self.accountInfo.accountID) + ',' + str(self.accountInfo.preBalance) + ',' +\
