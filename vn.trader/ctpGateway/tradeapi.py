@@ -31,7 +31,7 @@ class tradeAPI(CtpGateway):
                 self.sendOrder(orderReq)
                 self.tradeDict[tick.symbol].closeing = True
                 self.tradeDict[tick.symbol].tradeList.append(u'多')      # 多单盈利
-        if shortPosition == (tick.symbol + '.3'):  # 空单
+        if shortPosition in self.tdApi.posBufferDict.keys():  # 空单
             if tick.lastPrice <= self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice:  # 最新价格小于止盈价格
                 logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.writeLog(logContent)
