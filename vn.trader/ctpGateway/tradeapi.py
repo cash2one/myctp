@@ -153,10 +153,10 @@ class tradeAPI(CtpGateway):
         # 存在多单,设置止损价位，打开止损开关
         if longPosition in self.tdApi.posBufferDict.keys():
             print 'step3'
-            self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = lowThreshold
+            self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = lowThreshold
             self.tradeDict[tick.symbol].stopLoss = True
             # 涨停价止盈
-            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = tick.upperLimit
+            self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = tick.upperLimit
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在多单，且价格达到高阈值，开多单
         elif tick.lastPrice > highThreshold:
