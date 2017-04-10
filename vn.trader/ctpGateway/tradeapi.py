@@ -175,6 +175,10 @@ class tradeAPI(CtpGateway):
         # 收盘清仓
         nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
         if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
+            self.tradeDict[tick.symbol].stopLong = True
+            self.tradeDict[tick.symbol].stopShort = True
+            if self.tradeDict[tick.symbol].closeing == True:
+                return
             if tick.symbol + '.3' in self.tdApi.posBufferDict.keys(): #存在空单
                 #空单清仓
                 # print 'step9'
@@ -187,8 +191,6 @@ class tradeAPI(CtpGateway):
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
                 self.sendOrder(orderReq)
                 self.tradeDict[tick.symbol].closeing = True
-            self.tradeDict[tick.symbol].stopLong = True
-            self.tradeDict[tick.symbol].stopShort = True
 
     # ----------------------------------------------------------------------
     def shortPolicy2(self, tick):
