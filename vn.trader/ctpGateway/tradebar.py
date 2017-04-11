@@ -30,6 +30,7 @@ class tradeBar(object):
         self.todayLow = EMPTY_FLOAT             # 今天最低价
         self.stopLong = EMPTY_BOOL              # 不再开多仓
         self.stopShort = EMPTY_BOOL             # 不再开空仓
+        self.tickCount = EMPTY_INT
 
         self.loadConfig()
 

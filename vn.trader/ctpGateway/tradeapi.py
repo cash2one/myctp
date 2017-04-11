@@ -351,6 +351,9 @@ class tradeAPI(CtpGateway):
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
+        if self.tradeDict[tick.symbol].tickCount <= 0:
+            self.tradeDict[tick.symbol].tickCount += 1
+            return
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
         # 获取到持仓信息后执行策略
