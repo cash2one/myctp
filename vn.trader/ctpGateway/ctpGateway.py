@@ -52,7 +52,7 @@ class CtpGateway(VtGateway):
         # 载入json文件
         # fileName = self.gatewayName + '_connect.json'
         # fileName = os.getcwd() + '/' + fileName
-        fileName = config.CTP_configPath
+        fileName = os.getcwd() + '/' + config.CTP_configPath
         
         try:
             f = file(fileName)
