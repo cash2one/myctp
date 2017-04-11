@@ -489,7 +489,7 @@ class tradeAPI(CtpGateway):
         nowTime = datetime.now().time()
         if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (nowTime < datetime.strptime('15:01:30', '%H:%M:%S').time())\
                 and (not self.recodeAccount):
-            fileName = os.getcwd() + '/' + config.BALANCE_file
+            fileName = config.BALANCE_file
             fp = file(fileName, 'a+')
             today = datetime.now().date().strftime('%Y-%m-%d')
             info = today + ',' + str(self.accountInfo.accountID) + ',' + str(self.accountInfo.preBalance) + ',' +\

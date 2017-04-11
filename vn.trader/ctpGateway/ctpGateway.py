@@ -52,7 +52,7 @@ class CtpGateway(VtGateway):
         # 载入json文件
         # fileName = self.gatewayName + '_connect.json'
         # fileName = os.getcwd() + '/' + fileName
-        fileName = os.getcwd() + '/' + config.CTP_configPath
+        fileName = config.CTP_configPath
         
         try:
             f = file(fileName)
@@ -100,7 +100,7 @@ class CtpGateway(VtGateway):
 
     # ----------------------------------------------------------------------
     def loadTradeConfig(self):
-        fileName = os.getcwd() + '/' + config.TRADE_configPath
+        fileName = config.TRADE_configPath
         try:
             f = file(fileName)
         except IOError:
