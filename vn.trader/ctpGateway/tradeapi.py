@@ -418,7 +418,7 @@ class tradeAPI(CtpGateway):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
         self.getPosition = True
-        if order.symbol not in self.tradeDict.keys():
+        if pos.symbol not in self.tradeDict.keys():
             return
         if pos.direction == u'多':
             positionName = pos.symbol + '.2'
