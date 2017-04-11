@@ -203,12 +203,12 @@ class tradeAPI(CtpGateway):
 
     # ----------------------------------------------------------------------
     def shortPolicy2(self, tick):
-        # print '============================='
-        # print 'symbol:',tick.symbol
-        # print 'lastPrice:',tick.lastPrice
-        # print 'openPrice:',tick.openPrice
-        # print 'stopCount:',self.tradeDict[tick.symbol].stopCount
-        # print 'closeCount:',self.tradeDict[tick.symbol].closeCount
+        print '============================='
+        print 'symbol:', tick.symbol
+        print 'lastPrice:', tick.lastPrice
+        print 'openPrice:', tick.openPrice
+        print 'stopCount:', self.tradeDict[tick.symbol].stopCount
+        print 'closeing:', self.tradeDict[tick.symbol].closeing
         if self.tradeDict[tick.symbol].currentMode == u'多':
             highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 5
             lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 10
