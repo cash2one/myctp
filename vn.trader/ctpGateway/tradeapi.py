@@ -1,4 +1,5 @@
 # encoding: UTF-8
+import os
 from ctpGateway import *
 
 class tradeAPI(CtpGateway):
@@ -417,6 +418,8 @@ class tradeAPI(CtpGateway):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
         self.getPosition = True
+        if order.symbol not in self.tradeDict.keys():
+            return
         if pos.direction == u'多':
             positionName = pos.symbol + '.2'
         else:
@@ -463,7 +466,8 @@ class tradeAPI(CtpGateway):
         nowTime = datetime.now().time()
         if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (nowTime < datetime.strptime('15:01:30', '%H:%M:%S').time())\
                 and (not self.recodeAccount):
-            fp = file(config.BALANCE_file, 'a+')
+            fileName = os.getcwd() + '/' + config.BALANCE_file
+            fp = file(fileName, 'a+')
             today = datetime.now().date().strftime('%Y-%m-%d')
             info = today + ',' + str(self.accountInfo.accountID) + ',' + str(self.accountInfo.preBalance) + ',' +\
                 str(self.accountInfo.balance) + ',' + str(self.accountInfo.available) + ',' +\

@@ -100,8 +100,9 @@ class CtpGateway(VtGateway):
 
     # ----------------------------------------------------------------------
     def loadTradeConfig(self):
+        fileName = os.getcwd() + '/' + config.TRADE_configPath
         try:
-            f = file(config.TRADE_configPath)
+            f = file(fileName)
         except IOError:
             log = VtLogData()
             log.gatewayName = self.gatewayName
