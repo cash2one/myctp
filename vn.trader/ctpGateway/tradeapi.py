@@ -141,7 +141,7 @@ class tradeAPI(CtpGateway):
             self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = tick.lowerLimit
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在空单，且价格达到低阈值，开空单
-        elif tick.lastPrice < lowThreshold:
+        elif tick.lastPrice <= lowThreshold:
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'空'
@@ -158,7 +158,7 @@ class tradeAPI(CtpGateway):
             self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = tick.upperLimit
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在多单，且价格达到高阈值，开多单
-        elif tick.lastPrice > highThreshold:
+        elif tick.lastPrice >= highThreshold:
             print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'多'
