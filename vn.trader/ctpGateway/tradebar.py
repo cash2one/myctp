@@ -3,6 +3,8 @@ from vtConstant import *
 from config import *
 from weixin import *
 import json
+from pHist import *
+
 
 class tradeBar(object):
     def __init__(self, symbol):
@@ -71,12 +73,39 @@ class tradeBar(object):
                 self.opening = setting[self.symbol]['opening']
                 self.todayHigh = setting[self.symbol]['todayHigh']
                 self.todayLow = setting[self.symbol]['todayLow']
+                h = hist()
+                if h.getMode(self.symbol2hist()) == 1:
+                    self.currentMode = u'多'
+                else:
+                    self.currentMode = u'空'
             except KeyError:
                 logContent = u'交易配置缺少字段，请检查'
                 send_msg(logContent.encode('utf-8'))
                 return
 
+    def symbol2hist(self):
+        if self.symbol == 'RM709':
+            return 'RM1709'
+        elif self.symbol == 'i1709':
+            return 'i1709'
+        elif self.symbol == 'jm1709':
+            return 'jm1709'
+        elif self.symbol == 'hc1710':
+            return 'hc1710'
+        elif self.symbol == 'ru1709':
+            return 'ru1709'
+        elif self.symbol == 'zn1705':
+            return 'zn1705'
+        elif self.symbol == 'pp1709':
+            return 'pp1709'
+        elif self.symbol == 'j1709':
+            return 'j1709'
+        elif self.symbol == 'bu1706':
+            return 'bu1706'
+        elif self.symbol == 'FG705':
+            return 'fg1705'
+
 if __name__ == '__main__':
-    a = tradeBar('RM709')
-    print a.tickPrice
+    a = tradeBar('FG705')
+    print a.currentMode
     print a.stopShort

@@ -203,68 +203,88 @@ class tradeAPI(CtpGateway):
 
     # ----------------------------------------------------------------------
     def shortPolicy2(self, tick):
-        """两边10点止盈"""
         # print '============================='
         # print 'symbol:',tick.symbol
         # print 'lastPrice:',tick.lastPrice
         # print 'openPrice:',tick.openPrice
         # print 'stopCount:',self.tradeDict[tick.symbol].stopCount
         # print 'closeCount:',self.tradeDict[tick.symbol].closeCount
-        highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 2
-        lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 2
+        if self.tradeDict[tick.symbol].currentMode == u'多':
+            highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 5
+            lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 10
+        elif self.tradeDict[tick.symbol].currentMode == u'空':
+            highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 10
+            lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 5
+        else:
+            return
 
         longPosition = tick.symbol + '.2'
         shortPosition = tick.symbol + '.3'
 
-        # 存在空单,设置止损止盈价位，打开止损止盈开关
+        # 存在空单,设置止损价位，打开止损开关
         if shortPosition in self.tdApi.posBufferDict.keys():
-            # print 'step1'
+            print 'step1'
             self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = highThreshold
             self.tradeDict[tick.symbol].stopLoss = True
-            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = \
-                self.tdApi.posBufferDict[tick.symbol].pos.price - self.tradeDict[tick.symbol].tickPrice * self.tradeDict[tick.symbol].winTickPrice
+            # 跌停价止盈
+            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = tick.lowerLimit
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在空单，且价格达到低阈值，开空单
-        elif (tick.lastPrice < lowThreshold) and (u'空' not in self.tradeDict[tick.symbol].tradeList):
-            # print 'step2'
+        elif tick.lastPrice <= lowThreshold:
+            print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'空'
         else:
             pass
 
-        # 存在多单,设置止损止盈价位，打开止损止盈开关
+
+        # 存在多单,设置止损价位，打开止损开关
         if longPosition in self.tdApi.posBufferDict.keys():
-            # print 'step3'
-            self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = lowThreshold
+            print 'step3'
+            self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = lowThreshold
             self.tradeDict[tick.symbol].stopLoss = True
-            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = \
-                self.tdApi.posBufferDict[tick.symbol].pos.price + self.tradeDict[tick.symbol].tickPrice * self.tradeDict[tick.symbol].winTickPrice
+            # 涨停价止盈
+            self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = tick.upperLimit
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在多单，且价格达到高阈值，开多单
-        elif (tick.lastPrice > highThreshold) and (u'多' not in self.tradeDict[tick.symbol].tradeList):
-            # print 'step4'
+        elif tick.lastPrice >= highThreshold:
+            print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'多'
         else:
             pass
 
+        #涨停不开多单
+        if tick.highPrice >= tick.upperLimit:
+            self.tradeDict[tick.symbol].stopLong = True
+        #跌停不开空单
+        if tick.lowPrice <= tick.lowerLimit:
+            self.tradeDict[tick.symbol].stopShort = True
+
         # 收盘清仓
         nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
-        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (nowTime <= datetime.strptime('15:00:00','%H:%M:%S').time()):
-            if tick.symbol + '.3' in self.tdApi.posBufferDict.keys():  # 存在空单
-                # 空单清仓
-                # print 'step9'
+        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
+            self.tradeDict[tick.symbol].stopLong = True
+            self.tradeDict[tick.symbol].stopShort = True
+            if self.tradeDict[tick.symbol].closeing == True:
+                return
+            if (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()) and (not self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed): #存在空单
+                #空单清仓
+                print 'step9'
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
                 self.sendOrder(orderReq)
+                self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = True  # 标记仓位已被平
                 self.tradeDict[tick.symbol].closeing = True
-            if tick.symbol + '.2' in self.tdApi.posBufferDict.keys():  # 存在多单
-                # 多单清仓
-                # print 'step10'
+            if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) and (not self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed): #存在多单
+                #多单清仓
+                print 'step10'
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
                 self.sendOrder(orderReq)
+                self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = True  # 标记仓位已被平
                 self.tradeDict[tick.symbol].closeing = True
             self.tradeDict[tick.symbol].stopLong = True
             self.tradeDict[tick.symbol].stopShort = True
+
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
