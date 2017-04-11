@@ -384,7 +384,6 @@ class tradeAPI(CtpGateway):
         if order.offset == u'开仓' and order.status == u'全部成交':
             # self.getPosition = False
             self.qryPosition()  # 查询并更新持仓
-            self.tradeDict[order.symbol].opening = False  # 不存在未成交开仓单
             self.tradeDict[order.symbol].todayHigh = 0
             self.tradeDict[order.symbol].todayLow = 100000
             if order.direction == u'空':
@@ -422,8 +421,9 @@ class tradeAPI(CtpGateway):
             positionName = pos.symbol + '.2'
         else:
             positionName = pos.symbol + '.3'
-        print "aaaaa"
         if positionName in self.tdApi.posBufferDict.keys():
+            if not self.tdApi.posBufferDict[positionName].pos.beClosed:
+                self.tradeDict[pos.symbol].opening = False
             print '###############################'
             print 'position info:'
             print self.tdApi.posBufferDict[positionName].pos.symbol
