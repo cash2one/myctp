@@ -378,7 +378,7 @@ class tradeAPI(CtpGateway):
 
         # 获取到持仓信息后执行策略
         # if self.getPosition:
-        self.shortPolicy1(tick)
+        self.shortPolicy2(tick)
 
         # 止损
         self.tradeStopLoss(tick)
