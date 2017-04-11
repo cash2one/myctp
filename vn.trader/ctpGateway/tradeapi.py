@@ -361,7 +361,6 @@ class tradeAPI(CtpGateway):
     def pTrade(self, event):
         '''成交事件处理机，当订单成交回报时执行'''
         trade = event.dict_['data']
-        self.qryPosition()  #查询并更新持仓
         if self.sendOrderMsg:
             logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
                 trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID,trade.tradeTime)
@@ -375,6 +374,8 @@ class tradeAPI(CtpGateway):
         if order.symbol not in self.tradeDict.keys():
             return
         if order.offset == u'开仓' and order.status == u'全部成交':
+            self.getPosition = False
+            self.qryPosition()  # 查询并更新持仓
             self.tradeDict[order.symbol].opening = False  # 不存在未成交开仓单
             self.tradeDict[order.symbol].todayHigh = 0
             self.tradeDict[order.symbol].todayLow = 100000
@@ -386,6 +387,8 @@ class tradeAPI(CtpGateway):
                 pass
         # 非开仓，全部成交，视为平仓全部成交，因为可能为未知或者平今，所以没有限定为平仓
         elif order.status == u'全部成交':
+            self.getPosition = False
+            self.qryPosition()  # 查询并更新持仓
             self.tradeDict[order.symbol].closeing = False
             self.tradeDict[order.symbol].closeCount += 1
         else:
