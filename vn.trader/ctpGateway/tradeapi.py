@@ -418,17 +418,19 @@ class tradeAPI(CtpGateway):
         '''持仓事件处理机，当收到持仓消息时执行'''
         pos = event.dict_['data']
         self.getPosition = True
-        if pos.symbol in self.tdApi.posBufferDict.keys():
+        positionName = '.'.join([pos.symbol, pos.direction])
+        print "aaaaa"
+        if positionName in self.tdApi.posBufferDict.keys():
             print '###############################'
             print 'position info:'
-            print self.tdApi.posBufferDict[pos.symbol].pos.symbol
-            print self.tdApi.posBufferDict[pos.symbol].pos.direction.encode('utf-8')
-            print self.tdApi.posBufferDict[pos.symbol].pos.position
-            print self.tdApi.posBufferDict[pos.symbol].pos.frozen
-            print self.tdApi.posBufferDict[pos.symbol].pos.price
-            print self.tdApi.posBufferDict[pos.symbol].pos.stopLossPrice
-            print self.tdApi.posBufferDict[pos.symbol].pos.stopWinPrice
-            print self.tdApi.posBufferDict[pos.symbol].pos.vtPositionName.encode('utf-8')
+            print self.tdApi.posBufferDict[positionName].pos.symbol
+            print self.tdApi.posBufferDict[positionName].pos.direction.encode('utf-8')
+            print self.tdApi.posBufferDict[positionName].pos.position
+            print self.tdApi.posBufferDict[positionName].pos.frozen
+            print self.tdApi.posBufferDict[positionName].pos.price
+            print self.tdApi.posBufferDict[positionName].pos.stopLossPrice
+            print self.tdApi.posBufferDict[positionName].pos.stopWinPrice
+            print self.tdApi.posBufferDict[positionName].pos.vtPositionName.encode('utf-8')
 
         # for positionName in self.tdApi.posBufferDict.keys():
         #     print '###############################'
