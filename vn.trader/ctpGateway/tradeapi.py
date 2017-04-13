@@ -31,6 +31,7 @@ class tradeAPI(CtpGateway):
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
+                self.tradeDict[tick.symbol].winCount += 1
                 self.tdApi.posBufferDict[longPosition].pos.beClosed = True  # 标记仓位已被平
                 self.tradeDict[tick.symbol].closeing = True
                 self.tradeDict[tick.symbol].tradeList.append(u'多')      # 多单盈利
@@ -42,6 +43,7 @@ class tradeAPI(CtpGateway):
                 #发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
+                self.tradeDict[tick.symbol].winCount += 1
                 self.tdApi.posBufferDict[shortPosition].pos.beClosed = True  # 标记仓位已被平
                 self.tradeDict[tick.symbol].closeing = True
                 self.tradeDict[tick.symbol].tradeList.append(u'空')  # 空单盈利
@@ -390,6 +392,10 @@ class tradeAPI(CtpGateway):
             return
         # 今天止损达到3次
         if self.tradeDict[tick.symbol].stopCount >= 3:
+            self.tradeDict[tick.symbol].openFlag = False
+            return
+        # 今天止y盈达到2次
+        if self.tradeDict[tick.symbol].winCount >= 2:
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 存在持仓

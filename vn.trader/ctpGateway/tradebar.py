@@ -20,6 +20,7 @@ class tradeBar(object):
         self.maxDrawDown = EMPTY_INT            # 允许最大回撤点数(最小价格的倍数)，从最高价格回撤达到该点数，止盈
         self.stopLoss = EMPTY_BOOL              # 是否止损
         self.stopCount = EMPTY_INT              # 止损次数
+        self.winCount = EMPTY_INT               # 止盈次数
         self.stopWin = EMPTY_BOOL               # 是否止盈
         self.closeCount = EMPTY_INT             # 平仓次数
         self.tradeVolume = EMPTY_INT            # 交易手数
