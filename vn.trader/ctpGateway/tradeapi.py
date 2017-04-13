@@ -393,13 +393,24 @@ class tradeAPI(CtpGateway):
         # 存在空单,设置止损价位，打开止损开关
         if shortPosition in self.tdApi.posBufferDict.keys():
             print 'step1'
-            self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = x1
-            self.tradeDict[tick.symbol].stopLoss = True
-            # 跌停价止盈
-            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = x3
-            self.tradeDict[tick.symbol].stopWin = True
+            if self.tdApi.posBufferDict[longPosition].pos.price > tick.openPrice:
+                self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = x1
+                self.tradeDict[tick.symbol].stopLoss = True
+                # 跌停价止盈
+                self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = x3
+                self.tradeDict[tick.symbol].stopWin = True
+            else:
+                self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = x3
+                self.tradeDict[tick.symbol].stopLoss = True
+                # 跌停价止盈
+                self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = tick.lowerLimit
+                self.tradeDict[tick.symbol].stopWin = True
         # 不存在空单，且价格达到低阈值，开空单
         elif tick.lastPrice >= x2 and tick.lastPrice < x1:
+            print 'step2'
+            self.tradeDict[tick.symbol].openFlag = True
+            self.tradeDict[tick.symbol].openDirection = u'空'
+        elif tick.lastPrice <= x4:
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'空'
@@ -427,7 +438,8 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'多'
         elif tick.lastPrice >= x1:
-            pass
+            self.tradeDict[tick.symbol].openFlag = True
+            self.tradeDict[tick.symbol].openDirection = u'多'
         else:
             pass
 
