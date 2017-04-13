@@ -500,14 +500,14 @@ class tradeAPI(CtpGateway):
         if self.tradeDict[tick.symbol].opening:
             self.tradeDict[tick.symbol].openFlag = False
             return
-        # 今天止损达到3次
+        # 今天止损达到2次
         if self.tradeDict[tick.symbol].stopCount >= 3:
             self.tradeDict[tick.symbol].openFlag = False
             return
-        # 今天止y盈达到2次
-        if self.tradeDict[tick.symbol].winCount >= 2:
-            self.tradeDict[tick.symbol].openFlag = False
-            return
+        # 今天止盈达到2次
+        # if self.tradeDict[tick.symbol].winCount >= 2:
+        #     self.tradeDict[tick.symbol].openFlag = False
+        #     return
         # 存在持仓
         if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) or (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()):
             self.tradeDict[tick.symbol].openFlag = False
@@ -577,7 +577,7 @@ class tradeAPI(CtpGateway):
 
         # 获取到持仓信息后执行策略
         if tick.symbol == 'ru1709' or tick.symbol == 'i1709' or tick.symbol == 'zn1705':
-            self.shortPolicy3(tick)
+            self.shortPolicy4(tick)
         else:
             self.shortPolicy2(tick)
 
