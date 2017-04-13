@@ -375,7 +375,7 @@ class tradeAPI(CtpGateway):
 
     # ----------------------------------------------------------------------
     def shortPolicy4(self, tick):
-        '''在开盘价两边来回做，两边各做一次，大幅止损'''
+        '''在开盘价两边来回做，大幅止损，抓住大走势'''
         print '============================='
         print 'symbol:', tick.symbol
         print 'lastPrice:', tick.lastPrice
@@ -414,6 +414,7 @@ class tradeAPI(CtpGateway):
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'空'
+            self.tradeDict[tick.symbol].stopLong = True
         else:
             pass
 
@@ -440,6 +441,7 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice >= x1:
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'多'
+            self.tradeDict[tick.symbol].stopShort = True
         else:
             pass
 
