@@ -125,7 +125,7 @@ class tradeAPI(CtpGateway):
 
     # ----------------------------------------------------------------------
     def shortPolicy1(self, tick):
-        """持仓到收盘"""
+        """持仓到收盘，没有做多或者做空倾向，两边交易区间一致"""
         print '============================='
         print 'symbol:',tick.symbol
         print 'lastPrice:',tick.lastPrice
@@ -205,6 +205,7 @@ class tradeAPI(CtpGateway):
 
     # ----------------------------------------------------------------------
     def shortPolicy2(self, tick):
+        '''有倾向性做多或做空，两边交易区间不一致'''
         print '============================='
         print 'symbol:', tick.symbol
         print 'lastPrice:', tick.lastPrice
@@ -289,6 +290,7 @@ class tradeAPI(CtpGateway):
 
     # ----------------------------------------------------------------------
     def shortPolicy3(self, tick):
+        '''在开盘价两边来回做，两边各做一次，大幅止损'''
         print '============================='
         print 'symbol:', tick.symbol
         print 'lastPrice:', tick.lastPrice
@@ -466,8 +468,8 @@ class tradeAPI(CtpGateway):
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
         # 获取到持仓信息后执行策略
-        if tick.symbol == 'ru1709' or tick.symbol == 'bu1706' or tick.symbol == 'pp1709':
-            self.shortPolicy3()
+        if tick.symbol == 'ru1709' or tick.symbol == 'i1709' or tick.symbol == 'zn1705':
+            self.shortPolicy3(tick)
         else:
             self.shortPolicy2(tick)
 
