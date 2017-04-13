@@ -214,9 +214,9 @@ class tradeAPI(CtpGateway):
         print 'closeing:', self.tradeDict[tick.symbol].closeing
         if self.tradeDict[tick.symbol].currentMode == u'多':
             highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 5
-            lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 10
+            lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 15
         elif self.tradeDict[tick.symbol].currentMode == u'空':
-            highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 10
+            highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 15
             lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 5
         else:
             return
