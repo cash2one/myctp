@@ -501,7 +501,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 今天止损达到2次
-        if self.tradeDict[tick.symbol].stopCount >= 3:
+        if self.tradeDict[tick.symbol].stopCount >= 10:
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 今天止盈达到2次
