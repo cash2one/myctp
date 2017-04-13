@@ -393,7 +393,7 @@ class tradeAPI(CtpGateway):
         # 存在空单,设置止损价位，打开止损开关
         if shortPosition in self.tdApi.posBufferDict.keys():
             print 'step1'
-            if self.tdApi.posBufferDict[longPosition].pos.price > tick.openPrice:
+            if self.tdApi.posBufferDict[shortPosition].pos.price > tick.openPrice:
                 self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = x1
                 self.tradeDict[tick.symbol].stopLoss = True
                 # 跌停价止盈
