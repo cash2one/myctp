@@ -383,8 +383,8 @@ class tradeAPI(CtpGateway):
         print 'stopCount:', self.tradeDict[tick.symbol].stopCount
         print 'closeing:', self.tradeDict[tick.symbol].closeing
         x1 = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 25
-        x2 = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 5
-        x3 = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 5
+        x2 = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 6
+        x3 = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 6
         x4 = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 25
 
         longPosition = tick.symbol + '.2'
@@ -501,13 +501,13 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 今天止损达到2次
-        if self.tradeDict[tick.symbol].stopCount >= 10:
+        if self.tradeDict[tick.symbol].stopCount >= 1:
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 今天止盈达到2次
-        # if self.tradeDict[tick.symbol].winCount >= 2:
-        #     self.tradeDict[tick.symbol].openFlag = False
-        #     return
+        if self.tradeDict[tick.symbol].winCount >= 2:
+            self.tradeDict[tick.symbol].openFlag = False
+            return
         # 存在持仓
         if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) or (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()):
             self.tradeDict[tick.symbol].openFlag = False
@@ -576,10 +576,7 @@ class tradeAPI(CtpGateway):
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
         # 获取到持仓信息后执行策略
-        if tick.symbol == 'ru1709' or tick.symbol == 'i1709' or tick.symbol == 'zn1705':
-            self.shortPolicy4(tick)
-        else:
-            self.shortPolicy2(tick)
+        self.shortPolicy4(tick)
 
         # 止损
         self.tradeStopLoss(tick)
