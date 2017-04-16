@@ -495,8 +495,8 @@ class tradeAPI(CtpGateway):
 
         if self.tradeDict[tick.symbol].currentMode == u'多':
             if longPosition in self.tdApi.posBufferDict.keys():
-                self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = self.tdApi.posBufferDict[longPosition].pos.price - 100
-                self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = self.tdApi.posBufferDict[longPosition].pos.price + 50
+                self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = self.tdApi.posBufferDict[longPosition].pos.price - self.tradeDict[tick.symbol].tickPrice * 20
+                self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = self.tdApi.posBufferDict[longPosition].pos.price + self.tradeDict[tick.symbol].tickPrice * 10
                 self.tradeDict[tick.symbol].stopLoss = True
                 self.tradeDict[tick.symbol].stopWin = True
             else:
@@ -504,8 +504,8 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].openDirection = u'多'
         if self.tradeDict[tick.symbol].currentMode == u'空':
             if shortPosition in self.tdApi.posBufferDict.keys():
-                self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = self.tdApi.posBufferDict[shortPosition].pos.price + 100
-                self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = self.tdApi.posBufferDict[shortPosition].pos.price - 50
+                self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = self.tdApi.posBufferDict[shortPosition].pos.price + self.tradeDict[tick.symbol].tickPrice * 20
+                self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = self.tdApi.posBufferDict[shortPosition].pos.price - self.tradeDict[tick.symbol].tickPrice * 10
                 self.tradeDict[tick.symbol].stopLoss = True
                 self.tradeDict[tick.symbol].stopWin = True
             else:

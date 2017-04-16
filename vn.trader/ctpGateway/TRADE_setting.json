@@ -96,7 +96,7 @@
         "stopLoss": false,
         "stopCount": 0,
         "stopWin": false,
-        "tradeVolume": 5,
+        "tradeVolume": 1,
         "openFlag": false,
         "openDirection": "多",
         "closeing": false,
