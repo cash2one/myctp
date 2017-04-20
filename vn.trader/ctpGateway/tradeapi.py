@@ -500,7 +500,7 @@ class tradeAPI(CtpGateway):
             self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * self.tradeDict[tick.symbol].stopTickPrice
             self.tradeDict[tick.symbol].stopLoss = True
             # 跌停价止盈
-            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = tick.lowerLimit
+            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * self.tradeDict[tick.symbol].winTickPrice
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在空单，且价格达到低阈值，开空单
         elif ((tick.highPrice - tick.openPrice) >= (self.tradeDict[tick.symbol].maxDrawDown * self.tradeDict[tick.symbol].tickPrice)) and (tick.lastPrice <= tick.openPrice):
@@ -516,7 +516,7 @@ class tradeAPI(CtpGateway):
             self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * self.tradeDict[tick.symbol].stopTickPrice
             self.tradeDict[tick.symbol].stopLoss = True
             # 涨停价止盈
-            self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = tick.upperLimit
+            self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * self.tradeDict[tick.symbol].winTickPrice
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在多单，且价格达到高阈值，开多单
         elif ((tick.openPrice - tick.lowPrice) >= (self.tradeDict[tick.symbol].maxDrawDown * self.tradeDict[tick.symbol].tickPrice)) and (tick.lastPrice >= tick.openPrice):
