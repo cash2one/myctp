@@ -79,6 +79,17 @@ class hist():
         self.data['dea'] = self.data['diff'].ewm(ignore_na=False, span=m, min_periods=0, adjust=True).mean()
         self.data['macd'] = (self.data['diff'] - self.data['dea']) * 2
 
+    def getMode(self, symbol):
+        self.get_K_data(symbol)
+        self.get_macd()
+        print self.data
+        self.data.ix[self.data['macd'] >= self.data['macd'].shift(1), 'mode'] = 1
+        self.data.ix[self.data['macd'] < self.data['macd'].shift(1), 'mode'] = 0
+        print self.data
+        return list(self.data['mode'])[-1]
+
+
+
 def p1():
     a = hist()
     a.get_K_data('RM0', period='1d')
@@ -111,10 +122,21 @@ if __name__ == '__main__':
     symbol = ['A0', 'B0', 'M0', 'Y0', 'C0', 'P0', 'V0', 'L0', 'PP0', 'J0', 'JM0', 'I0', 'JD0', 'BB0','FB0',
               'WH0', 'PM0', 'RI0', 'JR0', 'CF0', 'SR0', 'OI0', 'RS0', 'RM0', 'PTA0', 'ME0', 'FG0', 'TC0', 'LR0',
               'SM0', 'SF0', 'CU0', 'AL0', 'ZN0', 'PB0', 'AU0', 'AG0', 'RB0', 'WR0', 'HC0', 'RU0', 'FU0', 'BU0']
-    mn = {}
-    for s in symbol:
-        mn[s] = {}
-        mn[s]['h-l'],mn[s]['volume'] = p2(s)
-    # b = sorted(mn.items(), key=lambda asd:asd[1], reverse=True)
-    df = pd.DataFrame(mn)
-    df.to_csv(u'期货合约平均波动.csv')
+    a = hist()
+    a.get_K_data('FG0', period='1d')
+    a.get_macd()
+    a.data.ix[(a.data['open'] > a.data['close']), 'fan'] = a.data['high'] - a.data['open']
+    a.data.ix[(a.data['open'] < a.data['close']), 'fan'] = a.data['open'] - a.data['low']
+    a.data.ix[(a.data['fan'] >= 10), 'win'] = 1
+
+    # a.data.ix[a.data['direction'] == u'多', 'win'] = a.data['close'] - a.data['open']
+    # a.data.ix[a.data['direction'] == u'空', 'win'] = a.data['open'] - a.data['close']
+    # a.data['win'] = abs(a.data['open'] - a.data['close']) - 200
+    # a.data.ix[a.data['win'] < -150 , 'win'] = -150
+
+    # a.data.ix[a.data['mode'] == 1, 'bad'] = (a.data['open'] - a.data['low'])/5
+    # a.data.ix[a.data['mode'] == 0, 'bad'] = (a.data['high'] - a.data['open'])/5
+    a.data['win'].fillna(0, inplace=True)
+    print a.data
+    print a.data['win'].sum()
+    print a.data['win'].sum()/a.data['win'].count()
