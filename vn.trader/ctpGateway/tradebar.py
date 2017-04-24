@@ -95,16 +95,16 @@ class tradeBar(object):
             return 'hc1710'
         elif self.symbol == 'ru1709':
             return 'ru1709'
-        elif self.symbol == 'zn1705':
-            return 'zn1705'
+        elif self.symbol == 'zn1706':
+            return 'zn1706'
         elif self.symbol == 'pp1709':
             return 'pp1709'
         elif self.symbol == 'j1709':
             return 'j1709'
         elif self.symbol == 'bu1706':
             return 'bu1706'
-        elif self.symbol == 'FG705':
-            return 'fg1705'
+        elif self.symbol == 'FG709':
+            return 'fg1709'
 
 if __name__ == '__main__':
     a = tradeBar('FG705')
