@@ -12,6 +12,7 @@ class tradeAPI(CtpGateway):
         self.tickDf = {}
         # 注册事件处理函数
         self.registeHandle()
+        self.initRecodeTick()
 
     # ----------------------------------------------------------------------
     def tradeStopWin(self, tick):
@@ -711,6 +712,7 @@ class tradeAPI(CtpGateway):
     def pTick(self, event):
         '''tick事件处理机，当接收到行情时执行'''
         tick = event.dict_['data']
+        self.recodeTick(tick)
         if self.tradeDict[tick.symbol].tickCount <= 1:
             self.tradeDict[tick.symbol].tickCount += 1
             return
