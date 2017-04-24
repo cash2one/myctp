@@ -12,6 +12,7 @@ class tradeAPI(CtpGateway):
         self.tickDf = {}
         # 注册事件处理函数
         self.registeHandle()
+        self.initRecodeTick()
 
     # ----------------------------------------------------------------------
     def tradeStopWin(self, tick):
