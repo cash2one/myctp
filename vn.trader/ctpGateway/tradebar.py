@@ -103,8 +103,8 @@ class tradeBar(object):
             return 'j1709'
         elif self.symbol == 'bu1706':
             return 'bu1706'
-        elif self.symbol == 'FG705':
-            return 'fg1705'
+        elif self.symbol == 'FG709':
+            return 'fg1709'
 
 if __name__ == '__main__':
     a = tradeBar('FG705')
