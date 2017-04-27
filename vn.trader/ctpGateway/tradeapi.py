@@ -788,9 +788,9 @@ class tradeAPI(CtpGateway):
         # TODO
         # 此处考虑到本策略不止盈，所以将平仓次数与止损次数视为相等，不使用此策略时，应该修改。
         # 不止盈的话，只有程序启动时，平仓次数才会大于止损次数，因此，程序中断后，通过此处获取当天止损次数
-        if self.tradeDict[order.symbol].closeCount > self.tradeDict[order.symbol].stopCount:
-            self.tradeDict[order.symbol].stopCount = self.tradeDict[order.symbol].closeCount
-            self.tradeDict[order.symbol].winCount = self.tradeDict[order.symbol].closeCount
+        # if self.tradeDict[order.symbol].closeCount > self.tradeDict[order.symbol].stopCount:
+        #     self.tradeDict[order.symbol].stopCount = self.tradeDict[order.symbol].closeCount
+        #     self.tradeDict[order.symbol].winCount = self.tradeDict[order.symbol].closeCount
 
         if self.sendOrderMsg:
             logContent = u'[订单回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
