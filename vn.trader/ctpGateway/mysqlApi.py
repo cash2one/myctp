@@ -5,7 +5,7 @@ import MySQLdb
 import pandas as pd
 
 class SqlApi():
-    def __init__(self, host, user, passwd, dbname):
+    def __init__(self):
         self.host = 'localhost'
         self.user = 'root'
         self.passwd = '880501'
