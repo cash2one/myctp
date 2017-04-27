@@ -718,7 +718,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].tickCount += 1
             return
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
-        
+
         print 'ststus:',self.tradeDict[tick.symbol].status
         print 'stopcount:',self.tradeDict[tick.symbol].stopCount
         print 'wincount:',self.tradeDict[tick.symbol].winCount
@@ -743,7 +743,7 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
         else:
-            if self.tradeDict[tick.symbol].winCount >= 1:
+            if self.tradeDict[tick.symbol].winCount >= 4:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
             if self.tradeDict[tick.symbol].stopCount >= 7:
