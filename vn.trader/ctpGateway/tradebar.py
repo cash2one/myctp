@@ -34,6 +34,7 @@ class tradeBar(object):
         self.stopLong = EMPTY_BOOL              # 不再开多仓
         self.stopShort = EMPTY_BOOL             # 不再开空仓
         self.tickCount = EMPTY_INT
+        self.status = EMPTY_INT
 
         self.loadConfig()
 

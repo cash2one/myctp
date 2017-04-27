@@ -88,7 +88,7 @@
         "size": 10,
         "currentMode": "多",
         "winTickPrice": 40,
-        "stopTickPrice": 40,
+        "stopTickPrice": 90,
         "winTargetPrice": 100000,
         "stopTargetPrice": 0,
         "preSellPrice": 0,

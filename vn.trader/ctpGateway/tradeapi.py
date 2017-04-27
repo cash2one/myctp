@@ -126,7 +126,7 @@ class tradeAPI(CtpGateway):
 
     # ----------------------------------------------------------------------
     def shortPolicy1(self, tick):
-        """持仓到收盘，没有做多或者做空倾向，两边交易区间一致"""
+        '''持仓到收盘，没有做多或者做空倾向，两边交易区间一致'''
         print '============================='
         print 'symbol:',tick.symbol
         print 'lastPrice:',tick.lastPrice
@@ -298,10 +298,11 @@ class tradeAPI(CtpGateway):
         print 'openPrice:', tick.openPrice
         print 'stopCount:', self.tradeDict[tick.symbol].stopCount
         print 'closeing:', self.tradeDict[tick.symbol].closeing
-        x1 = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 25
-        x2 = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 5
-        x3 = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 5
-        x4 = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 25
+
+        highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 3
+        lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 3
+        longStopLoss = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * self.tradeDict[tick.symbol].stopTickPrice
+        shortStopLoss = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * self.tradeDict[tick.symbol].stopTickPrice
 
         longPosition = tick.symbol + '.2'
         shortPosition = tick.symbol + '.3'
@@ -309,13 +310,13 @@ class tradeAPI(CtpGateway):
         # 存在空单,设置止损价位，打开止损开关
         if shortPosition in self.tdApi.posBufferDict.keys():
             print 'step1'
-            self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = x1
+            self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = shortStopLoss
             self.tradeDict[tick.symbol].stopLoss = True
             # 跌停价止盈
-            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = x3
+            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = lowThreshold
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在空单，且价格达到低阈值，开空单
-        elif tick.lastPrice >= x2 and tick.lastPrice < x1:
+        elif tick.lastPrice >= highThreshold:
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'空'
@@ -325,13 +326,13 @@ class tradeAPI(CtpGateway):
         # 存在多单,设置止损价位，打开止损开关
         if longPosition in self.tdApi.posBufferDict.keys():
             print 'step3'
-            self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = x4
+            self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = longStopLoss
             self.tradeDict[tick.symbol].stopLoss = True
             # 涨停价止盈
-            self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = x2
+            self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = highThreshold
             self.tradeDict[tick.symbol].stopWin = True
         # 不存在多单，且价格达到高阈值，开多单
-        elif tick.lastPrice <= x3 and tick.lastPrice > x4:
+        elif tick.lastPrice <= lowThreshold:
             print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
             self.tradeDict[tick.symbol].openDirection = u'多'
@@ -643,11 +644,11 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 今天止损达到1次
-        if self.tradeDict[tick.symbol].stopCount >= 1:
+        if self.tradeDict[tick.symbol].stopCount >= 7:
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 今天止盈达到1次
-        if self.tradeDict[tick.symbol].winCount >= 1:
+        if self.tradeDict[tick.symbol].winCount >= 4:
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 存在持仓
@@ -719,12 +720,32 @@ class tradeAPI(CtpGateway):
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
         # 获取到持仓信息后执行策略
-        self.shortPolicy5(tick)
+        if self.tradeDict[tick.symbol].status == 0:
+            self.shortPolicy3(tick)
+        else:
+            self.shortPolicy1(tick)
+
         # 止损
         self.tradeStopLoss(tick)
 
         # 止盈
         self.tradeStopWin(tick)
+
+        #更新状态
+        if self.tradeDict[tick.symbol].status == 0:
+            if self.tradeDict[tick.symbol].winCount >= 3:
+                self.tradeDict[tick.symbol].status = 1          #切换状态
+                self.tradeDict[tick.symbol].openFlag = False    #本次开仓无效
+            if self.tradeDict[tick.symbol].stopCount >= 1:
+                self.tradeDict[tick.symbol].stopLong = True
+                self.tradeDict[tick.symbol].stopShort = True
+        else:
+            if self.tradeDict[tick.symbol].winCount >= 1:
+                self.tradeDict[tick.symbol].stopLong = True
+                self.tradeDict[tick.symbol].stopShort = True
+            if self.tradeDict[tick.symbol].stopCount >= 7:
+                self.tradeDict[tick.symbol].stopLong = True
+                self.tradeDict[tick.symbol].stopShort = True
 
         # 开仓
         self.tradeOpen(tick)
