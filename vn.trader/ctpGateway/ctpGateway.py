@@ -166,16 +166,21 @@ class CtpGateway(VtGateway):
             self.mdApi.close()
         if self.tdConnected:
             self.tdApi.close()
-        
+
+    #---------------------------------------------------------------------
+    def saveConfig(self):
+        saveConfig(self.tradeDict)
+
+     
     #----------------------------------------------------------------------
     def initQuery(self):
         """初始化连续查询"""
         if self.qryEnabled:
             # 需要循环的查询函数列表
-            self.qryFunctionList = [self.qryAccount, self.qryPosition]      #查询账户信息和持仓信息
+            self.qryFunctionList = [self.qryAccount, self.qryPosition, self.saveConfig]      #查询账户信息和持仓信息
             
             self.qryCount = 0           # 查询触发倒计时
-            self.qryTrigger = 2         # 查询触发点，查询周期，2为每两秒查询一次
+            self.qryTrigger = 1         # 查询触发点，查询周期，2为每两秒查询一次
             self.qryNextFunction = 0    # 上次运行的查询函数索引
             
             self.startQuery()
