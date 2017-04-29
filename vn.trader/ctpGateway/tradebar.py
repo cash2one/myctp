@@ -107,10 +107,12 @@ class tradeBar(object):
             return 'fg1709'
 
 if __name__ == '__main__':
-    # resetConfig()
+    reconfig()
     a = tradeBar('FG709')
     b = tradeBar('i1709')
-    c = []
-    c.append(a.__dict__)
-    c.append(b.__dict__)
-    print pd.DataFrame(c)
+    c = {}
+    c[a.symbol] = a
+    c[b.symbol] = b
+    saveConfig(c)
+    a = tradeBar('FG709')
+    print a.__dict__
