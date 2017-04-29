@@ -9,7 +9,6 @@ def test():
 
     app = QtCore.QCoreApplication(sys.argv)
 
-    reconfig()
     # 开盘前重新初始化交易参数
     now = datetime.now()
     if ((now.time() > datetime.strptime('20:30:00', '%H:%M:%S').time())

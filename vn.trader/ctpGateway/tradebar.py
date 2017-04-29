@@ -72,6 +72,7 @@ class tradeBar(object):
         newdf = sql.readFromSql(config.tableName)
         newdf = newdf.drop(['index'], axis=1)
         newdf.index = newdf['symbol']
+        print newdf
         if self.symbol not in newdf.index:
             logContent = u'没有合约%s的交易配置' % self.symbol
             send_msg(logContent.encode('utf-8'))
