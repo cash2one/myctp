@@ -35,7 +35,6 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].winCount += 1
                 self.tdApi.posBufferDict[longPosition].pos.beClosed = True  # 标记仓位已被平
                 self.tradeDict[tick.symbol].closeing = True
-                self.tradeDict[tick.symbol].tradeList.append(u'多')      # 多单盈利
         if (shortPosition in self.tdApi.posBufferDict.keys()) and (not self.tdApi.posBufferDict[shortPosition].pos.beClosed):  # 空单
             if tick.lastPrice <= self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice:  # 最新价格小于止盈价格
                 logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
@@ -47,7 +46,6 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].winCount += 1
                 self.tdApi.posBufferDict[shortPosition].pos.beClosed = True  # 标记仓位已被平
                 self.tradeDict[tick.symbol].closeing = True
-                self.tradeDict[tick.symbol].tradeList.append(u'空')  # 空单盈利
         self.tradeDict[tick.symbol].stopWin = False
 
     # ----------------------------------------------------------------------
@@ -152,7 +150,7 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice <= lowThreshold:
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'空'
+            self.tradeDict[tick.symbol].openDirection = 'short'
         else:
             pass
 
@@ -169,7 +167,7 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice >= highThreshold:
             print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'多'
+            self.tradeDict[tick.symbol].openDirection = 'long'
         else:
             pass
 
@@ -213,10 +211,10 @@ class tradeAPI(CtpGateway):
         print 'openPrice:', tick.openPrice
         print 'stopCount:', self.tradeDict[tick.symbol].stopCount
         print 'closeing:', self.tradeDict[tick.symbol].closeing
-        if self.tradeDict[tick.symbol].currentMode == u'多':
+        if self.tradeDict[tick.symbol].currentMode == 'long':
             highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 5
             lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 15
-        elif self.tradeDict[tick.symbol].currentMode == u'空':
+        elif self.tradeDict[tick.symbol].currentMode == 'short':
             highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 15
             lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].tickPrice * 5
         else:
@@ -237,7 +235,7 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice <= lowThreshold:
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'空'
+            self.tradeDict[tick.symbol].openDirection = 'short'
         else:
             pass
 
@@ -254,7 +252,7 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice >= highThreshold:
             print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'多'
+            self.tradeDict[tick.symbol].openDirection = 'long'
         else:
             pass
 
@@ -319,7 +317,7 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice >= highThreshold:
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'空'
+            self.tradeDict[tick.symbol].openDirection = 'short'
         else:
             pass
 
@@ -335,7 +333,7 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice <= lowThreshold:
             print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'多'
+            self.tradeDict[tick.symbol].openDirection = 'long'
         else:
             pass
 
@@ -411,11 +409,11 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice >= x2 and tick.lastPrice < x1:
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'空'
+            self.tradeDict[tick.symbol].openDirection = 'short'
         elif tick.lastPrice <= x4:
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'空'
+            self.tradeDict[tick.symbol].openDirection = 'short'
             self.tradeDict[tick.symbol].stopLong = True
         else:
             pass
@@ -439,10 +437,10 @@ class tradeAPI(CtpGateway):
         elif tick.lastPrice <= x3 and tick.lastPrice > x4:
             print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'多'
+            self.tradeDict[tick.symbol].openDirection = 'long'
         elif tick.lastPrice >= x1:
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'多'
+            self.tradeDict[tick.symbol].openDirection = 'long'
             self.tradeDict[tick.symbol].stopShort = True
         else:
             pass
@@ -508,7 +506,7 @@ class tradeAPI(CtpGateway):
         elif ((tick.highPrice - tick.openPrice) >= (self.tradeDict[tick.symbol].maxDrawDown * self.tradeDict[tick.symbol].tickPrice)) and (tick.lastPrice <= tick.openPrice):
             print 'step2'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'空'
+            self.tradeDict[tick.symbol].openDirection = 'short'
         else:
             pass
 
@@ -524,7 +522,7 @@ class tradeAPI(CtpGateway):
         elif ((tick.openPrice - tick.lowPrice) >= (self.tradeDict[tick.symbol].maxDrawDown * self.tradeDict[tick.symbol].tickPrice)) and (tick.lastPrice >= tick.openPrice):
             print 'step4'
             self.tradeDict[tick.symbol].openFlag = True
-            self.tradeDict[tick.symbol].openDirection = u'多'
+            self.tradeDict[tick.symbol].openDirection = 'long'
         else:
             pass
 
@@ -576,7 +574,7 @@ class tradeAPI(CtpGateway):
         longPosition = tick.symbol + '.2'
         shortPosition = tick.symbol + '.3'
 
-        if self.tradeDict[tick.symbol].currentMode == u'多':
+        if self.tradeDict[tick.symbol].currentMode == 'long':
             if longPosition in self.tdApi.posBufferDict.keys():
                 self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = self.tdApi.posBufferDict[longPosition].pos.price - self.tradeDict[tick.symbol].tickPrice * 20
                 self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = self.tdApi.posBufferDict[longPosition].pos.price + self.tradeDict[tick.symbol].tickPrice * 10
@@ -584,8 +582,8 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].stopWin = True
             else:
                 self.tradeDict[tick.symbol].openFlag = True
-                self.tradeDict[tick.symbol].openDirection = u'多'
-        if self.tradeDict[tick.symbol].currentMode == u'空':
+                self.tradeDict[tick.symbol].openDirection = 'long'
+        if self.tradeDict[tick.symbol].currentMode == 'short':
             if shortPosition in self.tdApi.posBufferDict.keys():
                 self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = self.tdApi.posBufferDict[shortPosition].pos.price + self.tradeDict[tick.symbol].tickPrice * 20
                 self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = self.tdApi.posBufferDict[shortPosition].pos.price - self.tradeDict[tick.symbol].tickPrice * 10
@@ -593,7 +591,7 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].stopWin = True
             else:
                 self.tradeDict[tick.symbol].openFlag = True
-                self.tradeDict[tick.symbol].openDirection = u'空'
+                self.tradeDict[tick.symbol].openDirection = 'short'
 
         # 收盘清仓
         nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
@@ -632,11 +630,11 @@ class tradeAPI(CtpGateway):
         if not self.tradeDict[tick.symbol].openFlag:
             return
         # 停止开多仓
-        if self.tradeDict[tick.symbol].stopLong and (self.tradeDict[tick.symbol].openDirection == u'多'):
+        if self.tradeDict[tick.symbol].stopLong and (self.tradeDict[tick.symbol].openDirection == 'long'):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 停止开空仓
-        if self.tradeDict[tick.symbol].stopShort and (self.tradeDict[tick.symbol].openDirection == u'空'):
+        if self.tradeDict[tick.symbol].stopShort and (self.tradeDict[tick.symbol].openDirection == 'short'):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 存在未成交的开仓单
@@ -657,9 +655,9 @@ class tradeAPI(CtpGateway):
             return
 
         #其他情况，执行开仓指令
-        if self.tradeDict[tick.symbol].openDirection == u'多':
+        if self.tradeDict[tick.symbol].openDirection == 'long':
             orderReq = self.makeBuyOpenOrder(tick.symbol, tick.askPrice1, self.tradeDict[tick.symbol].tradeVolume)
-        elif self.tradeDict[tick.symbol].openDirection == u'空':
+        elif self.tradeDict[tick.symbol].openDirection == 'short':
             orderReq = self.makeSellOpenOrder(tick.symbol, tick.bidPrice1, self.tradeDict[tick.symbol].tradeVolume)
         else:
             self.tradeDict[tick.symbol].openFlag = False

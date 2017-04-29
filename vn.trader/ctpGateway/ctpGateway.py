@@ -171,7 +171,7 @@ class CtpGateway(VtGateway):
     def saveConfig(self):
         saveConfig(self.tradeDict)
 
-     
+
     #----------------------------------------------------------------------
     def initQuery(self):
         """初始化连续查询"""
