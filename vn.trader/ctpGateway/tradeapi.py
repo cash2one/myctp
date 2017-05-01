@@ -642,11 +642,11 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 今天止损达到1次
-        if self.tradeDict[tick.symbol].stopCount >= 7:
+        if self.tradeDict[tick.symbol].stopCount >= 8:
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 今天止盈达到1次
-        if self.tradeDict[tick.symbol].winCount >= 4:
+        if self.tradeDict[tick.symbol].winCount >= 5:
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 存在持仓
@@ -734,17 +734,17 @@ class tradeAPI(CtpGateway):
 
         #更新状态
         if self.tradeDict[tick.symbol].status == 0:
-            if self.tradeDict[tick.symbol].winCount >= 3:
+            if self.tradeDict[tick.symbol].winCount >= 4:
                 self.tradeDict[tick.symbol].status = 1          #切换状态
                 self.tradeDict[tick.symbol].openFlag = False    #本次开仓无效
             if self.tradeDict[tick.symbol].stopCount >= 1:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
         else:
-            if self.tradeDict[tick.symbol].winCount >= 4:
+            if self.tradeDict[tick.symbol].winCount >= 5:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
-            if self.tradeDict[tick.symbol].stopCount >= 7:
+            if self.tradeDict[tick.symbol].stopCount >= 8:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
 
