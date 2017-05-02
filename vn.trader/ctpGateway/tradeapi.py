@@ -772,12 +772,12 @@ class tradeAPI(CtpGateway):
             self.qryPosition()  # 查询并更新持仓
             self.tradeDict[order.symbol].todayHigh = 0
             self.tradeDict[order.symbol].todayLow = 100000
-            if order.direction == u'空':
-                self.tradeDict[order.symbol].tradeList.append(0)
-            elif order.direction == u'多':
-                self.tradeDict[order.symbol].tradeList.append(1)
-            else:
-                pass
+            # if order.direction == u'空':
+            #     self.tradeDict[order.symbol].tradeList.append(0)
+            # elif order.direction == u'多':
+            #     self.tradeDict[order.symbol].tradeList.append(1)
+            # else:
+            #     pass
         # 非开仓，全部成交，视为平仓全部成交，因为可能为未知或者平今，所以没有限定为平仓
         elif order.status == u'全部成交':
             # self.getPosition = False
