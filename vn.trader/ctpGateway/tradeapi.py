@@ -130,6 +130,8 @@ class tradeAPI(CtpGateway):
         print 'lastPrice:',tick.lastPrice
         print 'openPrice:',tick.openPrice
         print 'stopCount:',self.tradeDict[tick.symbol].stopCount
+        print 'ststus:', self.tradeDict[tick.symbol].status
+        print 'wincount:', self.tradeDict[tick.symbol].winCount
         print 'closeing:',self.tradeDict[tick.symbol].closeing
 
         highThreshold = tick.openPrice + self.tradeDict[tick.symbol].tickPrice * 2
@@ -294,6 +296,8 @@ class tradeAPI(CtpGateway):
         print 'symbol:', tick.symbol
         print 'lastPrice:', tick.lastPrice
         print 'openPrice:', tick.openPrice
+        print 'ststus:', self.tradeDict[tick.symbol].status
+        print 'wincount:', self.tradeDict[tick.symbol].winCount
         print 'stopCount:', self.tradeDict[tick.symbol].stopCount
         print 'closeing:', self.tradeDict[tick.symbol].closeing
 
@@ -717,9 +721,6 @@ class tradeAPI(CtpGateway):
             return
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
-        print 'ststus:',self.tradeDict[tick.symbol].status
-        print 'stopcount:',self.tradeDict[tick.symbol].stopCount
-        print 'wincount:',self.tradeDict[tick.symbol].winCount
         # 获取到持仓信息后执行策略
         if self.tradeDict[tick.symbol].status == 0:
             self.shortPolicy3(tick)
