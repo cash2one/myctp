@@ -72,6 +72,23 @@ class tradeBar(object):
         newdf = sql.readFromSql(config.tableName)
         newdf = newdf.drop(['index'], axis=1)
         newdf.index = newdf['symbol']
+        newdf['tickPrice'] = newdf['tickPrice'].astype(float)
+        newdf['size'] = newdf['size'].astype(int)
+        newdf['currentMode'] = newdf['currentMode'].astype(str)
+        newdf['winTickPrice'] = newdf['winTickPrice'].astype(int)
+        newdf['stopTickPrice'] = newdf['stopTickPrice'].astype(int)
+        newdf['winTargetPrice'] = newdf['winTargetPrice'].astype(float)
+        newdf['stopTargetPrice'] = newdf['stopTargetPrice'].astype(float)
+        newdf['preSellPrice'] = newdf['preSellPrice'].astype(float)
+        newdf['maxDrawDown'] = newdf['maxDrawDown'].astype(int)
+        newdf['stopLoss'] = newdf['stopLoss'].astype(bool)
+        newdf['stopCount'] = newdf['stopCount'].astype(int)
+        newdf['winCount'] = newdf['winCount'].astype(int)
+        newdf['stopWin'] = newdf['stopWin'].astype(bool)
+        newdf['tradeVolume'] = newdf['tradeVolume'].astype(int)
+        newdf['stopLong'] = newdf['stopLong'].astype(bool)
+        newdf['stopShort'] = newdf['stopShort'].astype(bool)
+        newdf['status'] = newdf['status'].astype(int)
         # print newdf
         if self.symbol not in newdf.index:
             logContent = u'没有合约%s的交易配置' % self.symbol
