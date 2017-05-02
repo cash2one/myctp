@@ -309,7 +309,7 @@ class tradeAPI(CtpGateway):
         if shortPosition in self.tdApi.posBufferDict.keys():
             print 'step1'
             self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = shortStopLoss
-            self.tradeDict[tick.symbol].stopLoss = True
+            self.tradeDict[tick.symbol].stopLoss = False
             # 跌停价止盈
             self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = lowThreshold
             self.tradeDict[tick.symbol].stopWin = True
