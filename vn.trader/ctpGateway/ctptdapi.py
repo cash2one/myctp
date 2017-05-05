@@ -252,6 +252,7 @@ class CtpTdApi(TdApi):
         else:
             pos = posBuffer.updateBuffer(data, size)
 
+        print 'InstrumentID:',data['InstrumentID']
         print 'positionName:',positionName
         print 'dataPositon:',data['Position']
         print 'onRspQryInvestorPosition:',self.posBufferDict[positionName].pos.position
