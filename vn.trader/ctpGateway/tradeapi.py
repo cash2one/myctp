@@ -630,6 +630,7 @@ class tradeAPI(CtpGateway):
     def tradeOpen(self, tick):
         '''开仓函数'''
 
+        print 'in tradeOpen:',self.tradeDict[tick.symbol].opening
         # 开仓标志位false
         if not self.tradeDict[tick.symbol].openFlag:
             return
@@ -654,6 +655,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].openFlag = False
             return
         # 存在持仓
+        print self.tdApi.posBufferDict.keys()
         if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) or (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()):
             self.tradeDict[tick.symbol].openFlag = False
             return
@@ -668,6 +670,7 @@ class tradeAPI(CtpGateway):
             return
         self.sendOrder(orderReq)
         self.tradeDict[tick.symbol].opening = True
+        print 'change opening true:',self.tradeDict[tick.symbol].opening
         self.tradeDict[tick.symbol].openFlag = False
 
         #记录日志
@@ -811,11 +814,13 @@ class tradeAPI(CtpGateway):
             positionName = pos.symbol + '.2'
         else:
             positionName = pos.symbol + '.3'
+        print 'in pPosition :',self.tdApi.posBufferDict.keys()
         if positionName in self.tdApi.posBufferDict.keys():
             if not self.tdApi.posBufferDict[positionName].pos.beClosed:
                 self.tradeDict[pos.symbol].opening = False
             print '###############################'
             print 'position info:'
+            print 'change opening false:',self.tradeDict[pos.symbol].opening
             print self.tdApi.posBufferDict[positionName].pos.symbol
             print self.tdApi.posBufferDict[positionName].pos.direction.encode('utf-8')
             print self.tdApi.posBufferDict[positionName].pos.position
