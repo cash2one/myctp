@@ -236,8 +236,8 @@ class CtpTdApi(TdApi):
     def onRspQryInvestorPosition(self, data, error, n, last):
         """持仓查询回报"""
         # 获取缓存字典中的持仓缓存，若无则创建并初始化
-        # if data['Position'] == 0:
-        #     return
+        if data['Position'] == 0:
+            return
         positionName = '.'.join([data['InstrumentID'], data['PosiDirection']])
 
         if positionName in self.posBufferDict:
@@ -255,14 +255,14 @@ class CtpTdApi(TdApi):
         #     pos = posBuffer.updateBuffer(data, size)
         pos = posBuffer.updateShfeBuffer(data, size)
 
-        print 'InstrumentID:',data['InstrumentID']
-        print 'positionName:',positionName
-        print 'dataPositon:',data['Position']
-        print 'onRspQryInvestorPosition:',self.posBufferDict[positionName].pos.position
-        # posDict = copy(self.posBufferDict)
-        # for positionName in posDict.keys():  # 如果持仓量为0，从持仓缓存中删除
-        #     if posDict[positionName].pos.position <= 0:
-        #         self.posBufferDict.pop(positionName)
+        # print 'InstrumentID:',data['InstrumentID']
+        # print 'positionName:',positionName
+        # print 'dataPositon:',data['Position']
+        # print 'onRspQryInvestorPosition:',self.posBufferDict[positionName].pos.position
+        posDict = copy(self.posBufferDict)
+        for positionName in posDict.keys():  # 如果持仓量为0，从持仓缓存中删除
+            if posDict[positionName].pos.position <= 0:
+                self.posBufferDict.pop(positionName)
         self.gateway.onPosition(pos)
 
     # ----------------------------------------------------------------------

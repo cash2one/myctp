@@ -814,13 +814,13 @@ class tradeAPI(CtpGateway):
             positionName = pos.symbol + '.2'
         else:
             positionName = pos.symbol + '.3'
-        print 'in pPosition :',self.tdApi.posBufferDict.keys()
+        # print 'in pPosition :',self.tdApi.posBufferDict.keys()
         if positionName in self.tdApi.posBufferDict.keys():
             if not self.tdApi.posBufferDict[positionName].pos.beClosed:
                 self.tradeDict[pos.symbol].opening = False
             print '###############################'
             print 'position info:'
-            print 'change opening false:',self.tradeDict[pos.symbol].opening
+            # print 'change opening false:',self.tradeDict[pos.symbol].opening
             print self.tdApi.posBufferDict[positionName].pos.symbol
             print self.tdApi.posBufferDict[positionName].pos.direction.encode('utf-8')
             print self.tdApi.posBufferDict[positionName].pos.position
