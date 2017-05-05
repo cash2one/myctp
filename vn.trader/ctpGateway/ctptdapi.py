@@ -237,7 +237,7 @@ class CtpTdApi(TdApi):
         """持仓查询回报"""
         # 获取缓存字典中的持仓缓存，若无则创建并初始化
         if data['Position'] == 0:
-            return 
+            return
         positionName = '.'.join([data['InstrumentID'], data['PosiDirection']])
 
         if positionName in self.posBufferDict:
@@ -249,10 +249,11 @@ class CtpTdApi(TdApi):
         # 更新持仓缓存，并获取VT系统中持仓对象的返回值
         exchange = self.symbolExchangeDict.get(data['InstrumentID'], EXCHANGE_UNKNOWN)
         size = self.symbolSizeDict.get(data['InstrumentID'], 1)
-        if exchange == EXCHANGE_SHFE:
-            pos = posBuffer.updateShfeBuffer(data, size)
-        else:
-            pos = posBuffer.updateBuffer(data, size)
+        # if exchange == EXCHANGE_SHFE:
+        #     pos = posBuffer.updateShfeBuffer(data, size)
+        # else:
+        #     pos = posBuffer.updateBuffer(data, size)
+        pos = posBuffer.updateShfeBuffer(data, size)
 
         print 'InstrumentID:',data['InstrumentID']
         print 'positionName:',positionName

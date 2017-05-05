@@ -448,7 +448,7 @@ class PositionBuffer(object):
         """更新上期所缓存，返回更新后的持仓数据"""
         # 昨仓和今仓的数据更新是分在两条记录里的，因此需要判断检查该条记录对应仓位
         # 因为今仓字段TodayPosition可能变为0（被全部平仓），因此分辨今昨仓需要用YdPosition字段
-        if data['YdPosition']:
+        if data.get('YdPosition', False):
             self.ydPosition = data['Position']
             self.ydPositionCost = data['PositionCost']
         else:
