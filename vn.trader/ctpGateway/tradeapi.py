@@ -879,7 +879,7 @@ class tradeAPI(CtpGateway):
         self.eventEngine.register(EVENT_CONTRACT, self.pContract)
         self.eventEngine.register(EVENT_ACCOUNT, self.pAccount)
         self.eventEngine.register(EVENT_ERROR, self.pError)
-        # self.eventEngine.register(EVENT_CONTRACT, self.pContract)
+        self.eventEngine.register(EVENT_CONTRACT, self.pContract)
 
 
 

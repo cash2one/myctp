@@ -85,7 +85,7 @@ class CtpGateway(VtGateway):
         # 初始化并启动查询
         self.initQuery()
         self.qryAccount()
-        # self.qryInstrument()
+        self.qryInstrument()
 
     # ----------------------------------------------------------------------
     def isTradeTime(self):
@@ -655,13 +655,13 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def pContract(self, event):
         contract = event.dict_['data']
-        # print "============================================="
-        # print contract.symbol
-        # print contract.priceTick
-        # print contract.size
-        # if contract.symbol in self.tradeDict.keys():
-        #     self.tradeDict[contract.symbol].tickPrice = contract.priceTick
-        #     self.tradeDict[contract.symbol].size = contract.size
+        print "============================================="
+        print contract.symbol
+        print contract.priceTick
+        print contract.size
+        if contract.symbol in self.tradeDict.keys():
+            self.tradeDict[contract.symbol].tickPrice = contract.priceTick
+            self.tradeDict[contract.symbol].size = contract.size
 
     # ----------------------------------------------------------------------
     def registeHandle(self):
