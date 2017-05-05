@@ -253,6 +253,7 @@ class CtpTdApi(TdApi):
             pos = posBuffer.updateBuffer(data, size)
 
         print 'positionName:',positionName
+        print 'dataPositon:',data['Position']
         print 'onRspQryInvestorPosition:',self.posBufferDict[positionName].pos.position
         posDict = copy(self.posBufferDict)
         for positionName in posDict.keys():  # 如果持仓量为0，从持仓缓存中删除
