@@ -252,10 +252,11 @@ class CtpTdApi(TdApi):
         else:
             pos = posBuffer.updateBuffer(data, size)
 
-        # posDict = copy(self.posBufferDict)
-        # for positionName in posDict.keys():  # 如果持仓量为0，从持仓缓存中删除
-        #     if posDict[positionName].pos.position <= 0:
-        #         self.posBufferDict.pop(positionName)
+        print 'onRspQryInvestorPosition:',self.posBufferDict[positionName].pos.position
+        posDict = copy(self.posBufferDict)
+        for positionName in posDict.keys():  # 如果持仓量为0，从持仓缓存中删除
+            if posDict[positionName].pos.position <= 0:
+                self.posBufferDict.pop(positionName)
         self.gateway.onPosition(pos)
 
     # ----------------------------------------------------------------------
