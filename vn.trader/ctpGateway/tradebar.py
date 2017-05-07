@@ -56,6 +56,8 @@ class tradeBar(object):
         # self.stopLong = EMPTY_BOOL              # 不再开多仓
         # self.stopShort = EMPTY_BOOL             # 不再开空仓
         # self.status = EMPTY_INT                 # 当前状态
+        # self.perHigh = EMPTY_FLOAT              # 前一天最高价
+        # self.perLow = EMPTY_FLOAT               # 前一天最低价
         self.closeCount = EMPTY_INT             # 平仓次数
         self.openFlag = EMPTY_BOOL              # 开仓标志
         self.openDirection = EMPTY_STRING       # 开仓方向，多或者空
@@ -65,6 +67,7 @@ class tradeBar(object):
         self.todayHigh = EMPTY_FLOAT            # 今天最高价
         self.todayLow = EMPTY_FLOAT             # 今天最低价
         self.tickCount = EMPTY_INT
+        self.update()
 
     def loadConfig(self):
         '''从数据库中读取交易参数，用来初始化类成员'''
@@ -102,6 +105,13 @@ class tradeBar(object):
             # else:
             #     self.currentMode = 'short'
 
+    def update(self):
+        a = hist()
+        a.get_K_data(self.symbol2hist(), period='1d')
+        self.perHigh = list(a.data['high'])[-1]
+        self.perLow = list(a.data['low'])[-1]
+
+
     def symbol2hist(self):
         if self.symbol == 'RM709':
             return 'RM1709'
@@ -123,14 +133,25 @@ class tradeBar(object):
             return 'bu1706'
         elif self.symbol == 'FG709':
             return 'fg1709'
+        elif self.symbol == 'jd1709':
+            return 'jd1709'
+        elif self.symbol == 'SR709':
+            return 'SR1709'
 
 if __name__ == '__main__':
-    reconfig()
-    a = tradeBar('FG709')
-    b = tradeBar('i1709')
-    c = {}
-    c[a.symbol] = a
-    c[b.symbol] = b
-    saveConfig(c)
-    a = tradeBar('FG709')
-    print a.__dict__
+    # reconfig()
+    # a = tradeBar('FG709')
+    # b = tradeBar('i1709')
+    # c = {}
+    # c[a.symbol] = a
+    # c[b.symbol] = b
+    # saveConfig(c)
+    # a = tradeBar('FG709')
+    # print a.__dict__
+    a = hist()
+    a.get_K_data('jd1709', period='1d')
+    print a.data
+    perHigh = list(a.data['high'])[-1]
+    perLow = list(a.data['low'])[-1]
+    print perHigh
+    print perLow

@@ -724,6 +724,9 @@ class tradeAPI(CtpGateway):
             return
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
+        if (tick.openPrice > self.tradeDict[tick.symbol].perHigh) or (tick.openPrice < self.tradeDict[tick.symbol].perLow):
+            self.tradeDict[tick.symbol].status = 1
+
         # 获取到持仓信息后执行策略
         if self.tradeDict[tick.symbol].status == 0:
             self.shortPolicy3(tick)
@@ -741,11 +744,12 @@ class tradeAPI(CtpGateway):
             if self.tradeDict[tick.symbol].winCount >= 3:
                 self.tradeDict[tick.symbol].status = 1          #切换状态
                 self.tradeDict[tick.symbol].openFlag = False    #本次开仓无效
+                self.tradeDict[tick.symbol].winCount = 0
             if self.tradeDict[tick.symbol].stopCount >= 1:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
         else:
-            if self.tradeDict[tick.symbol].winCount >= 4:
+            if self.tradeDict[tick.symbol].winCount >= 1:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
             if self.tradeDict[tick.symbol].stopCount >= 7:
