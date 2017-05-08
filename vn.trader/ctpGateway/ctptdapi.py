@@ -236,7 +236,7 @@ class CtpTdApi(TdApi):
     def onRspQryInvestorPosition(self, data, error, n, last):
         """持仓查询回报"""
         # 获取缓存字典中的持仓缓存，若无则创建并初始化
-        
+
         positionName = '.'.join([data['InstrumentID'], data['PosiDirection']])
 
         if positionName in self.posBufferDict:
