@@ -188,5 +188,43 @@
         "stopShort":false,
         "tradeVolume": 3,
         "status": 0
+    },
+    "jd1709": {
+        "tickPrice": 1,
+        "size": 10,
+        "currentMode": "long",
+        "winTickPrice": 30,
+        "stopTickPrice": 30,
+        "winTargetPrice": 100000,
+        "stopTargetPrice": 0,
+        "preSellPrice": 0,
+        "maxDrawDown": 30,
+        "winCount": 0,
+        "stopCount": 0,
+        "stopLoss":false,
+        "stopWin":false,
+        "stopLong":false,
+        "stopShort":false,
+        "tradeVolume": 8,
+        "status": 0
+    },
+    "SR709": {
+        "tickPrice": 1,
+        "size": 10,
+        "currentMode": "long",
+        "winTickPrice": 30,
+        "stopTickPrice": 30,
+        "winTargetPrice": 100000,
+        "stopTargetPrice": 0,
+        "preSellPrice": 0,
+        "maxDrawDown": 30,
+        "winCount": 0,
+        "stopCount": 0,
+        "stopLoss":false,
+        "stopWin":false,
+        "stopLong":false,
+        "stopShort":false,
+        "tradeVolume": 5,
+        "status": 0
     }
 }
