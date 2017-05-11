@@ -123,8 +123,8 @@ class tradeBar(object):
             return 'hc1710'
         elif self.symbol == 'ru1709':
             return 'ru1709'
-        elif self.symbol == 'zn1706':
-            return 'zn1706'
+        elif self.symbol == 'zn1707':
+            return 'zn1707'
         elif self.symbol == 'pp1709':
             return 'pp1709'
         elif self.symbol == 'j1709':
@@ -137,6 +137,14 @@ class tradeBar(object):
             return 'jd1709'
         elif self.symbol == 'SR709':
             return 'SR1709'
+        elif self.symbol == 'p1709':
+            return 'p1709'
+        elif self.symbol == 'c1709':
+            return 'c1709'
+        elif self.symbol == 'cu1707':
+            return 'cu1707'
+        elif self.symbol == 'rb1710':
+            return 'rb1710'
 
 if __name__ == '__main__':
     # reconfig()
@@ -149,7 +157,7 @@ if __name__ == '__main__':
     # a = tradeBar('FG709')
     # print a.__dict__
     a = hist()
-    a.get_K_data('jd1709', period='1d')
+    a.get_K_data('rb1710', period='1d')
     print a.data
     perHigh = list(a.data['high'])[-1]
     perLow = list(a.data['low'])[-1]
