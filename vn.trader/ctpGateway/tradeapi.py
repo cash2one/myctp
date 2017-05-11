@@ -28,7 +28,7 @@ class tradeAPI(CtpGateway):
             if tick.lastPrice >= self.tdApi.posBufferDict[longPosition].pos.stopWinPrice:  # 最新价格大于止盈价格
                 logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.writeLog(logContent)
-                send_msg(logContent.encode('utf-8'))
+                # send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -39,7 +39,7 @@ class tradeAPI(CtpGateway):
             if tick.lastPrice <= self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice:  # 最新价格小于止盈价格
                 logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.writeLog(logContent)
-                send_msg(logContent.encode('utf-8'))
+                # send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -62,7 +62,7 @@ class tradeAPI(CtpGateway):
             if tick.lastPrice <= self.tdApi.posBufferDict[longPosition].pos.stopLossPrice:  # 最新价格小于止损价格
                 logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.writeLog(logContent)
-                send_msg(logContent.encode('utf-8'))
+                # send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -73,7 +73,7 @@ class tradeAPI(CtpGateway):
             if tick.lastPrice >= self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice:  # 最新价格大于止损价格
                 logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.writeLog(logContent)
-                send_msg(logContent.encode('utf-8'))
+                # send_msg(logContent.encode('utf-8'))
                 # 发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -767,7 +767,7 @@ class tradeAPI(CtpGateway):
             logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
                 trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID,trade.tradeTime)
             self.writeLog(logContent)
-            send_msg(logContent.encode('utf-8'))
+            # send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def pOrder(self, event):
