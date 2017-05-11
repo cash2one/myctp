@@ -480,7 +480,7 @@ class CtpGateway(VtGateway):
         if self.tickCount >= 50:
             self.today = datetime.now().date().strftime('%Y-%m-%d')
             # filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-            filename2 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
+            filename2 = '/work/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
             if os.path.exists(filename2):
                 tickBuffer2 = pd.read_csv(filename2)
                 tickBuffer2 = pd.concat([tickBuffer2, self.tickDF2], ignore_index=True)
@@ -638,7 +638,7 @@ class CtpGateway(VtGateway):
         loginfo = ':'.join([log.logTime, log.logContent])
         # send_msg(loginfo)
         self.today = datetime.now().date().strftime('%Y-%m-%d')
-        filename = '/home/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
+        filename = '/work/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
         if os.path.exists(filename):
             fp = file(filename, 'a+')
             try:
