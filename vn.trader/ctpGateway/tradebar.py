@@ -145,6 +145,8 @@ class tradeBar(object):
             return 'cu1707'
         elif self.symbol == 'rb1710':
             return 'rb1710'
+        elif self.symbol == 'SM709':
+            return 'SM1709'
 
 if __name__ == '__main__':
     # reconfig()
@@ -157,7 +159,7 @@ if __name__ == '__main__':
     # a = tradeBar('FG709')
     # print a.__dict__
     a = hist()
-    a.get_K_data('rb1710', period='1d')
+    a.get_K_data('SM1709', period='1d')
     print a.data
     perHigh = list(a.data['high'])[-1]
     perLow = list(a.data['low'])[-1]

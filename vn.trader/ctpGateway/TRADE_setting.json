@@ -302,5 +302,24 @@
         "stopShort":false,
         "tradeVolume": 8,
         "status": 0
+    },
+    "SM709": {
+        "tickPrice": 2,
+        "size": 5,
+        "currentMode": "long",
+        "winTickPrice": 30,
+        "stopTickPrice": 30,
+        "winTargetPrice": 100000,
+        "stopTargetPrice": 0,
+        "preSellPrice": 0,
+        "maxDrawDown": 30,
+        "winCount": 0,
+        "stopCount": 0,
+        "stopLoss":false,
+        "stopWin":false,
+        "stopLong":false,
+        "stopShort":false,
+        "tradeVolume": 4,
+        "status": 0
     }
 }
