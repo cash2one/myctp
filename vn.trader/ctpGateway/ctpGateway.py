@@ -40,8 +40,8 @@ class CtpGateway(VtGateway):
         self.getPosition = False        #是否已经得到持仓
         self.sendOrderMsg = False       #非交易时间，不发送订单消息
 
-        self.initTradeSetting()
         self.lastOrder = {}
+        self.initTradeSetting()
         # self.initRecodeTick()
 
         # 注册事件处理函数
