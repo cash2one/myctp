@@ -741,10 +741,9 @@ class tradeAPI(CtpGateway):
 
         #更新状态
         if self.tradeDict[tick.symbol].status == 0:
-            if self.tradeDict[tick.symbol].winCount >= 2:
-                self.tradeDict[tick.symbol].status = 1          #切换状态
-                self.tradeDict[tick.symbol].openFlag = False    #本次开仓无效
-                self.tradeDict[tick.symbol].winCount = 0
+            if self.tradeDict[tick.symbol].winCount >= 3:
+                self.tradeDict[tick.symbol].stopLong = True
+                self.tradeDict[tick.symbol].stopShort = True
             if self.tradeDict[tick.symbol].stopCount >= 1:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
@@ -752,12 +751,26 @@ class tradeAPI(CtpGateway):
             if self.tradeDict[tick.symbol].winCount >= 1:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
-            if self.tradeDict[tick.symbol].stopCount >= 6:
+            if self.tradeDict[tick.symbol].stopCount >= 4:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
 
         # 开仓
         self.tradeOpen(tick)
+
+        # 未成交，处理撤单
+        if self.lastOrder[tick.symbol] != None and self.lastOrder[tick.symbol].status == u'未成交':
+            self.cancelOrder(self.lastOrder[tick.symbol].orderID)
+            self.lastOrder[tick.symbol] = None
+            if self.lastOrder[tick.symbol].offset == u'开仓':
+                self.tradeDict[tick.symbol].opening = False
+            else:
+                self.tradeDict[tick.symbol].closeing = False
+                if self.tradeDict[tick.symbol].status == 0:
+                    self.tradeDict[tick.symbol].winCount -= 1
+                else:
+                    self.tradeDict[tick.symbol].stopCount -= 1
+
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
@@ -775,18 +788,10 @@ class tradeAPI(CtpGateway):
         order = event.dict_['data']
         if order.symbol not in self.tradeDict.keys():
             return
+        self.lastOrder[order.symbol] = order
         if order.offset == u'开仓' and order.status == u'全部成交':
             # self.getPosition = False
             self.qryPosition()  # 查询并更新持仓
-            self.tradeDict[order.symbol].todayHigh = 0
-            self.tradeDict[order.symbol].todayLow = 100000
-            # if order.direction == u'空':
-            #     self.tradeDict[order.symbol].tradeList.append(0)
-            # elif order.direction == u'多':
-            #     self.tradeDict[order.symbol].tradeList.append(1)
-            # else:
-            #     pass
-        # 非开仓，全部成交，视为平仓全部成交，因为可能为未知或者平今，所以没有限定为平仓
         elif order.status == u'全部成交':
             # self.getPosition = False
             self.qryPosition()  # 查询并更新持仓
@@ -794,13 +799,6 @@ class tradeAPI(CtpGateway):
             self.tradeDict[order.symbol].closeCount += 1
         else:
             pass
-        # TODO
-        # 此处考虑到本策略不止盈，所以将平仓次数与止损次数视为相等，不使用此策略时，应该修改。
-        # 不止盈的话，只有程序启动时，平仓次数才会大于止损次数，因此，程序中断后，通过此处获取当天止损次数
-        # if self.tradeDict[order.symbol].closeCount > self.tradeDict[order.symbol].stopCount:
-        #     self.tradeDict[order.symbol].stopCount = self.tradeDict[order.symbol].closeCount
-        #     self.tradeDict[order.symbol].winCount = self.tradeDict[order.symbol].closeCount
-
         if self.sendOrderMsg:
             logContent = u'[订单回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
                 order.symbol, order.orderID, order.price, order.totalVolume, order.direction, order.offset,order.status, order.orderTime)

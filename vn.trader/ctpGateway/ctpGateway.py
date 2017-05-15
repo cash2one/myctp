@@ -41,6 +41,7 @@ class CtpGateway(VtGateway):
         self.sendOrderMsg = False       #非交易时间，不发送订单消息
 
         self.initTradeSetting()
+        self.lastOrder = {}
         # self.initRecodeTick()
 
         # 注册事件处理函数
@@ -128,6 +129,7 @@ class CtpGateway(VtGateway):
         for symbol in config.tradeSymbol:
             self.tradeDict[symbol] = tradeBar(symbol)
             self.tdApi.symbolSizeDict[symbol] = self.tradeDict[symbol].size
+            self.lastOrder[symbol] = None
 
     #----------------------------------------------------------------------
     def subscribe(self, subscribeReq):
