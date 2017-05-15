@@ -758,7 +758,7 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].opening = False
             else:
                 self.tradeDict[tick.symbol].closeing = False
-            self.tradeDict[tick.symbol].stopCount -= 1
+                self.tradeDict[tick.symbol].stopCount -= 1
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
