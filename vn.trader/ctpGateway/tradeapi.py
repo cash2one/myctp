@@ -759,6 +759,10 @@ class tradeAPI(CtpGateway):
             else:
                 self.tradeDict[tick.symbol].closeing = False
                 self.tradeDict[tick.symbol].stopCount -= 1
+                if self.lastOrder[tick.symbol].direction == u'多':
+                    self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = False
+                else:
+                    self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = False
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
