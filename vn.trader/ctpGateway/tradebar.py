@@ -63,6 +63,8 @@ class tradeBar(object):
         self.openDirection = EMPTY_STRING       # 开仓方向，多或者空
         self.closeing = EMPTY_BOOL              # 是否存在未成交平仓单
         self.opening = EMPTY_BOOL               # 是否存在未成交开仓单
+        self.doWin = EMPTY_BOOL                 # 正在止盈
+        self.doLoss = EMPTY_BOOL                # 正在止损
         # self.tradeList = EMPTY_LIST             # 记录交易历史
         self.todayHigh = EMPTY_FLOAT            # 今天最高价
         self.todayLow = EMPTY_FLOAT             # 今天最低价
