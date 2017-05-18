@@ -122,18 +122,6 @@ class tradeAPI(CtpGateway):
             else:
                 pass
 
-    def checkOrder(self):
-        for posName in self.tdApi.posBufferDict.keys():
-            symbol = posName.split('.')[0]
-            if self.lastOrder[symbol] != None and (self.lastOrder[symbol].status == u'未成交' or self.lastOrder[symbol].status == u'未知'):
-                req = VtCancelOrderReq()
-                req.symbol = self.lastOrder[symbol].symbol
-                req.exchange = self.lastOrder[symbol].exchange
-                req.orderID = self.lastOrder[symbol].orderID
-                req.frontID = self.lastOrder[symbol].frontID
-                req.sessionID = self.lastOrder[symbol].sessionID
-                self.cancelOrder(req)
-
     # ----------------------------------------------------------------------
     def shortPolicy1(self, tick):
         '''持仓到收盘，没有做多或者做空倾向，两边交易区间一致'''
@@ -841,6 +829,15 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[symbol].clearPos = True
             logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
                                                               self.accountInfo.positionProfit,self.accountInfo.commission)
+            self.writeLog(logContent)
+            # send_msg(logContent.encode('utf-8'))
+
+        # 风控止损
+        if (self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < -4000:
+            for symbol in self.tradeDict.keys():
+                self.tradeDict[symbol].clearPos = True
+            logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+                            self.accountInfo.positionProfit, self.accountInfo.commission)
             self.writeLog(logContent)
             # send_msg(logContent.encode('utf-8'))
 
