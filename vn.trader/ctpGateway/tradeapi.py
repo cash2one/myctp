@@ -670,7 +670,7 @@ class tradeAPI(CtpGateway):
             self.today = datetime.now().date().strftime('%Y-%m-%d')
             for symbol in self.tickDf.keys():
                 # filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-                filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
+                filename = '/work/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
                 if os.path.exists(filename):
                     tickBuffer = pd.read_csv(filename)
                     tickBuffer = pd.concat([tickBuffer, self.tickDf[symbol]], ignore_index=True)
@@ -718,9 +718,10 @@ class tradeAPI(CtpGateway):
 
         #更新状态
         if self.tradeDict[tick.symbol].status == 0:
-            if self.tradeDict[tick.symbol].winCount >= 3:
-                self.tradeDict[tick.symbol].stopLong = True
-                self.tradeDict[tick.symbol].stopShort = True
+            if self.tradeDict[tick.symbol].winCount >= 2:
+                self.tradeDict[tick.symbol].status = 1
+                self.tradeDict[tick.symbol].openFlag = False
+                self.tradeDict[tick.symbol].winCount = 0
             if self.tradeDict[tick.symbol].stopCount >= 1:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
@@ -728,7 +729,7 @@ class tradeAPI(CtpGateway):
             if self.tradeDict[tick.symbol].winCount >= 1:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
-            if self.tradeDict[tick.symbol].stopCount >= 4:
+            if self.tradeDict[tick.symbol].stopCount >= 6:
                 self.tradeDict[tick.symbol].stopLong = True
                 self.tradeDict[tick.symbol].stopShort = True
 
