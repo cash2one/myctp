@@ -833,7 +833,7 @@ class tradeAPI(CtpGateway):
             # send_msg(logContent.encode('utf-8'))
 
         # 风控止损
-        if (self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < -4000:
+        if (self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < -6000:
             for symbol in self.tradeDict.keys():
                 self.tradeDict[symbol].clearPos = True
             logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
