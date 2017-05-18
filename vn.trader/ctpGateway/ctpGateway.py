@@ -179,10 +179,10 @@ class CtpGateway(VtGateway):
         """初始化连续查询"""
         if self.qryEnabled:
             # 需要循环的查询函数列表
-            self.qryFunctionList = [self.qryAccount, self.qryPosition, self.saveConfig]      #查询账户信息和持仓信息
+            self.qryFunctionList = [self.qryAccount, self.qryPosition, self.saveConfig, self.checkOrder]      #查询账户信息和持仓信息
             
             self.qryCount = 0           # 查询触发倒计时
-            self.qryTrigger = 2         # 查询触发点，查询周期，2为每两秒查询一次
+            self.qryTrigger = 1         # 查询触发点，查询周期，2为每两秒查询一次
             self.qryNextFunction = 0    # 上次运行的查询函数索引
             
             self.startQuery()
@@ -215,6 +215,19 @@ class CtpGateway(VtGateway):
     def setQryEnabled(self, qryEnabled):
         """设置是否要启动循环查询"""
         self.qryEnabled = qryEnabled
+
+    # ----------------------------------------------------------------------
+    def checkOrder(self):
+        for posName in self.tdApi.posBufferDict.keys():
+            symbol = posName.split('.')[0]
+            if self.lastOrder[symbol] != None and (self.lastOrder[symbol].status == u'未成交' or self.lastOrder[symbol].status == u'未知'):
+                req = VtCancelOrderReq()
+                req.symbol = self.lastOrder[symbol].symbol
+                req.exchange = self.lastOrder[symbol].exchange
+                req.orderID = self.lastOrder[symbol].orderID
+                req.frontID = self.lastOrder[symbol].frontID
+                req.sessionID = self.lastOrder[symbol].sessionID
+                self.cancelOrder(req)
 
     # ----------------------------------------------------------------------
     def makeOrder(self, _symbol, _price, _volume, _direction, _offset, _priceType):
