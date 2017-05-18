@@ -92,6 +92,7 @@ class tradeBar(object):
         newdf['stopLong'] = newdf['stopLong'].astype(bool)
         newdf['stopShort'] = newdf['stopShort'].astype(bool)
         newdf['status'] = newdf['status'].astype(int)
+        newdf['clearPos'] = newdf['clearPos'].astype(bool)
         # print newdf
         if self.symbol not in newdf.index:
             logContent = u'没有合约%s的交易配置' % self.symbol

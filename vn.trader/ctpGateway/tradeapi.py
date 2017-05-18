@@ -180,10 +180,6 @@ class tradeAPI(CtpGateway):
         if tick.lowPrice <= tick.lowerLimit:
             self.tradeDict[tick.symbol].stopShort = True
 
-        # 收盘清仓
-        nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
-        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
-            self.clearPosition(tick)
 
     # ----------------------------------------------------------------------
     def shortPolicy2(self, tick):
@@ -328,12 +324,6 @@ class tradeAPI(CtpGateway):
         # 跌停不开空单
         if tick.lowPrice <= tick.lowerLimit:
             self.tradeDict[tick.symbol].stopShort = True
-
-        # 收盘清仓
-        nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
-        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (
-            nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
-            self.clearPosition(tick)
 
     # ----------------------------------------------------------------------
     def shortPolicy4(self, tick):
@@ -720,6 +710,16 @@ class tradeAPI(CtpGateway):
 
         # 开仓
         self.tradeOpen(tick)
+
+        # 策略清仓
+        if self.tradeDict[tick.symbol].clearPos:
+            self.clearPosition(tick)
+
+        # 收盘清仓
+        nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
+        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (
+                    nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
+            self.clearPosition(tick)
 
         # 未成交，处理撤单
         if self.lastOrder[tick.symbol] != None and self.lastOrder[tick.symbol].status == u'未成交':
