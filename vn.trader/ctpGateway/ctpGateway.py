@@ -154,7 +154,6 @@ class CtpGateway(VtGateway):
     #----------------------------------------------------------------------
     def qryPosition(self):
         """查询持仓"""
-        print '@@@@@@qryPosition@@@@@'
         self.tdApi.qryPosition()
 
     # ----------------------------------------------------------------------
@@ -180,10 +179,11 @@ class CtpGateway(VtGateway):
         """初始化连续查询"""
         if self.qryEnabled:
             # 需要循环的查询函数列表
-            self.qryFunctionList = [self.qryAccount, self.qryPosition, self.saveConfig, self.checkOrder]      #查询账户信息和持仓信息
+            self.qryFunctionList = [self.qryAccount, self.qryPosition]      #查询账户信息和持仓信息
+            self.taskList = [self.saveConfig, self.checkOrder]              # 定时任务
             
             self.qryCount = 0           # 查询触发倒计时
-            self.qryTrigger = 2         # 查询触发点，查询周期，2为每两秒查询一次
+            self.qryTrigger = 1         # 查询触发点，查询周期，2为每两秒查询一次
             self.qryNextFunction = 0    # 上次运行的查询函数索引
             
             self.startQuery()
@@ -198,14 +198,17 @@ class CtpGateway(VtGateway):
             self.qryCount = 0
             
             # 执行查询函数
-            # function = self.qryFunctionList[self.qryNextFunction]
-            for function in self.qryFunctionList:
-                function()
+            function = self.qryFunctionList[self.qryNextFunction]
+            function()
+            
+            # 执行定时任务
+            for task in self.taskList:
+                task()
             
             # 计算下次查询函数的索引，如果超过了列表长度，则重新设为0
-            # self.qryNextFunction += 1
-            # if self.qryNextFunction == len(self.qryFunctionList):
-            #     self.qryNextFunction = 0
+            self.qryNextFunction += 1
+            if self.qryNextFunction == len(self.qryFunctionList):
+                self.qryNextFunction = 0
     
     #----------------------------------------------------------------------
     def startQuery(self):
