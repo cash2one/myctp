@@ -182,7 +182,7 @@ class CtpGateway(VtGateway):
             self.qryFunctionList = [self.qryAccount, self.qryPosition, self.saveConfig, self.checkOrder]      #查询账户信息和持仓信息
             
             self.qryCount = 0           # 查询触发倒计时
-            self.qryTrigger = 1         # 查询触发点，查询周期，2为每两秒查询一次
+            self.qryTrigger = 2         # 查询触发点，查询周期，2为每两秒查询一次
             self.qryNextFunction = 0    # 上次运行的查询函数索引
             
             self.startQuery()
