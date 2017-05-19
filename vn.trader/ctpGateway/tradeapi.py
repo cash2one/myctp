@@ -682,7 +682,6 @@ class tradeAPI(CtpGateway):
 
         # 完成撤单
         if self.lastOrder[tick.symbol] != None and self.lastOrder[tick.symbol].status == u'已撤销':
-            self.lastOrder[tick.symbol] = None
             if self.lastOrder[tick.symbol].offset == u'开仓':
                 self.tradeDict[tick.symbol].opening = False
             else:
@@ -691,6 +690,7 @@ class tradeAPI(CtpGateway):
                     self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = False
                 elif self.lastOrder[tick.symbol].offset == u'空':
                     self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = False
+            self.lastOrder[tick.symbol] = None
 
         # 获取到持仓信息后执行策略
         if self.tradeDict[tick.symbol].status == 0:
