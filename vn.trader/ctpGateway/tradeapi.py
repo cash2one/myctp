@@ -553,10 +553,6 @@ class tradeAPI(CtpGateway):
     # ----------------------------------------------------------------------
     def clearPosition(self, tick):
         '''清仓，并停止开仓'''
-        # 记录日志
-        logContent = u'[清仓]合约代码：%s' % tick.symbol
-        self.writeLog(logContent)
-        # send_msg(logContent.encode('utf-8'))
 
         self.tradeDict[tick.symbol].stopLong = True
         self.tradeDict[tick.symbol].stopShort = True
@@ -570,6 +566,8 @@ class tradeAPI(CtpGateway):
             self.sendOrder(orderReq)
             self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = True  # 标记仓位已被平
             self.tradeDict[tick.symbol].closeing = True
+            logContent = u'[清仓]合约代码：%s' % tick.symbol
+            self.writeLog(logContent)
         if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) and (
                 not self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed):  # 存在多单
             # 多单清仓
@@ -578,6 +576,8 @@ class tradeAPI(CtpGateway):
             self.sendOrder(orderReq)
             self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = True  # 标记仓位已被平
             self.tradeDict[tick.symbol].closeing = True
+            logContent = u'[清仓]合约代码：%s' % tick.symbol
+            self.writeLog(logContent)
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
