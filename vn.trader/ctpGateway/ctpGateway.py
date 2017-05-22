@@ -222,10 +222,7 @@ class CtpGateway(VtGateway):
 
     # ----------------------------------------------------------------------
     def checkOrder(self):
-        for posName in self.tdApi.posBufferDict.keys():
-            symbol = posName.split('.')[0]
-            if symbol not in self.tradeDict.keys():
-                continue
+        for symbol in self.tradeDict.keys():
             if self.lastOrder[symbol] != None and (self.lastOrder[symbol].status == u'未成交' or self.lastOrder[symbol].status == u'未知'):
                 req = VtCancelOrderReq()
                 req.symbol = self.lastOrder[symbol].symbol
