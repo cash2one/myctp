@@ -823,25 +823,25 @@ class tradeAPI(CtpGateway):
         self.accountInfo.closeProfit = account.closeProfit  # 平仓盈亏
         self.accountInfo.positionProfit = account.positionProfit  # 持仓盈亏
 
-        # 风控止盈
-        if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) > 8000)\
-                and self.accountInfo.positionProfit != 0:
-            for symbol in self.tradeDict.keys():
-                self.tradeDict[symbol].clearPos = True
-            logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
-                                                              self.accountInfo.positionProfit,self.accountInfo.commission)
-            self.writeLog(logContent)
-            # send_msg(logContent.encode('utf-8'))
-
-        # 风控止损
-        if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < -6000)\
-                and self.accountInfo.positionProfit != 0:
-            for symbol in self.tradeDict.keys():
-                self.tradeDict[symbol].clearPos = True
-            logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
-                            self.accountInfo.positionProfit, self.accountInfo.commission)
-            self.writeLog(logContent)
-            # send_msg(logContent.encode('utf-8'))
+        # # 风控止盈
+        # if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) > 8000)\
+        #         and self.accountInfo.positionProfit != 0:
+        #     for symbol in self.tradeDict.keys():
+        #         self.tradeDict[symbol].clearPos = True
+        #     logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+        #                                                       self.accountInfo.positionProfit,self.accountInfo.commission)
+        #     self.writeLog(logContent)
+        #     # send_msg(logContent.encode('utf-8'))
+        #
+        # # 风控止损
+        # if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < -6000)\
+        #         and self.accountInfo.positionProfit != 0:
+        #     for symbol in self.tradeDict.keys():
+        #         self.tradeDict[symbol].clearPos = True
+        #     logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+        #                     self.accountInfo.positionProfit, self.accountInfo.commission)
+        #     self.writeLog(logContent)
+        #     # send_msg(logContent.encode('utf-8'))
 
         nowTime = datetime.now().time()
         if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (nowTime < datetime.strptime('15:01:30', '%H:%M:%S').time())\
