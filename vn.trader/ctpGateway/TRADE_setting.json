@@ -35,7 +35,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 4,
+        "tradeVolume": 3,
         "status": 0,
         "clearPos": false
     },
@@ -175,7 +175,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 15,
+        "tradeVolume": 10,
         "status": 0,
         "clearPos": false
     },
