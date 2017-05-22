@@ -686,9 +686,9 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].opening = False
             else:
                 self.tradeDict[tick.symbol].closeing = False
-                if self.lastOrder[tick.symbol].offset == u'多':
+                if self.lastOrder[tick.symbol].direction == u'多':
                     self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = False
-                elif self.lastOrder[tick.symbol].offset == u'空':
+                elif self.lastOrder[tick.symbol].direction == u'空':
                     self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = False
             self.lastOrder[tick.symbol] = None
 
