@@ -235,7 +235,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 5,
+        "tradeVolume": 6,
         "status": 0,
         "clearPos": false
     }
