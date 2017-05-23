@@ -679,10 +679,10 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def pContract(self, event):
         contract = event.dict_['data']
-        print "============================================="
-        print contract.symbol
-        print contract.priceTick
-        print contract.size
+        # print "============================================="
+        # print contract.symbol
+        # print contract.priceTick
+        # print contract.size
         if contract.symbol in self.tradeDict.keys():
             self.tradeDict[contract.symbol].tickPrice = contract.priceTick
             self.tradeDict[contract.symbol].size = contract.size
