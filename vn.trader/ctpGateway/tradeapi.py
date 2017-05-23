@@ -680,6 +680,7 @@ class tradeAPI(CtpGateway):
 
         if (tick.openPrice > self.tradeDict[tick.symbol].perHigh) or (tick.openPrice < self.tradeDict[tick.symbol].perLow):
             self.tradeDict[tick.symbol].status = 1
+            config.riskControl = False
 
         # 完成撤单
         if self.lastOrder[tick.symbol] != None and self.lastOrder[tick.symbol].status == u'已撤销':
