@@ -735,7 +735,7 @@ class tradeAPI(CtpGateway):
 
         # 收盘清仓
         nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
-        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (
+        if (nowTime > datetime.strptime('14:59:30', '%H:%M:%S').time()) and (
                     nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
             self.clearPosition(tick)
 
