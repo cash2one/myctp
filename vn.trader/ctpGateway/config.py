@@ -8,6 +8,6 @@ class config:
     basePath = '/work/'
 
     # 风控
-    riskControl = False     # 是否执行风控
-    rc_win = 20000          # 风控止盈金额
-    rc_loss = -20000        # 风控止损金额
+    riskControl = True      # 是否执行风控
+    rc_win = 4000          # 风控止盈金额
+    rc_loss = -8000        # 风控止损金额
