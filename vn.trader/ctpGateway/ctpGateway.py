@@ -233,7 +233,7 @@ class CtpGateway(VtGateway):
                 self.cancelOrder(req)
                 logContent = u'[撤单]合约代码：%s，订单编号：%s' % (self.lastOrder[symbol].symbol, self.lastOrder[symbol].orderID)
                 self.writeLog(logContent)
-                # send_msg(logContent.encode('utf-8'))
+                send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def makeOrder(self, _symbol, _price, _volume, _direction, _offset, _priceType):
