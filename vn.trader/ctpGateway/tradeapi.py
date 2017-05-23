@@ -578,6 +578,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].closeing = True
             logContent = u'[清仓]合约代码：%s' % tick.symbol
             self.writeLog(logContent)
+        self.tradeDict[tick.symbol].clearPos = False
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
