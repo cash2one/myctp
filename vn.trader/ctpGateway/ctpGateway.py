@@ -40,6 +40,7 @@ class CtpGateway(VtGateway):
         self.getPosition = False        #是否已经得到持仓
         self.sendOrderMsg = False       #非交易时间，不发送订单消息
 
+        self.lastOrder = {}
         self.initTradeSetting()
         # self.initRecodeTick()
 
@@ -128,6 +129,7 @@ class CtpGateway(VtGateway):
         for symbol in config.tradeSymbol:
             self.tradeDict[symbol] = tradeBar(symbol)
             self.tdApi.symbolSizeDict[symbol] = self.tradeDict[symbol].size
+            self.lastOrder[symbol] = None
 
     #----------------------------------------------------------------------
     def subscribe(self, subscribeReq):
@@ -177,7 +179,8 @@ class CtpGateway(VtGateway):
         """初始化连续查询"""
         if self.qryEnabled:
             # 需要循环的查询函数列表
-            self.qryFunctionList = [self.qryAccount, self.qryPosition, self.saveConfig]      #查询账户信息和持仓信息
+            self.qryFunctionList = [self.qryAccount, self.qryPosition]      #查询账户信息和持仓信息
+            self.taskList = [self.saveConfig, self.checkOrder]              # 定时任务
             
             self.qryCount = 0           # 查询触发倒计时
             self.qryTrigger = 1         # 查询触发点，查询周期，2为每两秒查询一次
@@ -198,6 +201,10 @@ class CtpGateway(VtGateway):
             function = self.qryFunctionList[self.qryNextFunction]
             function()
             
+            # 执行定时任务
+            for task in self.taskList:
+                task()
+            
             # 计算下次查询函数的索引，如果超过了列表长度，则重新设为0
             self.qryNextFunction += 1
             if self.qryNextFunction == len(self.qryFunctionList):
@@ -212,6 +219,21 @@ class CtpGateway(VtGateway):
     def setQryEnabled(self, qryEnabled):
         """设置是否要启动循环查询"""
         self.qryEnabled = qryEnabled
+
+    # ----------------------------------------------------------------------
+    def checkOrder(self):
+        for symbol in self.tradeDict.keys():
+            if self.lastOrder[symbol] != None and (self.lastOrder[symbol].status == u'未成交' or self.lastOrder[symbol].status == u'未知'):
+                req = VtCancelOrderReq()
+                req.symbol = self.lastOrder[symbol].symbol
+                req.exchange = self.lastOrder[symbol].exchange
+                req.orderID = self.lastOrder[symbol].orderID
+                req.frontID = self.lastOrder[symbol].frontID
+                req.sessionID = self.lastOrder[symbol].sessionID
+                self.cancelOrder(req)
+                logContent = u'[撤单]合约代码：%s，订单编号：%s' % (self.lastOrder[symbol].symbol, self.lastOrder[symbol].orderID)
+                self.writeLog(logContent)
+                # send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def makeOrder(self, _symbol, _price, _volume, _direction, _offset, _priceType):
@@ -480,7 +502,7 @@ class CtpGateway(VtGateway):
         if self.tickCount >= 50:
             self.today = datetime.now().date().strftime('%Y-%m-%d')
             # filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-            filename2 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
+            filename2 = '/work/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
             if os.path.exists(filename2):
                 tickBuffer2 = pd.read_csv(filename2)
                 tickBuffer2 = pd.concat([tickBuffer2, self.tickDF2], ignore_index=True)
@@ -638,7 +660,7 @@ class CtpGateway(VtGateway):
         loginfo = ':'.join([log.logTime, log.logContent])
         # send_msg(loginfo)
         self.today = datetime.now().date().strftime('%Y-%m-%d')
-        filename = '/home/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
+        filename = '/work/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
         if os.path.exists(filename):
             fp = file(filename, 'a+')
             try:

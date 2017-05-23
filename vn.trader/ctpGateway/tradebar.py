@@ -63,6 +63,8 @@ class tradeBar(object):
         self.openDirection = EMPTY_STRING       # 开仓方向，多或者空
         self.closeing = EMPTY_BOOL              # 是否存在未成交平仓单
         self.opening = EMPTY_BOOL               # 是否存在未成交开仓单
+        self.doWin = EMPTY_BOOL                 # 正在止盈
+        self.doLoss = EMPTY_BOOL                # 正在止损
         # self.tradeList = EMPTY_LIST             # 记录交易历史
         self.todayHigh = EMPTY_FLOAT            # 今天最高价
         self.todayLow = EMPTY_FLOAT             # 今天最低价
@@ -92,6 +94,7 @@ class tradeBar(object):
         newdf['stopLong'] = newdf['stopLong'].astype(bool)
         newdf['stopShort'] = newdf['stopShort'].astype(bool)
         newdf['status'] = newdf['status'].astype(int)
+        newdf['clearPos'] = newdf['clearPos'].astype(bool)
         # print newdf
         if self.symbol not in newdf.index:
             logContent = u'没有合约%s的交易配置' % self.symbol

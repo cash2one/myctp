@@ -32,7 +32,7 @@ class tradeAPI(CtpGateway):
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
-                self.tradeDict[tick.symbol].winCount += 1
+                self.tradeDict[tick.symbol].doWin = True
                 self.tdApi.posBufferDict[longPosition].pos.beClosed = True  # 标记仓位已被平
                 self.tradeDict[tick.symbol].closeing = True
         if (shortPosition in self.tdApi.posBufferDict.keys()) and (not self.tdApi.posBufferDict[shortPosition].pos.beClosed):  # 空单
@@ -43,7 +43,7 @@ class tradeAPI(CtpGateway):
                 #发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
-                self.tradeDict[tick.symbol].winCount += 1
+                self.tradeDict[tick.symbol].doWin = True
                 self.tdApi.posBufferDict[shortPosition].pos.beClosed = True  # 标记仓位已被平
                 self.tradeDict[tick.symbol].closeing = True
         self.tradeDict[tick.symbol].stopWin = False
@@ -67,7 +67,7 @@ class tradeAPI(CtpGateway):
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
                 self.tdApi.posBufferDict[longPosition].pos.beClosed = True  # 标记仓位已被平
-                self.tradeDict[tick.symbol].stopCount += 1
+                self.tradeDict[tick.symbol].doLoss = True
                 self.tradeDict[tick.symbol].closeing = True
         if (shortPosition in self.tdApi.posBufferDict.keys()) and (not self.tdApi.posBufferDict[shortPosition].pos.beClosed):  # 空单
             if tick.lastPrice >= self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice:  # 最新价格大于止损价格
@@ -78,7 +78,7 @@ class tradeAPI(CtpGateway):
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
                 self.tdApi.posBufferDict[shortPosition].pos.beClosed = True  # 标记仓位已被平
-                self.tradeDict[tick.symbol].stopCount += 1
+                self.tradeDict[tick.symbol].doLoss = True
                 self.tradeDict[tick.symbol].closeing = True
         self.tradeDict[tick.symbol].stopLoss = False
 
@@ -178,30 +178,6 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].stopLong = True
         #跌停不开空单
         if tick.lowPrice <= tick.lowerLimit:
-            self.tradeDict[tick.symbol].stopShort = True
-
-        # 收盘清仓
-        nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
-        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
-            self.tradeDict[tick.symbol].stopLong = True
-            self.tradeDict[tick.symbol].stopShort = True
-            if self.tradeDict[tick.symbol].closeing == True:
-                return
-            if (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()) and (not self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed): #存在空单
-                #空单清仓
-                print 'step9'
-                orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
-                self.sendOrder(orderReq)
-                self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = True  # 标记仓位已被平
-                self.tradeDict[tick.symbol].closeing = True
-            if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) and (not self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed): #存在多单
-                #多单清仓
-                print 'step10'
-                orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
-                self.sendOrder(orderReq)
-                self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = True  # 标记仓位已被平
-                self.tradeDict[tick.symbol].closeing = True
-            self.tradeDict[tick.symbol].stopLong = True
             self.tradeDict[tick.symbol].stopShort = True
 
     # ----------------------------------------------------------------------
@@ -346,35 +322,6 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].stopLong = True
         # 跌停不开空单
         if tick.lowPrice <= tick.lowerLimit:
-            self.tradeDict[tick.symbol].stopShort = True
-
-        # 收盘清仓
-        nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
-        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (
-            nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
-            self.tradeDict[tick.symbol].stopLong = True
-            self.tradeDict[tick.symbol].stopShort = True
-            if self.tradeDict[tick.symbol].closeing == True:
-                return
-            if (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()) and (
-                not self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed):  # 存在空单
-                # 空单清仓
-                print 'step9'
-                orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,
-                                                      self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
-                self.sendOrder(orderReq)
-                self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = True  # 标记仓位已被平
-                self.tradeDict[tick.symbol].closeing = True
-            if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) and (
-                not self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed):  # 存在多单
-                # 多单清仓
-                print 'step10'
-                orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,
-                                                       self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
-                self.sendOrder(orderReq)
-                self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = True  # 标记仓位已被平
-                self.tradeDict[tick.symbol].closeing = True
-            self.tradeDict[tick.symbol].stopLong = True
             self.tradeDict[tick.symbol].stopShort = True
 
     # ----------------------------------------------------------------------
@@ -541,30 +488,7 @@ class tradeAPI(CtpGateway):
         nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
         if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (
                     nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
-            self.tradeDict[tick.symbol].stopLong = True
-            self.tradeDict[tick.symbol].stopShort = True
-            if self.tradeDict[tick.symbol].closeing == True:
-                return
-            if (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()) and (
-                    not self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed):  # 存在空单
-                # 空单清仓
-                print 'step9'
-                orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,
-                            self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
-                self.sendOrder(orderReq)
-                self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = True  # 标记仓位已被平
-                self.tradeDict[tick.symbol].closeing = True
-            if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) and (
-                    not self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed):  # 存在多单
-                # 多单清仓
-                print 'step10'
-                orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,
-                            self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
-                self.sendOrder(orderReq)
-                self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = True  # 标记仓位已被平
-                self.tradeDict[tick.symbol].closeing = True
-            self.tradeDict[tick.symbol].stopLong = True
-            self.tradeDict[tick.symbol].stopShort = True
+            self.clearPosition(tick)
 
     # ----------------------------------------------------------------------
     def ruPolicy(self, tick):
@@ -625,6 +549,35 @@ class tradeAPI(CtpGateway):
                 self.tradeDict[tick.symbol].closeing = True
             self.tradeDict[tick.symbol].stopLong = True
             self.tradeDict[tick.symbol].stopShort = True
+
+    # ----------------------------------------------------------------------
+    def clearPosition(self, tick):
+        '''清仓，并停止开仓'''
+
+        self.tradeDict[tick.symbol].stopLong = True
+        self.tradeDict[tick.symbol].stopShort = True
+        if self.tradeDict[tick.symbol].closeing == True:
+            return
+        if (tick.symbol + '.3' in self.tdApi.posBufferDict.keys()) and (
+                not self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed):  # 存在空单
+            # 空单清仓
+            orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1,
+                                              self.tdApi.posBufferDict[tick.symbol + '.3'].pos.position)
+            self.sendOrder(orderReq)
+            self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = True  # 标记仓位已被平
+            self.tradeDict[tick.symbol].closeing = True
+            logContent = u'[清仓]合约代码：%s' % tick.symbol
+            self.writeLog(logContent)
+        if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) and (
+                not self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed):  # 存在多单
+            # 多单清仓
+            orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1,
+                                               self.tdApi.posBufferDict[tick.symbol + '.2'].pos.position)
+            self.sendOrder(orderReq)
+            self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = True  # 标记仓位已被平
+            self.tradeDict[tick.symbol].closeing = True
+            logContent = u'[清仓]合约代码：%s' % tick.symbol
+            self.writeLog(logContent)
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
@@ -705,7 +658,7 @@ class tradeAPI(CtpGateway):
             self.today = datetime.now().date().strftime('%Y-%m-%d')
             for symbol in self.tickDf.keys():
                 # filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-                filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
+                filename = '/work/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
                 if os.path.exists(filename):
                     tickBuffer = pd.read_csv(filename)
                     tickBuffer = pd.concat([tickBuffer, self.tickDf[symbol]], ignore_index=True)
@@ -727,6 +680,22 @@ class tradeAPI(CtpGateway):
         if (tick.openPrice > self.tradeDict[tick.symbol].perHigh) or (tick.openPrice < self.tradeDict[tick.symbol].perLow):
             self.tradeDict[tick.symbol].status = 1
 
+        # 完成撤单
+        if self.lastOrder[tick.symbol] != None and self.lastOrder[tick.symbol].status == u'已撤销':
+            logContent = u'[撤单成功]合约代码：%s，订单编号：%s，撤销时间：%s' % (
+                self.lastOrder[tick.symbol].symbol, self.lastOrder[tick.symbol].orderID, self.lastOrder[tick.symbol].cancelTime)
+            self.writeLog(logContent)
+            # send_msg(logContent.encode('utf-8'))
+            if self.lastOrder[tick.symbol].offset == u'开仓':
+                self.tradeDict[tick.symbol].opening = False
+            else:
+                self.tradeDict[tick.symbol].closeing = False
+                if self.lastOrder[tick.symbol].direction == u'多':
+                    self.tdApi.posBufferDict[tick.symbol + '.3'].pos.beClosed = False
+                elif self.lastOrder[tick.symbol].direction == u'空':
+                    self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed = False
+            self.lastOrder[tick.symbol] = None
+
         # 获取到持仓信息后执行策略
         if self.tradeDict[tick.symbol].status == 0:
             self.shortPolicy3(tick)
@@ -742,8 +711,8 @@ class tradeAPI(CtpGateway):
         #更新状态
         if self.tradeDict[tick.symbol].status == 0:
             if self.tradeDict[tick.symbol].winCount >= 2:
-                self.tradeDict[tick.symbol].status = 1          #切换状态
-                self.tradeDict[tick.symbol].openFlag = False    #本次开仓无效
+                self.tradeDict[tick.symbol].status = 1
+                self.tradeDict[tick.symbol].openFlag = False
                 self.tradeDict[tick.symbol].winCount = 0
             if self.tradeDict[tick.symbol].stopCount >= 1:
                 self.tradeDict[tick.symbol].stopLong = True
@@ -758,6 +727,16 @@ class tradeAPI(CtpGateway):
 
         # 开仓
         self.tradeOpen(tick)
+
+        # 策略清仓
+        if self.tradeDict[tick.symbol].clearPos:
+            self.clearPosition(tick)
+
+        # 收盘清仓
+        nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
+        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (
+                    nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
+            self.clearPosition(tick)
 
     # ----------------------------------------------------------------------
     def pTrade(self, event):
@@ -776,31 +755,20 @@ class tradeAPI(CtpGateway):
         if order.symbol not in self.tradeDict.keys():
             return
         if order.offset == u'开仓' and order.status == u'全部成交':
-            # self.getPosition = False
+            self.lastOrder[order.symbol] = None
             self.qryPosition()  # 查询并更新持仓
-            self.tradeDict[order.symbol].todayHigh = 0
-            self.tradeDict[order.symbol].todayLow = 100000
-            # if order.direction == u'空':
-            #     self.tradeDict[order.symbol].tradeList.append(0)
-            # elif order.direction == u'多':
-            #     self.tradeDict[order.symbol].tradeList.append(1)
-            # else:
-            #     pass
-        # 非开仓，全部成交，视为平仓全部成交，因为可能为未知或者平今，所以没有限定为平仓
         elif order.status == u'全部成交':
-            # self.getPosition = False
+            self.lastOrder[order.symbol] = None
             self.qryPosition()  # 查询并更新持仓
             self.tradeDict[order.symbol].closeing = False
-            self.tradeDict[order.symbol].closeCount += 1
+            if self.tradeDict[order.symbol].doWin:
+                self.tradeDict[order.symbol].winCount += 1
+                self.tradeDict[order.symbol].doWin = False
+            elif self.tradeDict[order.symbol].doLoss:
+                self.tradeDict[order.symbol].stopCount += 1
+                self.tradeDict[order.symbol].doLoss = False
         else:
-            pass
-        # TODO
-        # 此处考虑到本策略不止盈，所以将平仓次数与止损次数视为相等，不使用此策略时，应该修改。
-        # 不止盈的话，只有程序启动时，平仓次数才会大于止损次数，因此，程序中断后，通过此处获取当天止损次数
-        # if self.tradeDict[order.symbol].closeCount > self.tradeDict[order.symbol].stopCount:
-        #     self.tradeDict[order.symbol].stopCount = self.tradeDict[order.symbol].closeCount
-        #     self.tradeDict[order.symbol].winCount = self.tradeDict[order.symbol].closeCount
-
+            self.lastOrder[order.symbol] = order
         if self.sendOrderMsg:
             logContent = u'[订单回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，订单状态：%s，报单时间：%s' % (
                 order.symbol, order.orderID, order.price, order.totalVolume, order.direction, order.offset,order.status, order.orderTime)
@@ -858,6 +826,26 @@ class tradeAPI(CtpGateway):
         self.accountInfo.margin = account.margin            # 保证金占用
         self.accountInfo.closeProfit = account.closeProfit  # 平仓盈亏
         self.accountInfo.positionProfit = account.positionProfit  # 持仓盈亏
+
+        # # 风控止盈
+        # if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) > 8000)\
+        #         and self.accountInfo.positionProfit != 0:
+        #     for symbol in self.tradeDict.keys():
+        #         self.tradeDict[symbol].clearPos = True
+        #     logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+        #                                                       self.accountInfo.positionProfit,self.accountInfo.commission)
+        #     self.writeLog(logContent)
+        #     # send_msg(logContent.encode('utf-8'))
+        #
+        # # 风控止损
+        # if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < -6000)\
+        #         and self.accountInfo.positionProfit != 0:
+        #     for symbol in self.tradeDict.keys():
+        #         self.tradeDict[symbol].clearPos = True
+        #     logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+        #                     self.accountInfo.positionProfit, self.accountInfo.commission)
+        #     self.writeLog(logContent)
+        #     # send_msg(logContent.encode('utf-8'))
 
         nowTime = datetime.now().time()
         if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (nowTime < datetime.strptime('15:01:30', '%H:%M:%S').time())\
