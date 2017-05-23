@@ -123,11 +123,12 @@ if __name__ == '__main__':
               'WH0', 'PM0', 'RI0', 'JR0', 'CF0', 'SR0', 'OI0', 'RS0', 'RM0', 'PTA0', 'ME0', 'FG0', 'TC0', 'LR0',
               'SM0', 'SF0', 'CU0', 'AL0', 'ZN0', 'PB0', 'AU0', 'AG0', 'RB0', 'WR0', 'HC0', 'RU0', 'FU0', 'BU0']
     a = hist()
-    a.get_K_data('FG0', period='1d')
+    a.get_K_data('RM1705', period='1d')
+    print a.data.loc[200:210,:]
     a.get_macd()
     a.data.ix[(a.data['open'] > a.data['close']), 'fan'] = a.data['high'] - a.data['open']
     a.data.ix[(a.data['open'] < a.data['close']), 'fan'] = a.data['open'] - a.data['low']
-    a.data.ix[(a.data['fan'] >= 10), 'win'] = 1
+    a.data.ix[(a.data['fan'] >= 5), 'win'] = 1
 
     # a.data.ix[a.data['direction'] == u'多', 'win'] = a.data['close'] - a.data['open']
     # a.data.ix[a.data['direction'] == u'空', 'win'] = a.data['open'] - a.data['close']
