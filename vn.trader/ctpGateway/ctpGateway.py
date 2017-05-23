@@ -53,7 +53,7 @@ class CtpGateway(VtGateway):
         # 载入json文件
         # fileName = self.gatewayName + '_connect.json'
         # fileName = os.getcwd() + '/' + fileName
-        fileName = config.CTP_configPath
+        fileName = config.basePath + 'myctp/vn.trader/ctpGateway/CTP_connect.json'
         
         try:
             f = file(fileName)
@@ -101,7 +101,7 @@ class CtpGateway(VtGateway):
 
     # ----------------------------------------------------------------------
     def loadTradeConfig(self):
-        fileName = config.TRADE_configPath
+        fileName = config.basePath + 'myctp/vn.trader/ctpGateway/TRADE_setting.json'
         try:
             f = file(fileName)
         except IOError:
@@ -502,7 +502,7 @@ class CtpGateway(VtGateway):
         if self.tickCount >= 50:
             self.today = datetime.now().date().strftime('%Y-%m-%d')
             # filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-            filename2 = '/real/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
+            filename2 = config.basePath + 'myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
             if os.path.exists(filename2):
                 tickBuffer2 = pd.read_csv(filename2)
                 tickBuffer2 = pd.concat([tickBuffer2, self.tickDF2], ignore_index=True)
@@ -660,7 +660,7 @@ class CtpGateway(VtGateway):
         loginfo = ':'.join([log.logTime, log.logContent])
         # send_msg(loginfo)
         self.today = datetime.now().date().strftime('%Y-%m-%d')
-        filename = '/real/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
+        filename = config.basePath + 'myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
         if os.path.exists(filename):
             fp = file(filename, 'a+')
             try:
