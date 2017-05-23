@@ -658,7 +658,7 @@ class tradeAPI(CtpGateway):
             self.today = datetime.now().date().strftime('%Y-%m-%d')
             for symbol in self.tickDf.keys():
                 # filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-                filename = '/work/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
+                filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
                 if os.path.exists(filename):
                     tickBuffer = pd.read_csv(filename)
                     tickBuffer = pd.concat([tickBuffer, self.tickDf[symbol]], ignore_index=True)
