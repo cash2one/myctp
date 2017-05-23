@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6464f521-124f-4ac7-b7f9-88db31a9b4de" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+    <list default="true" id="6464f521-124f-4ac7-b7f9-88db31a9b4de" name="Default" comment="update">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vn.trader/ctpGateway/CTP_connect.json" afterPath="$PROJECT_DIR$/vn.trader/ctpGateway/CTP_connect.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vn.trader/ctpGateway/TRADE_setting.json" afterPath="$PROJECT_DIR$/vn.trader/ctpGateway/TRADE_setting.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vn.trader/ctpGateway/config.py" afterPath="$PROJECT_DIR$/vn.trader/ctpGateway/config.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vn.trader/ctpGateway/ctpGateway.py" afterPath="$PROJECT_DIR$/vn.trader/ctpGateway/ctpGateway.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vn.trader/ctpGateway/tradeapi.py" afterPath="$PROJECT_DIR$/vn.trader/ctpGateway/tradeapi.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vn.trader/ctpGateway/tradebar.py" afterPath="$PROJECT_DIR$/vn.trader/ctpGateway/tradebar.py" />
     </list>
     <ignored path="myctp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,22 +22,39 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="TRADE_setting.json" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/TRADE_setting.json">
+      <file leaf-file-name="ctpGateway.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/ctpGateway.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="200" column="6" lean-forward="true" selection-start-line="200" selection-start-column="6" selection-end-line="200" selection-end-column="6" />
+            <state relative-caret-position="220">
+              <caret line="221" column="0" lean-forward="true" selection-start-line="221" selection-start-column="0" selection-end-line="221" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyCtpApi.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/MyCtpApi.py">
+      <file leaf-file-name="dataType.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/dataType.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="462">
-              <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="88">
+              <caret line="110" column="0" lean-forward="false" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
+              <folding>
+                <marker date="1495511249568" expanded="true" signature="4209:4991" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="4327:4991" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="5099:5767" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="5217:5767" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="5873:6278" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="5991:6278" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="6382:6688" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="6500:6688" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="6797:7498" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="6917:7498" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="7603:8088" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="7727:8088" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="8189:8881" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="8311:8881" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="8988:9384" ph="..." />
+                <marker date="1495511249568" expanded="true" signature="9110:9384" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -52,69 +62,18 @@
       <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+            <state relative-caret-position="220">
+              <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="vtConstant.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/vtConstant.py">
+      <file leaf-file-name="eventEngine.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/eventEngine.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="968">
-              <caret line="44" column="20" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CTP_connect.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/CTP_connect.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ctpGateway.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/ctpGateway.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="107">
-              <caret line="256" column="17" lean-forward="false" selection-start-line="256" selection-start-column="17" selection-end-line="256" selection-end-column="17" />
-              <folding>
-                <marker date="1495509569737" expanded="true" signature="417:31239" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="566:1081" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="29610:30059" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="29725:29885" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="29899:30059" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="30169:30554" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="30414:30554" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="30661:31239" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="31326:31755" ph="..." />
-                <marker date="1495509569737" expanded="true" signature="31414:31502" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="eventType.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/eventType.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="24" column="23" lean-forward="false" selection-start-line="24" selection-start-column="23" selection-end-line="24" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vtGateway.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/vtGateway.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8690">
-              <caret line="401" column="0" lean-forward="false" selection-start-line="401" selection-start-column="0" selection-end-line="401" selection-end-column="0" />
+            <state relative-caret-position="176">
+              <caret line="60" column="8" lean-forward="false" selection-start-line="60" selection-start-column="8" selection-end-line="60" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -204,28 +163,6 @@
               <option name="myItemId" value="myctp" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vn.trader" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ctpGateway" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ctpGateway.py" />
-              <option name="myItemType" value="com.jetbrains.python.projectView.PyFileNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="myctp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="myctp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
@@ -234,6 +171,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -396,30 +334,31 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2585288" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19068256" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33261105" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2585288" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19068256" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25582626" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2585288" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -611,17 +550,32 @@
             <element signature="e#18#42#0" expanded="true" />
             <element signature="e#162#631#0" expanded="false" />
             <element signature="e#659#887#0" expanded="false" />
-            <marker date="1495509569737" expanded="true" signature="944:2546" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="4212:4661" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/dataType.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="128" column="23" lean-forward="false" selection-start-line="128" selection-start-column="13" selection-end-line="128" selection-end-column="23" />
-          <folding />
+        <state relative-caret-position="88">
+          <caret line="110" column="0" lean-forward="false" selection-start-line="110" selection-start-column="0" selection-end-line="110" selection-end-column="0" />
+          <folding>
+            <marker date="1495511249568" expanded="true" signature="4209:4991" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="4327:4991" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="5099:5767" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="5217:5767" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="5873:6278" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="5991:6278" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="6382:6688" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="6500:6688" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="6797:7498" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="6917:7498" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="7603:8088" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="7727:8088" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="8189:8881" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="8311:8881" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="8988:9384" ph="..." />
+            <marker date="1495511249568" expanded="true" signature="9110:9384" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -629,18 +583,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="223" column="25" lean-forward="true" selection-start-line="223" selection-start-column="25" selection-end-line="223" selection-end-column="25" />
-          <folding>
-            <marker date="1495509569737" expanded="true" signature="417:31239" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="566:1081" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29610:30059" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29725:29885" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29899:30059" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30169:30554" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30414:30554" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30661:31239" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="31326:31755" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="31414:31502" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -664,18 +607,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1495509569737" expanded="true" signature="417:31239" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="566:1081" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29610:30059" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29725:29885" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29899:30059" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30169:30554" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30414:30554" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30661:31239" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="31326:31755" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="31414:31502" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -704,8 +636,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/eventEngine.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2735">
-          <caret line="53" column="8" lean-forward="false" selection-start-line="53" selection-start-column="8" selection-end-line="53" selection-end-column="8" />
+        <state relative-caret-position="176">
+          <caret line="60" column="8" lean-forward="false" selection-start-line="60" selection-start-column="8" selection-end-line="60" selection-end-column="8" />
           <folding />
         </state>
       </provider>
@@ -739,7 +671,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="968">
           <caret line="44" column="20" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -751,25 +682,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/ctpGateway.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="107">
-          <caret line="256" column="17" lean-forward="false" selection-start-line="256" selection-start-column="17" selection-end-line="256" selection-end-column="17" />
-          <folding>
-            <marker date="1495509569737" expanded="true" signature="417:31239" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="566:1081" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29610:30059" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29725:29885" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="29899:30059" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30169:30554" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30414:30554" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="30661:31239" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="31326:31755" ph="..." />
-            <marker date="1495509569737" expanded="true" signature="31414:31502" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/CTP_connect.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -778,18 +690,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/TRADE_setting.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="159">
           <caret line="200" column="6" lean-forward="true" selection-start-line="200" selection-start-column="6" selection-end-line="200" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vn.trader/ctpGateway/ctpGateway.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="221" column="0" lean-forward="true" selection-start-line="221" selection-start-column="0" selection-end-line="221" selection-end-column="0" />
           <folding />
         </state>
       </provider>
