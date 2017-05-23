@@ -682,6 +682,10 @@ class tradeAPI(CtpGateway):
 
         # 完成撤单
         if self.lastOrder[tick.symbol] != None and self.lastOrder[tick.symbol].status == u'已撤销':
+            logContent = u'[撤单成功]合约代码：%s，订单编号：%s，撤销时间：%s' % (
+                self.lastOrder[tick.symbol].symbol, self.lastOrder[tick.symbol].orderID, self.lastOrder[tick.symbol].cancelTime)
+            self.writeLog(logContent)
+            # send_msg(logContent.encode('utf-8'))
             if self.lastOrder[tick.symbol].offset == u'开仓':
                 self.tradeDict[tick.symbol].opening = False
             else:
