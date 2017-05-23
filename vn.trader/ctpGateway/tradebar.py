@@ -9,7 +9,7 @@ from mysqlApi import *
 
 def reconfig():
     '''初始化交易参数，读取json文件，转换成DataFrame并存入数据库中'''
-    fileName = config.TRADE_configPath
+    fileName = config.basePath + 'myctp/vn.trader/ctpGateway/TRADE_setting.json'
     # fileName = 'TRADE_setting.json'
     try:
         f = file(fileName)
