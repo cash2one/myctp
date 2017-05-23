@@ -28,7 +28,7 @@ class tradeAPI(CtpGateway):
             if tick.lastPrice >= self.tdApi.posBufferDict[longPosition].pos.stopWinPrice:  # 最新价格大于止盈价格
                 logContent = u'[止盈单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.writeLog(logContent)
-                # send_msg(logContent.encode('utf-8'))
+                send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -39,7 +39,7 @@ class tradeAPI(CtpGateway):
             if tick.lastPrice <= self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice:  # 最新价格小于止盈价格
                 logContent = u'[止盈单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.writeLog(logContent)
-                # send_msg(logContent.encode('utf-8'))
+                send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -62,7 +62,7 @@ class tradeAPI(CtpGateway):
             if tick.lastPrice <= self.tdApi.posBufferDict[longPosition].pos.stopLossPrice:  # 最新价格小于止损价格
                 logContent = u'[止损单]多单卖出，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.writeLog(logContent)
-                # send_msg(logContent.encode('utf-8'))
+                send_msg(logContent.encode('utf-8'))
                 #发单
                 orderReq = self.makeSellCloseOrder(tick.symbol, tick.bidPrice1, self.tdApi.posBufferDict[longPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -73,7 +73,7 @@ class tradeAPI(CtpGateway):
             if tick.lastPrice >= self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice:  # 最新价格大于止损价格
                 logContent = u'[止损单]空单买入，合约代码：%s，价格：%s，数量：%s' % (tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.writeLog(logContent)
-                # send_msg(logContent.encode('utf-8'))
+                send_msg(logContent.encode('utf-8'))
                 # 发单
                 orderReq = self.makeBuyCloseOrder(tick.symbol, tick.askPrice1, self.tdApi.posBufferDict[shortPosition].pos.position)
                 self.sendOrder(orderReq)
@@ -568,6 +568,7 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].closeing = True
             logContent = u'[清仓]合约代码：%s' % tick.symbol
             self.writeLog(logContent)
+            send_msg(logContent.encode('utf-8'))
         if (tick.symbol + '.2' in self.tdApi.posBufferDict.keys()) and (
                 not self.tdApi.posBufferDict[tick.symbol + '.2'].pos.beClosed):  # 存在多单
             # 多单清仓
@@ -578,6 +579,8 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].closeing = True
             logContent = u'[清仓]合约代码：%s' % tick.symbol
             self.writeLog(logContent)
+            send_msg(logContent.encode('utf-8'))
+        self.tradeDict[tick.symbol].clearPos = False
 
     # ----------------------------------------------------------------------
     def tradeOpen(self, tick):
@@ -630,7 +633,7 @@ class tradeAPI(CtpGateway):
         logContent = u'[开仓单]合约代码：%s，价格：%s，数量：%s，方向：%s' % (
             tick.symbol, tick.bidPrice1, self.tradeDict[tick.symbol].tradeVolume, self.tradeDict[tick.symbol].openDirection)
         self.writeLog(logContent)
-        # send_msg(logContent.encode('utf-8'))
+        send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def writeLog(self, loginfo):
@@ -658,7 +661,7 @@ class tradeAPI(CtpGateway):
             self.today = datetime.now().date().strftime('%Y-%m-%d')
             for symbol in self.tickDf.keys():
                 # filename = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-                filename = '/work/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
+                filename = '/real/myctp/vn.trader/ctpGateway/tickData/%s' % (symbol + '-' + self.today + '.csv')
                 if os.path.exists(filename):
                     tickBuffer = pd.read_csv(filename)
                     tickBuffer = pd.concat([tickBuffer, self.tickDf[symbol]], ignore_index=True)
@@ -685,7 +688,7 @@ class tradeAPI(CtpGateway):
             logContent = u'[撤单成功]合约代码：%s，订单编号：%s，撤销时间：%s' % (
                 self.lastOrder[tick.symbol].symbol, self.lastOrder[tick.symbol].orderID, self.lastOrder[tick.symbol].cancelTime)
             self.writeLog(logContent)
-            # send_msg(logContent.encode('utf-8'))
+            send_msg(logContent.encode('utf-8'))
             if self.lastOrder[tick.symbol].offset == u'开仓':
                 self.tradeDict[tick.symbol].opening = False
             else:
@@ -746,7 +749,7 @@ class tradeAPI(CtpGateway):
             logContent = u'[成交回报]合约代码：%s，订单编号：%s，价格：%s，数量：%s，方向：%s，开平仓：%s，成交编号：%s，成交时间：%s' % (
                 trade.symbol, trade.orderID, trade.price, trade.volume, trade.direction, trade.offset, trade.tradeID,trade.tradeTime)
             self.writeLog(logContent)
-            # send_msg(logContent.encode('utf-8'))
+            send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def pOrder(self, event):
@@ -827,25 +830,25 @@ class tradeAPI(CtpGateway):
         self.accountInfo.closeProfit = account.closeProfit  # 平仓盈亏
         self.accountInfo.positionProfit = account.positionProfit  # 持仓盈亏
 
-        # # 风控止盈
-        # if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) > 8000)\
-        #         and self.accountInfo.positionProfit != 0:
-        #     for symbol in self.tradeDict.keys():
-        #         self.tradeDict[symbol].clearPos = True
-        #     logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
-        #                                                       self.accountInfo.positionProfit,self.accountInfo.commission)
-        #     self.writeLog(logContent)
-        #     # send_msg(logContent.encode('utf-8'))
-        #
-        # # 风控止损
-        # if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < -6000)\
-        #         and self.accountInfo.positionProfit != 0:
-        #     for symbol in self.tradeDict.keys():
-        #         self.tradeDict[symbol].clearPos = True
-        #     logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
-        #                     self.accountInfo.positionProfit, self.accountInfo.commission)
-        #     self.writeLog(logContent)
-        #     # send_msg(logContent.encode('utf-8'))
+        # 风控止盈
+        if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) > 2000)\
+                and self.accountInfo.positionProfit != 0:
+            for symbol in self.tradeDict.keys():
+                self.tradeDict[symbol].clearPos = True
+            logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+                                                              self.accountInfo.positionProfit,self.accountInfo.commission)
+            self.writeLog(logContent)
+            send_msg(logContent.encode('utf-8'))
+
+        # 风控止损
+        if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < -6000)\
+                and self.accountInfo.positionProfit != 0:
+            for symbol in self.tradeDict.keys():
+                self.tradeDict[symbol].clearPos = True
+            logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+                            self.accountInfo.positionProfit, self.accountInfo.commission)
+            self.writeLog(logContent)
+            send_msg(logContent.encode('utf-8'))
 
         nowTime = datetime.now().time()
         if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (nowTime < datetime.strptime('15:01:30', '%H:%M:%S').time())\
