@@ -6,3 +6,8 @@ class config:
     recodeTickFlag = True        #是否记录实时行情
     tableName = 'tradeseting_doing'
     basePath = '/work/'
+
+    # 风控
+    riskControl = False     # 是否执行风控
+    rc_win = 20000          # 风控止盈金额
+    rc_loss = -20000        # 风控止损金额
