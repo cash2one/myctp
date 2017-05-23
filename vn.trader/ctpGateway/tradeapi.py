@@ -602,6 +602,10 @@ class tradeAPI(CtpGateway):
         if self.tradeDict[tick.symbol].opening:
             self.tradeDict[tick.symbol].openFlag = False
             return
+        # 开仓次数达到8次
+        if self.tradeDict[tick.symbol].openCount >= 8:
+            self.tradeDict[tick.symbol].openFlag = False
+            return
         # 今天止损达到1次
         if self.tradeDict[tick.symbol].stopCount >= 6:
             self.tradeDict[tick.symbol].openFlag = False
@@ -760,6 +764,7 @@ class tradeAPI(CtpGateway):
             return
         if order.offset == u'开仓' and order.status == u'全部成交':
             self.lastOrder[order.symbol] = None
+            self.tradeDict[order.symbol].openCount += 1
             self.qryPosition()  # 查询并更新持仓
         elif order.status == u'全部成交':
             self.lastOrder[order.symbol] = None

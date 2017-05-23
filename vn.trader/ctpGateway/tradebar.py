@@ -69,6 +69,7 @@ class tradeBar(object):
         self.todayHigh = EMPTY_FLOAT            # 今天最高价
         self.todayLow = EMPTY_FLOAT             # 今天最低价
         self.tickCount = EMPTY_INT
+        self.openCount = EMPTY_INT
         self.update()
 
     def loadConfig(self):
