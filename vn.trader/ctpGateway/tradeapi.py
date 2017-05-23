@@ -738,7 +738,7 @@ class tradeAPI(CtpGateway):
 
         # 收盘清仓
         nowTime = datetime.strptime(tick.time.split('.')[0], '%H:%M:%S').time()
-        if (nowTime > datetime.strptime('14:59:55', '%H:%M:%S').time()) and (
+        if (nowTime > datetime.strptime('14:59:30', '%H:%M:%S').time()) and (
                     nowTime <= datetime.strptime('15:00:00', '%H:%M:%S').time()):
             self.clearPosition(tick)
 
@@ -863,6 +863,10 @@ class tradeAPI(CtpGateway):
                 str(self.accountInfo.commission) + ',' + str(self.accountInfo.closeProfit) + '\n'
             fp.write(info)
             fp.close()
+            for symbol in self.tradeDict.keys():
+                logContent = u'[统计]合约：%s，策略状态：%s，止盈次数：%s，止损次数：%s' % (symbol, self.tradeDict[symbol].status,
+                                                                     self.tradeDict[symbol].winCount, self.tradeDict[symbol].stopCount)
+                self.writeLog(logContent)
             self.recodeAccount = True
 
     # ----------------------------------------------------------------------
