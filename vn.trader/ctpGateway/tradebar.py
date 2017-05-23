@@ -140,6 +140,10 @@ class tradeBar(object):
             return 'jd1709'
         elif self.symbol == 'SR709':
             return 'SR1709'
+        elif self.symbol == 'cu1707':
+            return 'cu1707'
+        elif self.symbol == 'rb1710':
+            return 'rb1710'
 
 if __name__ == '__main__':
     # reconfig()
