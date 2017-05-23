@@ -8,6 +8,6 @@ class config:
     basePath = '/real/'
 
     # 风控
-    riskControl = True      # 是否执行风控
+    riskControl = False      # 是否执行风控
     rc_win = 1500           # 风控止盈金额
     rc_loss = -3000         # 风控止损金额
