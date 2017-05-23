@@ -860,6 +860,10 @@ class tradeAPI(CtpGateway):
                 str(self.accountInfo.commission) + ',' + str(self.accountInfo.closeProfit) + '\n'
             fp.write(info)
             fp.close()
+            for symbol in self.tradeDict.keys():
+                logContent = u'[统计]合约：%s，策略状态：%s，止盈次数：%s，止损次数：%s' % (symbol, self.tradeDict[symbol].status,
+                                                                     self.tradeDict[symbol].winCount, self.tradeDict[symbol].stopCount)
+                self.writeLog(logContent)
             self.recodeAccount = True
 
     # ----------------------------------------------------------------------
