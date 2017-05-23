@@ -233,7 +233,7 @@ class CtpGateway(VtGateway):
                 self.cancelOrder(req)
                 logContent = u'[撤单]合约代码：%s，订单编号：%s' % (self.lastOrder[symbol].symbol, self.lastOrder[symbol].orderID)
                 self.writeLog(logContent)
-                send_msg(logContent.encode('utf-8'))
+                # send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def makeOrder(self, _symbol, _price, _volume, _direction, _offset, _priceType):
@@ -256,7 +256,7 @@ class CtpGateway(VtGateway):
     def makeBuyCloseOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
         '''买平单'''
         # 日内交易，平今仓
-        if _symbol.startswith('hc') or _symbol.startswith('ru') or _symbol.startswith('bu') or _symbol.startswith('zn') \
+        if _symbol.startswith('hc') or _symbol.startswith('ru') or _symbol.startswith('bu') or _symbol.startswith('zn')\
                 or _symbol.startswith('cu') or _symbol.startswith('rb'):
             return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_CLOSETODAY, _priceType)
         else:
