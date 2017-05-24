@@ -834,6 +834,8 @@ class tradeAPI(CtpGateway):
                     and self.accountInfo.positionProfit != 0:
                 for symbol in self.tradeDict.keys():
                     self.tradeDict[symbol].clearPos = True
+                    self.tradeDict[symbol].stopLong = True
+                    self.tradeDict[symbol].stopShort = True
                 logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
                                                                   self.accountInfo.positionProfit,self.accountInfo.commission)
                 self.writeLog(logContent)
@@ -844,6 +846,8 @@ class tradeAPI(CtpGateway):
                     and self.accountInfo.positionProfit != 0:
                 for symbol in self.tradeDict.keys():
                     self.tradeDict[symbol].clearPos = True
+                    self.tradeDict[symbol].stopLong = True
+                    self.tradeDict[symbol].stopShort = True
                 logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
                                 self.accountInfo.positionProfit, self.accountInfo.commission)
                 self.writeLog(logContent)
