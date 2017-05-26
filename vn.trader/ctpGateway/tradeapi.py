@@ -705,10 +705,10 @@ class tradeAPI(CtpGateway):
             self.lastOrder[tick.symbol] = None
 
         # 获取到持仓信息后执行策略
-        if self.tradeDict[tick.symbol].status == 0:
-            self.shortPolicy3(tick)
-        else:
+        if self.tradeDict[tick.symbol].status == 1:
             self.shortPolicy1(tick)
+        else:
+            return
 
         # 止损
         self.tradeStopLoss(tick)
@@ -716,22 +716,12 @@ class tradeAPI(CtpGateway):
         # 止盈
         self.tradeStopWin(tick)
 
-        #更新状态
-        if self.tradeDict[tick.symbol].status == 0:
-            if self.tradeDict[tick.symbol].winCount >= 2:
-                self.tradeDict[tick.symbol].status = 1
-                self.tradeDict[tick.symbol].openFlag = False
-                self.tradeDict[tick.symbol].winCount = 0
-            if self.tradeDict[tick.symbol].stopCount >= 1:
-                self.tradeDict[tick.symbol].stopLong = True
-                self.tradeDict[tick.symbol].stopShort = True
-        else:
-            if self.tradeDict[tick.symbol].winCount >= 1:
-                self.tradeDict[tick.symbol].stopLong = True
-                self.tradeDict[tick.symbol].stopShort = True
-            if self.tradeDict[tick.symbol].stopCount >= 6:
-                self.tradeDict[tick.symbol].stopLong = True
-                self.tradeDict[tick.symbol].stopShort = True
+        if self.tradeDict[tick.symbol].winCount >= 1:
+            self.tradeDict[tick.symbol].stopLong = True
+            self.tradeDict[tick.symbol].stopShort = True
+        if self.tradeDict[tick.symbol].stopCount >= 4:
+            self.tradeDict[tick.symbol].stopLong = True
+            self.tradeDict[tick.symbol].stopShort = True
 
         # 开仓
         self.tradeOpen(tick)
