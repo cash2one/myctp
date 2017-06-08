@@ -9,6 +9,7 @@ class tradeAPI(CtpGateway):
 
         self.accountInfo = VtAccountData()
         self.recodeAccount = False
+        self.maxProfit = 0
         self.tickDf = {}
         # 注册事件处理函数
         self.registeHandle()
@@ -121,6 +122,32 @@ class tradeAPI(CtpGateway):
                         self.tradeDict[tick.symbol].closeing = True
             else:
                 pass
+
+    # ----------------------------------------------------------------------
+    def accountMaxWin(self, profit):
+        '''摸顶止盈，当账户浮盈达到目标收益后，开始摸顶，从最高价回撤达到阈值，平仓止盈'''
+        if profit > self.maxProfit:
+            self.maxProfit = profit
+        if self.maxProfit >= config.rc_win and profit <= self.maxProfit - config.rc_maxDrawDown:
+            for symbol in self.tradeDict.keys():
+                self.tradeDict[symbol].clearPos = True
+                self.tradeDict[symbol].stopLong = True
+                self.tradeDict[symbol].stopShort = True
+            logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+                                                              self.accountInfo.positionProfit,
+                                                              self.accountInfo.commission)
+            self.writeLog(logContent)
+            # send_msg(logContent.encode('utf-8'))
+        if profit <= config.rc_loss:
+            for symbol in self.tradeDict.keys():
+                self.tradeDict[symbol].clearPos = True
+                self.tradeDict[symbol].stopLong = True
+                self.tradeDict[symbol].stopShort = True
+            logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
+                                                              self.accountInfo.positionProfit,
+                                                              self.accountInfo.commission)
+            self.writeLog(logContent)
+            # send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def shortPolicy1(self, tick):
@@ -828,30 +855,10 @@ class tradeAPI(CtpGateway):
         self.accountInfo.closeProfit = account.closeProfit  # 平仓盈亏
         self.accountInfo.positionProfit = account.positionProfit  # 持仓盈亏
 
-        if config.riskControl:
-            # 风控止盈
-            if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) > config.rc_win)\
-                    and self.accountInfo.positionProfit != 0:
-                for symbol in self.tradeDict.keys():
-                    self.tradeDict[symbol].clearPos = True
-                    self.tradeDict[symbol].stopLong = True
-                    self.tradeDict[symbol].stopShort = True
-                logContent = u'[风控止盈]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
-                                                                  self.accountInfo.positionProfit,self.accountInfo.commission)
-                self.writeLog(logContent)
-                # send_msg(logContent.encode('utf-8'))
+        Profit = self.accountInfo.balance - self.accountInfo.preBalance
 
-            # 风控止损
-            if ((self.accountInfo.positionProfit + self.accountInfo.closeProfit - self.accountInfo.commission) < config.rc_loss)\
-                    and self.accountInfo.positionProfit != 0:
-                for symbol in self.tradeDict.keys():
-                    self.tradeDict[symbol].clearPos = True
-                    self.tradeDict[symbol].stopLong = True
-                    self.tradeDict[symbol].stopShort = True
-                logContent = u'[风控止损]平仓盈亏：%s，持仓盈亏：%s，今日手续费：%s' % (self.accountInfo.closeProfit,
-                                self.accountInfo.positionProfit, self.accountInfo.commission)
-                self.writeLog(logContent)
-                # send_msg(logContent.encode('utf-8'))
+        if config.riskControl:
+            self.accountMaxWin(Profit)
 
         nowTime = datetime.now().time()
         if (nowTime > datetime.strptime('15:00:30', '%H:%M:%S').time()) and (nowTime < datetime.strptime('15:01:30', '%H:%M:%S').time())\

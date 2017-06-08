@@ -9,5 +9,6 @@ class config:
 
     # 风控
     riskControl = True      # 是否执行风控
-    rc_win = 20000          # 风控止盈金额
-    rc_loss = -8000        # 风控止损金额
+    rc_win = 6000          # 风控止盈金额
+    rc_loss = -6000        # 风控止损金额
+    rc_maxDrawDown = 3000   #允许最大回撤
