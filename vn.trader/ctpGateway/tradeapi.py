@@ -684,7 +684,7 @@ class tradeAPI(CtpGateway):
             return
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
-        if (tick.openPrice > self.tradeDict[tick.symbol].perHigh) or (tick.openPrice < self.tradeDict[tick.symbol].perLow):
+        if (tick.openPrice >= self.tradeDict[tick.symbol].perHigh) or (tick.openPrice <= self.tradeDict[tick.symbol].perLow):
             self.tradeDict[tick.symbol].status = 1
             config.riskControl = False
 
