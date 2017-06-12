@@ -15,7 +15,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 40,
+        "tradeVolume": 10,
         "status": 0,
         "clearPos": false
     },
@@ -35,7 +35,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 12,
+        "tradeVolume": 3,
         "status": 0,
         "clearPos": false
     },
@@ -95,7 +95,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 4,
+        "tradeVolume": 1,
         "status": 0,
         "clearPos": false
     },
@@ -175,7 +175,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 30,
+        "tradeVolume": 8,
         "status": 0,
         "clearPos": false
     },
@@ -215,7 +215,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 24,
+        "tradeVolume": 6,
         "status": 0,
         "clearPos": false
     },
@@ -235,7 +235,7 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 20,
+        "tradeVolume": 6,
         "status": 0,
         "clearPos": false
     },
@@ -255,7 +255,7 @@
         "stopWin": false,
         "stopLong": false,
         "stopShort": false,
-        "tradeVolume": 2,
+        "tradeVolume": 1,
         "status": 0,
         "clearPos": false
     }
