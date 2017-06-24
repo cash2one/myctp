@@ -9,7 +9,7 @@ from mysqlApi import *
 
 def reconfig():
     '''初始化交易参数，读取json文件，转换成DataFrame并存入数据库中'''
-    fileName = config.TRADE_configPath
+    fileName = config.basePath + 'myctp/vn.trader/ctpGateway/TRADE_setting.json'
     # fileName = 'TRADE_setting.json'
     try:
         f = file(fileName)
@@ -63,10 +63,13 @@ class tradeBar(object):
         self.openDirection = EMPTY_STRING       # 开仓方向，多或者空
         self.closeing = EMPTY_BOOL              # 是否存在未成交平仓单
         self.opening = EMPTY_BOOL               # 是否存在未成交开仓单
+        self.doWin = EMPTY_BOOL                 # 正在止盈
+        self.doLoss = EMPTY_BOOL                # 正在止损
         # self.tradeList = EMPTY_LIST             # 记录交易历史
         self.todayHigh = EMPTY_FLOAT            # 今天最高价
         self.todayLow = EMPTY_FLOAT             # 今天最低价
         self.tickCount = EMPTY_INT
+        self.openCount = EMPTY_INT
         self.update()
 
     def loadConfig(self):
@@ -92,6 +95,7 @@ class tradeBar(object):
         newdf['stopLong'] = newdf['stopLong'].astype(bool)
         newdf['stopShort'] = newdf['stopShort'].astype(bool)
         newdf['status'] = newdf['status'].astype(int)
+        newdf['clearPos'] = newdf['clearPos'].astype(bool)
         # print newdf
         if self.symbol not in newdf.index:
             logContent = u'没有合约%s的交易配置' % self.symbol
@@ -123,30 +127,24 @@ class tradeBar(object):
             return 'hc1710'
         elif self.symbol == 'ru1709':
             return 'ru1709'
-        elif self.symbol == 'zn1707':
-            return 'zn1707'
+        elif self.symbol == 'zn1706':
+            return 'zn1706'
         elif self.symbol == 'pp1709':
             return 'pp1709'
         elif self.symbol == 'j1709':
             return 'j1709'
-        elif self.symbol == 'bu1709':
-            return 'bu1709'
+        elif self.symbol == 'bu1706':
+            return 'bu1706'
         elif self.symbol == 'FG709':
             return 'fg1709'
         elif self.symbol == 'jd1709':
             return 'jd1709'
         elif self.symbol == 'SR709':
             return 'SR1709'
-        elif self.symbol == 'p1709':
-            return 'p1709'
-        elif self.symbol == 'c1709':
-            return 'c1709'
-        elif self.symbol == 'cu1707':
-            return 'cu1707'
+        elif self.symbol == 'cu1708':
+            return 'cu1708'
         elif self.symbol == 'rb1710':
             return 'rb1710'
-        elif self.symbol == 'SM709':
-            return 'SM1709'
 
 if __name__ == '__main__':
     # reconfig()
@@ -159,7 +157,7 @@ if __name__ == '__main__':
     # a = tradeBar('FG709')
     # print a.__dict__
     a = hist()
-    a.get_K_data('SM1709', period='1d')
+    a.get_K_data('jd1709', period='1d')
     print a.data
     perHigh = list(a.data['high'])[-1]
     perLow = list(a.data['low'])[-1]

@@ -16,7 +16,8 @@
         "stopLong":false,
         "stopShort":false,
         "tradeVolume": 10,
-        "status": 0
+        "status": 0,
+        "clearPos": false
     },
     "i1709": {
         "tickPrice": 0.5,
@@ -34,8 +35,9 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 4,
-        "status": 0
+        "tradeVolume": 3,
+        "status": 0,
+        "clearPos": false
     },
     "jm1709": {
         "tickPrice": 0.5,
@@ -54,7 +56,8 @@
         "stopLong":false,
         "stopShort":false,
         "tradeVolume": 1,
-        "status": 0
+        "status": 0,
+        "clearPos": false
     },
     "hc1710": {
         "tickPrice": 1,
@@ -73,7 +76,8 @@
         "stopLong":false,
         "stopShort":false,
         "tradeVolume": 10,
-        "status": 0
+        "status": 0,
+        "clearPos": false
     },
     "ru1709": {
         "tickPrice": 5,
@@ -91,8 +95,9 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 2,
-        "status": 0
+        "tradeVolume": 1,
+        "status": 0,
+        "clearPos": false
     },
     "pp1709": {
         "tickPrice": 1,
@@ -110,8 +115,9 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 4,
-        "status": 0
+        "tradeVolume": 6,
+        "status": 0,
+        "clearPos": false
     },
     "j1709": {
         "tickPrice": 0.5,
@@ -130,9 +136,10 @@
         "stopLong":false,
         "stopShort":false,
         "tradeVolume": 1,
-        "status": 0
+        "status": 0,
+        "clearPos": false
     },
-    "bu1709": {
+    "bu1706": {
         "tickPrice": 2,
         "size": 10,
         "currentMode": "long",
@@ -149,7 +156,8 @@
         "stopLong":false,
         "stopShort":false,
         "tradeVolume": 5,
-        "status": 0
+        "status": 0,
+        "clearPos": false
     },
     "FG709": {
         "tickPrice": 1,
@@ -167,10 +175,11 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 15,
-        "status": 0
+        "tradeVolume": 8,
+        "status": 0,
+        "clearPos": false
     },
-    "zn1707": {
+    "zn1706": {
         "tickPrice": 5,
         "size": 5,
         "currentMode": "long",
@@ -186,8 +195,9 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 3,
-        "status": 0
+        "tradeVolume": 6,
+        "status": 0,
+        "clearPos": false
     },
     "jd1709": {
         "tickPrice": 1,
@@ -205,8 +215,9 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 8,
-        "status": 0
+        "tradeVolume": 6,
+        "status": 0,
+        "clearPos": false
     },
     "SR709": {
         "tickPrice": 1,
@@ -224,48 +235,11 @@
         "stopWin":false,
         "stopLong":false,
         "stopShort":false,
-        "tradeVolume": 5,
-        "status": 0
+        "tradeVolume": 6,
+        "status": 0,
+        "clearPos": false
     },
-    "p1709": {
-        "tickPrice": 2,
-        "size": 10,
-        "currentMode": "long",
-        "winTickPrice": 30,
-        "stopTickPrice": 30,
-        "winTargetPrice": 100000,
-        "stopTargetPrice": 0,
-        "preSellPrice": 0,
-        "maxDrawDown": 30,
-        "winCount": 0,
-        "stopCount": 0,
-        "stopLoss":false,
-        "stopWin":false,
-        "stopLong":false,
-        "stopShort":false,
-        "tradeVolume": 4,
-        "status": 0
-    },
-    "c1709": {
-        "tickPrice": 1,
-        "size": 10,
-        "currentMode": "long",
-        "winTickPrice": 30,
-        "stopTickPrice": 30,
-        "winTargetPrice": 100000,
-        "stopTargetPrice": 0,
-        "preSellPrice": 0,
-        "maxDrawDown": 30,
-        "winCount": 0,
-        "stopCount": 0,
-        "stopLoss":false,
-        "stopWin":false,
-        "stopLong":false,
-        "stopShort":false,
-        "tradeVolume": 15,
-        "status": 0
-    },
-    "cu1707": {
+    "cu1708": {
         "tickPrice": 10,
         "size": 5,
         "currentMode": "long",
@@ -277,49 +251,12 @@
         "maxDrawDown": 30,
         "winCount": 0,
         "stopCount": 0,
-        "stopLoss":false,
-        "stopWin":false,
-        "stopLong":false,
-        "stopShort":false,
+        "stopLoss": false,
+        "stopWin": false,
+        "stopLong": false,
+        "stopShort": false,
         "tradeVolume": 1,
-        "status": 0
-    },
-    "rb1710": {
-        "tickPrice": 1,
-        "size": 10,
-        "currentMode": "long",
-        "winTickPrice": 30,
-        "stopTickPrice": 30,
-        "winTargetPrice": 100000,
-        "stopTargetPrice": 0,
-        "preSellPrice": 0,
-        "maxDrawDown": 30,
-        "winCount": 0,
-        "stopCount": 0,
-        "stopLoss":false,
-        "stopWin":false,
-        "stopLong":false,
-        "stopShort":false,
-        "tradeVolume": 8,
-        "status": 0
-    },
-    "SM709": {
-        "tickPrice": 2,
-        "size": 5,
-        "currentMode": "long",
-        "winTickPrice": 30,
-        "stopTickPrice": 30,
-        "winTargetPrice": 100000,
-        "stopTargetPrice": 0,
-        "preSellPrice": 0,
-        "maxDrawDown": 30,
-        "winCount": 0,
-        "stopCount": 0,
-        "stopLoss":false,
-        "stopWin":false,
-        "stopLong":false,
-        "stopShort":false,
-        "tradeVolume": 4,
-        "status": 0
+        "status": 0,
+        "clearPos": false
     }
 }

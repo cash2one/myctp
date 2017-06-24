@@ -53,7 +53,7 @@ class CtpGateway(VtGateway):
         # 载入json文件
         # fileName = self.gatewayName + '_connect.json'
         # fileName = os.getcwd() + '/' + fileName
-        fileName = config.CTP_configPath
+        fileName = config.basePath + 'myctp/vn.trader/ctpGateway/CTP_connect.json'
         
         try:
             f = file(fileName)
@@ -101,7 +101,7 @@ class CtpGateway(VtGateway):
 
     # ----------------------------------------------------------------------
     def loadTradeConfig(self):
-        fileName = config.TRADE_configPath
+        fileName = config.basePath + 'myctp/vn.trader/ctpGateway/TRADE_setting.json'
         try:
             f = file(fileName)
         except IOError:
@@ -179,7 +179,8 @@ class CtpGateway(VtGateway):
         """初始化连续查询"""
         if self.qryEnabled:
             # 需要循环的查询函数列表
-            self.qryFunctionList = [self.qryAccount, self.qryPosition, self.saveConfig]      #查询账户信息和持仓信息
+            self.qryFunctionList = [self.qryAccount, self.qryPosition]      #查询账户信息和持仓信息
+            self.taskList = [self.saveConfig, self.checkOrder]              # 定时任务
             
             self.qryCount = 0           # 查询触发倒计时
             self.qryTrigger = 1         # 查询触发点，查询周期，2为每两秒查询一次
@@ -200,6 +201,10 @@ class CtpGateway(VtGateway):
             function = self.qryFunctionList[self.qryNextFunction]
             function()
             
+            # 执行定时任务
+            for task in self.taskList:
+                task()
+            
             # 计算下次查询函数的索引，如果超过了列表长度，则重新设为0
             self.qryNextFunction += 1
             if self.qryNextFunction == len(self.qryFunctionList):
@@ -214,6 +219,21 @@ class CtpGateway(VtGateway):
     def setQryEnabled(self, qryEnabled):
         """设置是否要启动循环查询"""
         self.qryEnabled = qryEnabled
+
+    # ----------------------------------------------------------------------
+    def checkOrder(self):
+        for symbol in self.tradeDict.keys():
+            if self.lastOrder[symbol] != None and (self.lastOrder[symbol].status == u'未成交' or self.lastOrder[symbol].status == u'未知'):
+                req = VtCancelOrderReq()
+                req.symbol = self.lastOrder[symbol].symbol
+                req.exchange = self.lastOrder[symbol].exchange
+                req.orderID = self.lastOrder[symbol].orderID
+                req.frontID = self.lastOrder[symbol].frontID
+                req.sessionID = self.lastOrder[symbol].sessionID
+                self.cancelOrder(req)
+                logContent = u'[撤单]合约代码：%s，订单编号：%s' % (self.lastOrder[symbol].symbol, self.lastOrder[symbol].orderID)
+                self.writeLog(logContent)
+                # send_msg(logContent.encode('utf-8'))
 
     # ----------------------------------------------------------------------
     def makeOrder(self, _symbol, _price, _volume, _direction, _offset, _priceType):
@@ -237,7 +257,7 @@ class CtpGateway(VtGateway):
         '''买平单'''
         # 日内交易，平今仓
         if _symbol.startswith('hc') or _symbol.startswith('ru') or _symbol.startswith('bu') or _symbol.startswith('zn')\
-            or _symbol.startswith('cu') or _symbol.startswith('rb'):
+                or _symbol.startswith('cu') or _symbol.startswith('rb'):
             return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_CLOSETODAY, _priceType)
         else:
             return self.makeOrder(_symbol, _price, _volume, DIRECTION_LONG, OFFSET_CLOSE, _priceType)
@@ -250,8 +270,8 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def makeSellCloseOrder(self, _symbol, _price, _volume, _priceType=PRICETYPE_LIMITPRICE):
         '''卖平单'''
-        if _symbol.startswith('hc') or _symbol.startswith('ru') or _symbol.startswith('bu') or _symbol.startswith('zn')\
-            or _symbol.startswith('cu') or _symbol.startswith('rb'):
+        if _symbol.startswith('hc') or _symbol.startswith('ru') or _symbol.startswith('bu') or _symbol.startswith('zn') \
+                or _symbol.startswith('cu') or _symbol.startswith('rb'):
             return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_CLOSETODAY, _priceType)
         else:
             return self.makeOrder(_symbol, _price, _volume, DIRECTION_SHORT, OFFSET_CLOSE, _priceType)
@@ -484,7 +504,7 @@ class CtpGateway(VtGateway):
         if self.tickCount >= 50:
             self.today = datetime.now().date().strftime('%Y-%m-%d')
             # filename1 = '/home/myctp/vn.trader/ctpGateway/tickData/%s' % (config.analysisSymbol + '-' + self.today + '.csv')
-            filename2 = '/work/myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
+            filename2 = config.basePath + 'myctp/vn.trader/ctpGateway/tickData/%s' % (config.tradeSymbol + '-' + self.today + '.csv')
             if os.path.exists(filename2):
                 tickBuffer2 = pd.read_csv(filename2)
                 tickBuffer2 = pd.concat([tickBuffer2, self.tickDF2], ignore_index=True)
@@ -642,7 +662,7 @@ class CtpGateway(VtGateway):
         loginfo = ':'.join([log.logTime, log.logContent])
         # send_msg(loginfo)
         self.today = datetime.now().date().strftime('%Y-%m-%d')
-        filename = '/work/myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
+        filename = config.basePath + 'myctp/vn.trader/ctpGateway/log/%s' % ('tradeLog' + '-' + self.today + '.txt')
         if os.path.exists(filename):
             fp = file(filename, 'a+')
             try:
@@ -659,10 +679,10 @@ class CtpGateway(VtGateway):
     # ----------------------------------------------------------------------
     def pContract(self, event):
         contract = event.dict_['data']
-        print "============================================="
-        print contract.symbol
-        print contract.priceTick
-        print contract.size
+        # print "============================================="
+        # print contract.symbol
+        # print contract.priceTick
+        # print contract.size
         if contract.symbol in self.tradeDict.keys():
             self.tradeDict[contract.symbol].tickPrice = contract.priceTick
             self.tradeDict[contract.symbol].size = contract.size

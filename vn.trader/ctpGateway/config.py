@@ -2,10 +2,12 @@
 
 class config:
 
-    tradeSymbol = ['ru1709', 'RM709', 'i1709', 'FG709', 'jd1709', 'SR709', 'p1709', 'c1709', 'pp1709',
-                   'cu1707', 'zn1707', 'rb1710', 'bu1709', 'SM709']       #交易合约，菜粕
-    recodeTickFlag = True        #是否记录实时行情
-    tableName = 'tradesetingGap'
-    CTP_configPath = '/work/myctp/vn.trader/ctpGateway/CTP_connect.json'
-    TRADE_configPath = '/work/myctp/vn.trader/ctpGateway/TRADE_setting.json'
-    BALANCE_file = '/work/myctp/vn.trader/ctpGateway/balance.csv'
+    tradeSymbol = ['ru1709', 'cu1708', 'SR709', 'jd1709', 'FG709', 'i1709', 'RM709']       #交易合约，菜粕
+    recodeTickFlag = False        #是否记录实时行情
+    tableName = 'tradeseting_gap'
+    basePath = '/gap/'
+
+    # 风控
+    riskControl = False      # 是否执行风控
+    rc_win = 1500           # 风控止盈金额
+    rc_loss = -3000         # 风控止损金额
