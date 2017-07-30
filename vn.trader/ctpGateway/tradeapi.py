@@ -773,7 +773,7 @@ class tradeAPI(CtpGateway):
         if self.tradeDict[tick.symbol].winCount >= 1:
             self.tradeDict[tick.symbol].stopLong = True
             self.tradeDict[tick.symbol].stopShort = True
-        if self.tradeDict[tick.symbol].stopCount >= 4:
+        if self.tradeDict[tick.symbol].stopCount >= 3:
             self.tradeDict[tick.symbol].stopLong = True
             self.tradeDict[tick.symbol].stopShort = True
 
