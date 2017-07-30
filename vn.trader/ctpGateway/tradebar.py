@@ -139,8 +139,8 @@ class tradeBar(object):
             return 'fg1709'
         elif self.symbol == 'jd1709':
             return 'jd1709'
-        elif self.symbol == 'SR709':
-            return 'SR1709'
+        elif self.symbol == 'SR801':
+            return 'SR1801'
         elif self.symbol == 'cu1708':
             return 'cu1708'
         elif self.symbol == 'rb1710':
