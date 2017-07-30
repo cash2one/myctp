@@ -68,9 +68,12 @@ class tradeBar(object):
         # self.tradeList = EMPTY_LIST             # 记录交易历史
         self.todayHigh = EMPTY_FLOAT            # 今天最高价
         self.todayLow = EMPTY_FLOAT             # 今天最低价
+        self.range = EMPTY_FLOAT
+        self.Ku = EMPTY_FLOAT
+        self.Kd = EMPTY_FLOAT
         self.tickCount = EMPTY_INT
         self.openCount = EMPTY_INT
-        self.update()
+        self.getRange(1)
 
     def loadConfig(self):
         '''从数据库中读取交易参数，用来初始化类成员'''
@@ -115,6 +118,25 @@ class tradeBar(object):
         self.perHigh = list(a.data['high'])[-1]
         self.perLow = list(a.data['low'])[-1]
 
+    def getRange(self, n):
+        a = hist()
+        a.get_K_data(self.symbol2hist(), period='1d')
+        self.perHigh = list(a.data['high'])[-1]
+        self.perLow = list(a.data['low'])[-1]
+        peropen = list(a.data['open'])[-1]
+        perclose = list(a.data['close'])[-1]
+        HH = max(list(a.data['high'])[-n:])
+        LC = min(list(a.data['close'])[-n:])
+        LL = min(list(a.data['low'])[-n:])
+        HC = max(list(a.data['close'])[-n:])
+        self.range = max(HH-LC, HC-LL)
+        if perclose >= peropen:
+            self.Ku = 0.7
+            self.Kd = 1
+        else:
+            self.Ku = 1
+            self.Kd = 0.7
+
 
     def symbol2hist(self):
         if self.symbol == 'RM709':
@@ -157,9 +179,15 @@ if __name__ == '__main__':
     # a = tradeBar('FG709')
     # print a.__dict__
     a = hist()
-    a.get_K_data('jd1709', period='1d')
+    a.get_K_data('ru1709', period='1d')
     print a.data
-    perHigh = list(a.data['high'])[-1]
-    perLow = list(a.data['low'])[-1]
-    print perHigh
-    print perLow
+    HH = max(list(a.data['high'])[-2:-1])
+    LC = min(list(a.data['close'])[-2:-1])
+    LL = min(list(a.data['low'])[-2:-1])
+    HC = max(list(a.data['close'])[-2:-1])
+    range = max(HH - LC, HC - LL)
+    print 'HH:',HH
+    print 'LC:',LC
+    print 'HC:',HC
+    print 'LL:',LL
+    print range

@@ -551,6 +551,63 @@ class tradeAPI(CtpGateway):
             self.tradeDict[tick.symbol].stopShort = True
 
     # ----------------------------------------------------------------------
+    def DualThrust(self, tick):
+        '''持仓到收盘，没有做多或者做空倾向，两边交易区间一致'''
+        # print '============================='
+        # print 'symbol:',tick.symbol
+        # print 'lastPrice:',tick.lastPrice
+        # print 'openPrice:',tick.openPrice
+        # print 'stopCount:',self.tradeDict[tick.symbol].stopCount
+        # print 'ststus:', self.tradeDict[tick.symbol].status
+        # print 'wincount:', self.tradeDict[tick.symbol].winCount
+        # print 'closeing:',self.tradeDict[tick.symbol].closeing
+
+        highThreshold = tick.openPrice + self.tradeDict[tick.symbol].range * self.tradeDict[tick.symbol].Ku
+        lowThreshold = tick.openPrice - self.tradeDict[tick.symbol].range * self.tradeDict[tick.symbol].Kd
+
+        longPosition = tick.symbol + '.2'
+        shortPosition = tick.symbol + '.3'
+
+        # 存在空单,设置止损价位，打开止损开关
+        if shortPosition in self.tdApi.posBufferDict.keys():
+            # print 'step1'
+            self.tdApi.posBufferDict[shortPosition].pos.stopLossPrice = highThreshold
+            self.tradeDict[tick.symbol].stopLoss = True
+            # 跌停价止盈
+            self.tdApi.posBufferDict[shortPosition].pos.stopWinPrice = tick.lowerLimit
+            self.tradeDict[tick.symbol].stopWin = True
+        # 不存在空单，且价格达到低阈值，开空单
+        elif tick.lastPrice <= lowThreshold:
+            # print 'step2'
+            self.tradeDict[tick.symbol].openFlag = True
+            self.tradeDict[tick.symbol].openDirection = 'short'
+        else:
+            pass
+
+        # 存在多单,设置止损价位，打开止损开关
+        if longPosition in self.tdApi.posBufferDict.keys():
+            # print 'step3'
+            self.tdApi.posBufferDict[longPosition].pos.stopLossPrice = lowThreshold
+            self.tradeDict[tick.symbol].stopLoss = True
+            # 涨停价止盈
+            self.tdApi.posBufferDict[longPosition].pos.stopWinPrice = tick.upperLimit
+            self.tradeDict[tick.symbol].stopWin = True
+        # 不存在多单，且价格达到高阈值，开多单
+        elif tick.lastPrice >= highThreshold:
+            # print 'step4'
+            self.tradeDict[tick.symbol].openFlag = True
+            self.tradeDict[tick.symbol].openDirection = 'long'
+        else:
+            pass
+
+        # 涨停不开多单
+        if tick.highPrice >= tick.upperLimit:
+            self.tradeDict[tick.symbol].stopLong = True
+        # 跌停不开空单
+        if tick.lowPrice <= tick.lowerLimit:
+            self.tradeDict[tick.symbol].stopShort = True
+
+    # ----------------------------------------------------------------------
     def clearPosition(self, tick):
         '''清仓，并停止开仓'''
 
@@ -684,9 +741,9 @@ class tradeAPI(CtpGateway):
             return
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
-        if (tick.openPrice >= self.tradeDict[tick.symbol].perHigh) or (tick.openPrice <= self.tradeDict[tick.symbol].perLow):
-            self.tradeDict[tick.symbol].status = 1
-            config.riskControl = False
+        # if (tick.openPrice >= self.tradeDict[tick.symbol].perHigh) or (tick.openPrice <= self.tradeDict[tick.symbol].perLow):
+        #     self.tradeDict[tick.symbol].status = 1
+        #     config.riskControl = False
 
         # 完成撤单
         if self.lastOrder[tick.symbol] != None and self.lastOrder[tick.symbol].status == u'已撤销':
@@ -705,10 +762,7 @@ class tradeAPI(CtpGateway):
             self.lastOrder[tick.symbol] = None
 
         # 获取到持仓信息后执行策略
-        if self.tradeDict[tick.symbol].status == 1:
-            self.shortPolicy1(tick)
-        else:
-            return
+        self.DualThrust(tick)
 
         # 止损
         self.tradeStopLoss(tick)
