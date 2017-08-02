@@ -685,8 +685,12 @@ class tradeAPI(CtpGateway):
         self.sendOrderMsg = True    # 只有在交易时间才允许记录成交日志和订单日志，以及发送微信消息
 
         if (tick.openPrice >= self.tradeDict[tick.symbol].perHigh) or (tick.openPrice <= self.tradeDict[tick.symbol].perLow):
-            self.tradeDict[tick.symbol].status = 1
-            config.riskControl = False
+            if self.tradeDict[tick.symbol].status == 0:
+                self.tradeDict[tick.symbol].status = 1
+                for symbol in self.tradeDict.keys():
+                    if symbol != tick.symbol:
+                        self.tradeDict[symbol].status = 3
+                config.riskControl = False
 
         # 完成撤单
         if self.lastOrder[tick.symbol] != None and self.lastOrder[tick.symbol].status == u'已撤销':
