@@ -655,6 +655,13 @@ class CtpGateway(VtGateway):
             #平仓量超过持仓量
             for symbol in self.tradeDict.keys():
                 self.tradeDict[symbol].closeing = False     #否则不再发平仓单
+        elif error.errorID == '31':
+            #资金不足
+            for symbol in self.tradeDict.keys():
+                if self.tradeDict[symbol].opening == True:
+                    #正在开仓的合约不再开仓
+                    self.tradeDict[symbol].stopLong = True
+                    self.tradeDict[symbol].stopShort = True
 
     # ----------------------------------------------------------------------
     def pLog(self, event):
