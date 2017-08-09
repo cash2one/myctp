@@ -141,14 +141,14 @@ class tradeBar(object):
     def symbol2hist(self):
         if self.symbol == 'RM709':
             return 'RM1709'
-        elif self.symbol == 'i1709':
-            return 'i1709'
+        elif self.symbol == 'i1801':
+            return 'i1801'
         elif self.symbol == 'jm1709':
             return 'jm1709'
         elif self.symbol == 'hc1710':
             return 'hc1710'
-        elif self.symbol == 'ru1709':
-            return 'ru1709'
+        elif self.symbol == 'ru1801':
+            return 'ru1801'
         elif self.symbol == 'zn1706':
             return 'zn1706'
         elif self.symbol == 'pp1709':

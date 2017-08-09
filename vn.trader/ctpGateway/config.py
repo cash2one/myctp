@@ -2,7 +2,7 @@
 
 class config:
 
-    tradeSymbol = ['ru1709', 'i1709']       #交易合约，菜粕
+    tradeSymbol = ['ru1801', 'i1801']       #交易合约，菜粕
     recodeTickFlag = False        #是否记录实时行情
     tableName = 'tradeseting'
     basePath = '/home/'

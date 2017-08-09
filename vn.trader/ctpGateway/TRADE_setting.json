@@ -19,7 +19,7 @@
         "status": 0,
         "clearPos": false
     },
-    "i1709": {
+    "i1801": {
         "tickPrice": 0.5,
         "size": 100,
         "currentMode": "long",
@@ -79,7 +79,7 @@
         "status": 0,
         "clearPos": false
     },
-    "ru1709": {
+    "ru1801": {
         "tickPrice": 5,
         "size": 10,
         "currentMode": "long",
