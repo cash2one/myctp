@@ -117,34 +117,34 @@ class tradeBar(object):
 
 
     def symbol2hist(self):
-        if self.symbol == 'RM709':
-            return 'RM1709'
-        elif self.symbol == 'i1709':
-            return 'i1709'
-        elif self.symbol == 'jm1709':
-            return 'jm1709'
-        elif self.symbol == 'hc1710':
-            return 'hc1710'
-        elif self.symbol == 'ru1709':
-            return 'ru1709'
-        elif self.symbol == 'zn1706':
-            return 'zn1706'
-        elif self.symbol == 'pp1709':
-            return 'pp1709'
-        elif self.symbol == 'j1709':
-            return 'j1709'
-        elif self.symbol == 'bu1706':
-            return 'bu1706'
-        elif self.symbol == 'FG709':
-            return 'fg1709'
-        elif self.symbol == 'jd1709':
-            return 'jd1709'
+        if self.symbol == 'RM801':
+            return 'RM1801'
+        elif self.symbol == 'i1801':
+            return 'i1801'
+        elif self.symbol == 'jm1801':
+            return 'jm1801'
+        elif self.symbol == 'hc1801':
+            return 'hc1801'
+        elif self.symbol == 'ru1801':
+            return 'ru1801'
+        elif self.symbol == 'zn1801':
+            return 'zn1801'
+        elif self.symbol == 'pp1801':
+            return 'pp1801'
+        elif self.symbol == 'j1801':
+            return 'j1801'
+        elif self.symbol == 'bu1801':
+            return 'bu1801'
+        elif self.symbol == 'FG801':
+            return 'fg1801'
+        elif self.symbol == 'jd1801':
+            return 'jd1801'
         elif self.symbol == 'SR801':
             return 'SR1801'
-        elif self.symbol == 'cu1708':
-            return 'cu1708'
-        elif self.symbol == 'rb1710':
-            return 'rb1710'
+        elif self.symbol == 'cu1801':
+            return 'cu1801'
+        elif self.symbol == 'rb1801':
+            return 'rb1801'
 
 if __name__ == '__main__':
     # reconfig()

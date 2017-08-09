@@ -2,7 +2,7 @@
 
 class config:
 
-    tradeSymbol = ['ru1709', 'SR801', 'jd1709', 'FG709', 'i1709', 'RM709']       #交易合约，菜粕
+    tradeSymbol = ['ru1801', 'SR801', 'jd1801', 'FG801', 'i1801', 'RM801']       #交易合约，菜粕
     recodeTickFlag = False        #是否记录实时行情
     tableName = 'tradeseting_gap'
     basePath = '/gap/'
